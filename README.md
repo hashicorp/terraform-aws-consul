@@ -2,7 +2,15 @@
 
 This repo contains Blueprint for how to deploy a [Consul](https://www.consul.io/) cluster on 
 [AWS](https://aws.amazon.com/) using [Terraform](https://www.terraform.io/). Consul is a distributed, highly-available 
-tool that you can use for service discovery and key/value storage.
+tool that you can use for service discovery and key/value storage. 
+
+This Blueprint includes:
+
+* [consul-install-scripts](/modules/consul-install-scripts): Scripts to install Consul and configure it to 
+  automatically join a cluster. These can be used in a [Packer](https://www.packer.io/) template to create a Consul 
+  [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html).
+* [consul-cluster](/modules/consul-cluster): Terraform code to deploy a Consul AMI across an [Auto Scaling 
+  Group](https://aws.amazon.com/autoscaling/). 
 
 ## What's a Blueprint?
 
@@ -29,7 +37,7 @@ Each Blueprint has the following folder structure:
 * [examples](/examples): This folder contains examples of how to use the modules.
 * [test](/test): Automated tests for the modules and examples.
 
-Click on each of the folders above for its documentation.
+Click on each of the folders above for details.
 
 ## How do I contribute to this Blueprint?
 
@@ -67,4 +75,5 @@ This code is released under the Apache 2.0 License. Please see [LICENSE.txt](/LI
 -- How to get secrets to it? KMS?
 * Encryption key for consul?
 -- How to get the secret key to all servers? KMS?
-* Can install-scripts be reused outside of AWS? 
+* Can install-scripts be reused outside of AWS?
+* Updates: phinze's approach OK? or locally cached data too important?
