@@ -58,22 +58,9 @@ This code is released under the Apache 2.0 License. Please see [LICENSE.txt](/LI
 
 ## Open questions
 
-* Monitoring, backup: separate modules?
-* How to package code for Packer 
--- Ansible
--- Chef
--- Puppet
--- Nix
--- Docker
--- https://github.com/jordansissel/fpm
--- http://tpkg.github.io/
--- https://snapcraft.io/
-* DNS entries?
-* Tons of optional configs: ACLs, data centers, Atlas, DNS config, syslog, performance, ports, etc
--- Perhaps allow custom base config file in the AMI? Use consul template to fill in placeholders? Simple convention: __param_name__... Or use jq to do it cleanly.
-* SSL cert for consul?
--- How to get secrets to it? KMS?
-* Encryption key for consul?
--- How to get the secret key to all servers? KMS?
-* Can install-scripts be reused outside of AWS?
-* Updates: phinze's approach OK? or locally cached data too important?
+1. Cluster updates: use create_before_destroy + ELB trick?
+1. UI endpoint: does it need an ELB in front of it?
+1. Route 53 DNS entries: do we need them?
+1. What process supervisor to use?
+1. How to package the scripts so they run on many platforms?
+1. Security: how to securely handle SSL certs and encryption keys? KMS?
