@@ -1,9 +1,9 @@
 # Consul Cluster Example
 
 This folder shows an example of Terraform code that uses the [consul-cluster](/modules/consul-cluster) module to deploy 
-a Consul cluster on [AWS](https://aws.amazon.com/). This example expects you to create an [Amazon Machine Image 
-(AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) that has Consul installed, which you can do using
-the [consul-ami example](/examples/consul-ami)).  
+a [Consul](https://www.consul.io/) cluster on [AWS](https://aws.amazon.com/). This example expects you to create an 
+[Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) that has Consul installed, 
+which you can do using the [consul-ami example](/examples/consul-ami)).  
 
 For more info on how the Consul cluster works, check out the [consul-cluster](/modules/consul-cluster) documentation.
 
