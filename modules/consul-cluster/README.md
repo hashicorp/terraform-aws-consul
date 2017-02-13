@@ -3,7 +3,7 @@
 This folder contains a [Terraform](https://www.terraform.io/) module that can be used to deploy a 
 [Consul](https://www.consul.io/) cluster in [AWS](https://aws.amazon.com/). This module is designed to deploy an 
 [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) that had Consul installed
-and configured within it via the scripts in [consul-install-scripts](/modules/consul-install-scripts).
+via the [consul-install](/modules/consul-install) module.
 
 ## How do you use this module?
 
@@ -55,8 +55,15 @@ This architecture consists of the following resources:
 This module runs Consul on top of an [Auto Scaling Group (ASG)](https://aws.amazon.com/autoscaling/). Typically, you
 would run the ASG with 3 or 5 EC2 Instances spread across multiple [Availability 
 Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html). Each of the EC2
-Instances should be running an AMI that has had Consul installed and configured via the 
-[consul-install-scripts](/modules/consul-install-scripts). 
+Instances should be running an AMI that has had Consul installed via the [consul-install](/modules/consul-install)
+module. 
+
+TODO: should we provide a way to automatically roll out updates across the ASG? We could use the [create_before_destroy
+approach described by Paul Hinze](https://groups.google.com/forum/#!msg/terraform-tool/7Gdhv1OAc80/iNQ93riiLwAJ),
+although we'd need to hook up a load balancer to the ASG.
+
+TODO: should we hook up a load balancer to the ASG? It's useful for health checks and could be a central URL for users
+to visit the `/ui` endpoint.
 
 ### EC2 Instance Tags
 
@@ -99,3 +106,12 @@ provide your own solutions.
 This module assumes you've already created your network topology (VPC, subnets, route tables, etc). You will need to 
 pass in the the relevant info about your network topology (e.g. `vpc_id`, `subnet_ids`) as input variables to this 
 module.
+
+### Route 53 entries (TODO)
+
+TODO: Should we include any Route 53 entries for the consul cluster?
+
+### Encryption (TODO)
+
+TODO: How do we securely get an SSL cert to the Consul servers? KMS?
+TODO: How do we securely get an encryption key to the Consul servers? KMS?

@@ -6,8 +6,8 @@ tool that you can use for service discovery and key/value storage.
 
 This Blueprint includes:
 
-* [consul-install-scripts](/modules/consul-install-scripts): Scripts to install Consul and configure it to 
-  automatically join a cluster. These can be used in a [Packer](https://www.packer.io/) template to create a Consul 
+* [consul-install](/modules/consul-install): This module can be used to to install Consul. It can be used in a 
+  [Packer](https://www.packer.io/) template to create a Consul 
   [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html).
 * [consul-cluster](/modules/consul-cluster): Terraform code to deploy a Consul AMI across an [Auto Scaling 
   Group](https://aws.amazon.com/autoscaling/). 
@@ -56,11 +56,3 @@ MINOR, and PATCH versions on each release to indicate any incompatibilities.
 
 This code is released under the Apache 2.0 License. Please see [LICENSE.txt](/LICENSE.txt) for more details.
 
-## Open questions
-
-1. Cluster updates: use create_before_destroy + ELB trick?
-1. UI endpoint: does it need an ELB in front of it?
-1. Route 53 DNS entries: do we need them?
-1. What process supervisor to use?
-1. How to package the scripts so they run on many platforms?
-1. Security: how to securely handle SSL certs and encryption keys? KMS?

@@ -1,13 +1,13 @@
 # Consul AMI
 
-This folder shows an example of how to use the [consul-install-scripts](/modules/consul-install-scripts) with 
+This folder shows an example of how to use the [consul-install](/modules/consul-install) module with 
 [Packer](https://www.packer.io/) to create a Consul [Amazon Machine Image 
 (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html). This AMI will have 
 [Consul](https://www.consul.io/) installed and configured to automatically join a cluster during boot-up. To see how to 
 deploy this AMI, check out the [consul-cluster example](/examples/consul-cluster). 
 
 For more info on Consul installation and configuration, check out the 
-[consul-install-scripts](/modules/consul-install-scripts) documentation.
+[consul-install](/modules/consul-install) documentation.
 
 ## Quick start
 
