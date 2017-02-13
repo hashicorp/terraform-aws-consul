@@ -60,7 +60,10 @@ module.
 
 TODO: should we provide a way to automatically roll out updates across the ASG? We could use the [create_before_destroy
 approach described by Paul Hinze](https://groups.google.com/forum/#!msg/terraform-tool/7Gdhv1OAc80/iNQ93riiLwAJ),
-although we'd need to hook up a load balancer to the ASG.
+although we'd need to hook up a load balancer to the ASG. However, that approach creates an entirely new ASG, so all 
+the locally stored data on the nodes of the original ASG would have to be synced to the new nodes. Is this a slow 
+process or a bad approach? Should the nodes be updated in-place instead (mutable infrastructure) using a cfg mgmt 
+tool?
 
 TODO: should we hook up a load balancer to the ASG? It's useful for health checks and could be a central URL for users
 to visit the `/ui` endpoint.
