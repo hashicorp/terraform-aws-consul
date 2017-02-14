@@ -6,6 +6,9 @@ This folder contains two scripts for installing and configuring Consul:
 1. `configure-consul`: This script can be used when a system is first booting up to configure Consul so that it runs
    on startup and automatically finds other Consul nodes to form a cluster.
 
+Note that these scripts are designed to be modular, so they can be combined with other scripts (e.g. you could 
+install Consul and Vault on the same server), and cross-platform, so they should work on all major Linux distributions.
+
 ## Quick start (TODO)
 
 The best way to install these scripts on your server is to create a [Packer](https://www.packer.io/) template:

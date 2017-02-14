@@ -3,7 +3,7 @@
 This folder contains a [Terraform](https://www.terraform.io/) module that can be used to deploy a 
 [Consul](https://www.consul.io/) cluster in [AWS](https://aws.amazon.com/). This module is designed to deploy an 
 [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) that had Consul installed
-via the [consul-install](/modules/consul-install) module.
+via the [consul-install](/modules/consul-install) module in this Blueprint.
 
 ## How do you use this module?
 
