@@ -12,11 +12,11 @@ code by adding a `module` configuration and setting its `source` parameter to UR
 
 ```hcl
 module "consul_cluster" {
-  // TODO: update this to the final URL
-  // Use version v0.0.1 of this module
+  # TODO: update this to the final URL
+  # Use version v0.0.1 of this module
   source = "github.com/gruntwork-io/consul-aws-blueprint//modules/consul-cluster?ref=v0.0.1"
 
-  // Set the parameters for this module. See vars.tf for available parameters.
+  # Set the parameters for this module. See vars.tf for available parameters.
   foo = "bar"
 }
 ```

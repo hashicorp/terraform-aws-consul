@@ -3,12 +3,12 @@
 Contributions to this Blueprint are very welcome! We follow a fairly standard [pull request 
 process](https://help.github.com/articles/about-pull-requests/) for contributions, subject to the following guidelines:
  
-1. File a GitHub issue
-1. Update the documentation
-1. Update the tests
-1. Update the code
-1. Create a pull request
-1. Merge and release
+1. [File a GitHub issue](#file-a-github-issue)
+1. [Update the documentation](#update-the-documentation)
+1. [Update the tests](#update-the-tests)
+1. [Update the code](#update-the-code)
+1. [Create a pull request](#create-a-pull-request)
+1. [Merge and release](#merge-and-release)
 
 ## File a GitHub issue
 
@@ -63,9 +63,10 @@ production, and certain types of changes could cause downtime. For example, cons
    treat that as an instruction to delete the old resource and a create a new one. 
    
 Deleting certain types of resources (e.g. virtual servers, load balancers) can cause downtime, so when making code
-changes, think carefully about how to avoid that (e.g. can you avoid downtime by using 
-[create_before_destroy](https://www.terraform.io/docs/configuration/resources.html#create_before_destroy)?). If 
-downtime cannot be avoided, please make sure to call that out when you submit a pull request. 
+changes, think carefully about how to avoid that. For example, can you avoid downtime by using 
+[create_before_destroy](https://www.terraform.io/docs/configuration/resources.html#create_before_destroy)? Or via
+the `terraform state` command? If so, make sure to note this in our pull request. If  downtime cannot be avoided, 
+please make sure to call that out when you submit a pull request. 
 
 ## Create a pull request
 

@@ -17,11 +17,11 @@ section for a discussion.
 
 The `install-consul` script does the following:
 
-1. Install the Consul binary
-1. Create a user for Consul
-1. Create an initial Consul configuration
-1. Install a process supervisor (TODO)
-1. Install the configure-consul script
+1. [Install the Consul binary](#install-the-consul-binary)
+1. [Create a user for Consul](#create-a-user-for-consul)
+1. [Create an initial Consul configuration](#create-an-initial-consul-configuration)
+1. [Install a process supervisor](#install-a-process-supervisor)
+1. [Install the configure-consul script](#install-the-configure-consul-script)
 
 ### Install the Consul binary
 
@@ -69,7 +69,7 @@ Note that `install-consul` has a default `consul-base.json` that it uses, but yo
 if you need custom configurations. You can use the same `__REPLACEME__` convention in your custom configuration file to 
 indicate values that should be replaced by the `configure-consul` script during boot.
 
-### Install a process supervisor (TODO)
+### Install a process supervisor
  
 We want to run the Consul process on boot and to automatically restart the process if it crashes. To do that, we need
 a process supervisor that works across a variety of Linux distributions. The most popular options are:
@@ -91,8 +91,8 @@ to do this is to run it from [User Data](http://docs.aws.amazon.com/AWSEC2/lates
  
 The `configure-consul` script does the following:
  
-1. Fill in placeholders in the Consul configuration file
-1. Start Consul using a process supervisor
+1. [Fill in placeholders in the Consul configuration file](#fill-in-placeholders-in-the-consul-configuration-file)
+1. [Start Consul using a process supervisor](#start-consul-using-a-process-supervisor)
  
 ### Fill in placeholders in the Consul configuration file
 
