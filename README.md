@@ -1,6 +1,6 @@
 # Consul AWS Blueprint
 
-This repo contains Blueprint for how to deploy a [Consul](https://www.consul.io/) cluster on 
+This repo contains a Blueprint for how to deploy a [Consul](https://www.consul.io/) cluster on 
 [AWS](https://aws.amazon.com/) using [Terraform](https://www.terraform.io/). Consul is a distributed, highly-available 
 tool that you can use for service discovery and key/value storage. 
 
@@ -27,7 +27,11 @@ a version number bump.
 ## Who maintains this Blueprint?
 
 This Blueprint is maintained by [Gruntwork](http://www.gruntwork.io/). If you need help or support, send an email to 
-[blueprints@gruntwork.io](mailto:blueprints@gruntwork.io?Subject=Consul%20Blueprint).
+[blueprints@gruntwork.io](mailto:blueprints@gruntwork.io?Subject=Consul%20Blueprint). Gruntwork can help with:
+
+* Blueprints for other types of infrastructure, such as VPCs, Docker clusters, databases, and continuous integration.
+* Blueprints that meet compliance requirements, such as HIPAA.
+* Consulting & Training on AWS, Terraform, and DevOps.
 
 ## How do you use a Blueprint?
 
