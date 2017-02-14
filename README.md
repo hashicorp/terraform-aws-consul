@@ -54,5 +54,6 @@ MINOR, and PATCH versions on each release to indicate any incompatibilities.
 
 ## License
 
-This code is released under the Apache 2.0 License. Please see [LICENSE.txt](/LICENSE.txt) for more details.
+This code is released under the Apache 2.0 License. Please see [LICENSE](/LICENSE) and [NOTICE](/NOTICE) for more 
+details.
 
