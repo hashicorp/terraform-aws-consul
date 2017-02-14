@@ -64,8 +64,9 @@ specified a custom config file, you can use the same `__REPLACEME__` syntax to h
 We want to run the Consul process on boot and to automatically restart the process if it crashes. To do that, we need
 a process supervisor that works across a variety of Linux distributions. The most popular options are:
 
-- systemd: available by default on Fedora/RHEL.
-- upstart: available by default on Ubuntu (or does Ubuntu 16 use systemd as well?).
+- systemd: available by default on Fedora/RHEL/Ubuntu 16.04.
+- upstart: available by default on Ubuntu before 15.04.
+- initd: available by default on Amazon Linux.
 - supervisord: can be installed separately on most OS's.
  
 TODO: pick a process supervisor 
