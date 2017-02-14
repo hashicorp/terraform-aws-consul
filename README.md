@@ -6,7 +6,7 @@ tool that you can use for service discovery and key/value storage.
 
 This Blueprint includes:
 
-* [consul-install](/modules/consul-install): This module can be used to to install Consul. It can be used in a 
+* [consul-install](/modules/consul-install): This module can be used to install Consul. It can be used in a 
   [Packer](https://www.packer.io/) template to create a Consul 
   [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html).
 * [consul-cluster](/modules/consul-cluster): Terraform code to deploy a Consul AMI across an [Auto Scaling 
@@ -39,7 +39,7 @@ This Blueprint is maintained by [Gruntwork](http://www.gruntwork.io/). If you ne
 
 
 
-## How do you use a Blueprint?
+## How do you use this Blueprint?
 
 Each Blueprint has the following folder structure:
 
@@ -47,7 +47,12 @@ Each Blueprint has the following folder structure:
 * [examples](/examples): This folder contains examples of how to use the modules.
 * [test](/test): Automated tests for the modules and examples.
 
-Click on each of the folders above for details.
+The basic idea for using this Blueprint is to:
+
+1. Use the scripts from the [consul-install](/modules/consul-install) in a Packer template to create a Consul AMI.
+1. Deploy that AMI using the [consul-cluster](/modules/consul-cluster) module.
+
+Click on each of the modules above for more details.
 
 
 
