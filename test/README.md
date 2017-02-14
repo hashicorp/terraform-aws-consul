@@ -4,6 +4,8 @@ This folder contains automated tests for this Blueprint. All of the tests are wr
 Most of these are "integration tests" that deploy real infrastructure using Terraform and verify that infrastructure 
 works as expected using a helper library called [Terratest](https://github.com/gruntwork-io/terratest).  
 
+
+
 ## WARNING WARNING WARNING
 
 **Note #1**: Many of these tests create real resources in an AWS account and then try to clean those resources up at 
@@ -17,6 +19,8 @@ default test timeout of 10 minutes, after which it forcefully kills the tests wi
 tasks from running. Therefore, we set an overlying long timeout to make sure all tests have enough time to finish and 
 clean up.
 
+
+
 ## Prerequisites
 
 - Install the latest version of [Go](https://golang.org/).
@@ -25,6 +29,8 @@ clean up.
 - Configure your AWS credentials using one of the [options supported by the AWS 
   SDK](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html). Usually, the easiest option is to
   set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
+
+
 
 ## One-time setup
 
@@ -35,12 +41,16 @@ cd test
 glide install
 ```
 
+
+
 ## Run all the tests
 
 ```bash
 cd test
 go test -v -timeout 60m
 ```
+
+
 
 ## Run a specific test
 

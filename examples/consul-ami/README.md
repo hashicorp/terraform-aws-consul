@@ -9,6 +9,8 @@ deploy this AMI, check out the [consul-cluster example](/examples/consul-cluster
 For more info on Consul installation and configuration, check out the 
 [consul-install](/modules/consul-install) documentation.
 
+
+
 ## Quick start
 
 To build the Consul AMI:

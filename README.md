@@ -12,6 +12,8 @@ This Blueprint includes:
 * [consul-cluster](/modules/consul-cluster): Terraform code to deploy a Consul AMI across an [Auto Scaling 
   Group](https://aws.amazon.com/autoscaling/). 
 
+
+
 ## What's a Blueprint?
 
 A Blueprint is a canonical, reusable, best-practices definition for how to run a single piece of infrastructure, such 
@@ -24,6 +26,8 @@ existing code that has been proven in production. And instead of maintaining all
 you can leverage the work of the Blueprint community and maintainers, and pick up infrastructure improvements through
 a version number bump.
  
+ 
+ 
 ## Who maintains this Blueprint?
 
 This Blueprint is maintained by [Gruntwork](http://www.gruntwork.io/). If you need help or support, send an email to 
@@ -32,6 +36,8 @@ This Blueprint is maintained by [Gruntwork](http://www.gruntwork.io/). If you ne
 * Blueprints for other types of infrastructure, such as VPCs, Docker clusters, databases, and continuous integration.
 * Blueprints that meet compliance requirements, such as HIPAA.
 * Consulting & Training on AWS, Terraform, and DevOps.
+
+
 
 ## How do you use a Blueprint?
 
@@ -43,9 +49,13 @@ Each Blueprint has the following folder structure:
 
 Click on each of the folders above for details.
 
+
+
 ## How do I contribute to this Blueprint?
 
 Contributions are very welcome! Check out the [Contribution Guidelines](/CONTRIBUTING.md) for instructions.
+
+
 
 ## How is this Blueprint versioned?
 
@@ -55,6 +65,8 @@ along with the changelog, in the [Releases Page](../../releases).
 During initial development, the major version will be 0 (e.g., `0.x.y`), which indicates the code does not yet have a 
 stable API. Once we hit `1.0.0`, we will make every effort to maintain a backwards compatible API and use the MAJOR, 
 MINOR, and PATCH versions on each release to indicate any incompatibilities. 
+
+
 
 ## License
 

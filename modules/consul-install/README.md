@@ -1,20 +1,24 @@
 # Consul Install Scripts
 
-This folder contains two scripts for installing and configuring Consul:
+This folder contains scripts for installing and configuring Consul:
  
-1. `install-consul`: This script installs Consul, its dependencies, and the `configure-consul` script.
-1. `configure-consul`: This script can be used when a system is first booting up to configure Consul so that it runs
+1. `install-consul`: This script installs Consul, its dependencies, and the `run-consul` script.
+1. `run-consul`: This script can be used when a system is first booting up to configure Consul so that it runs
    on startup and automatically finds other Consul nodes to form a cluster.
 
 Note that these scripts are designed to be modular, so they can be combined with other scripts (e.g. you could 
 install Consul and Vault on the same server), and cross-platform, so they should work on all major Linux distributions.
 
-## Quick start (TODO)
+
+
+## Quick start
 
 The best way to install these scripts on your server is to create a [Packer](https://www.packer.io/) template:
 
 TODO: we need to figure out how to "package" (and write) these scripts. See the [Package Manager](#package-manager)
 section for a discussion.
+
+
 
 ## The install-consul script
 
@@ -24,7 +28,7 @@ The `install-consul` script does the following:
 1. [Create a user for Consul](#create-a-user-for-consul)
 1. [Create an initial Consul configuration](#create-an-initial-consul-configuration)
 1. [Install a process supervisor](#install-a-process-supervisor)
-1. [Install the configure-consul script](#install-the-configure-consul-script)
+1. [Install the run-consul script](#install-the-run-consul-script)
 
 ### Install the Consul binary
 
@@ -43,34 +47,17 @@ owned by user `consul`:
 
 ### Create an initial Consul configuration
 
-Copy over a basic config file into `/opt/consul/config/consul-base.json`. This contains the basic 
-[configuration settings](https://www.consul.io/docs/agent/options.html) for Consul:
+Copy over a basic config file into `/opt/consul/config/consul-base.json`. See 
+[consul-config-default.json](consul-config-default.json) for the default config values. You can override this file with
+your own config file when running the `install-consul` script. Refer to the Consul [configuration 
+documentation](https://www.consul.io/docs/agent/options.html) for available configuration options and what each one
+does.
 
-```json
-{
-  "advertise_addr": "__REPLACEME__",
-  "bootstrap_expect": "__REPLACEME__",
-  "bind_addr": "__REPLACEME__",
-  "datacenter": "__REPLACEME__",
-  "data_dir": "/opt/consul/data",
-  "node": "__REPLACEME__",
-  "retry_join_ec2_tag_value": "__REPLACEME__",
-  "retry_join_ec2_tag_key": "consul-cluster",
-  "retry_interval": "30s",
-  "retry_max": 20,
-  "server": true,
-  "ui": true
-}
-```
-
-Note, however, that a few configuration values are not known until runtime, so they show up in the configuration with 
-the placeholder value `__REPLACEME__`. The `configure-consul` script is responsible for filling in these values while 
-the server is booting. See the [configure-consul script docs](#the-configure-consul-script) for details on which 
-variables it fills in.
-
-Note that `install-consul` has a default `consul-base.json` that it uses, but you can override this with your own file
-if you need custom configurations. You can use the same `__REPLACEME__` convention in your custom configuration file to 
-indicate values that should be replaced by the `configure-consul` script during boot.
+Note that some configuration values are not known until runtime (e.g. `bind_addr`), so they show up in 
+[consul-config-default.json](consul-config-default.json) with the placeholder value `__REPLACEME__`. The 
+`run-consul` script is responsible for filling in these values while the server is booting. See 
+the [run-consul script docs](#the-run-consul-script) for details on which variables it fills in. If you
+specified a custom config file, you can use the same `__REPLACEME__` syntax to have those values filled in at runtime.
 
 ### Install a process supervisor
  
@@ -78,21 +65,23 @@ We want to run the Consul process on boot and to automatically restart the proce
 a process supervisor that works across a variety of Linux distributions. The most popular options are:
 
 - systemd: available by default on Fedora/RHEL.
-- upstart: available by default on Ubuntu.
+- upstart: available by default on Ubuntu (or does Ubuntu 16 use systemd as well?).
 - supervisord: can be installed separately on most OS's.
  
 TODO: pick a process supervisor 
 
-### Install the configure-consul script
+### Install the run-consul script
 
-Install the `configure-consul` script into `/usr/bin` (this directory is configurable, but should be part of `PATH`).
+Install the `run-consul` script into `/usr/bin` (this directory is configurable, but should be part of `PATH`).
 
-## The configure-consul script
 
-The `configure-consul` script is meant to be executed when the Consul server is first booting up. The most common way
+
+## The run-consul script
+
+The `run-consul` script is meant to be executed when the Consul server is first booting up. The most common way
 to do this is to run it from [User Data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-data-shell-scripts).
  
-The `configure-consul` script does the following:
+The `run-consul` script does the following:
  
 1. [Fill in placeholders in the Consul configuration file](#fill-in-placeholders-in-the-consul-configuration-file)
 1. [Start Consul using a process supervisor](#start-consul-using-a-process-supervisor)
@@ -100,8 +89,14 @@ The `configure-consul` script does the following:
 ### Fill in placeholders in the Consul configuration file
 
 The `install-consul` script creates a Consul configuration file under `/opt/consul/config/consul-base.json`. This file
-contains placeholders of the format `__REPLACEME__` that the `configure-consul` script fills in with dynamic values.
-The following values are filled in:
+contains placeholders of the format `__REPLACEME__` that the `run-consul` script fills in with dynamic values.
+To fill in a value, pass the argument `--set-config KEY=VALUE` to the `run-consul` script. For example:
+
+```
+run-consul --set-config datacenter=foo --set-config node=bar 
+```
+
+The following values are filled in by default:
 
 * `advertise_addr`: Set to the EC2 Instance's private IP address, as fetched from 
   [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
@@ -120,11 +115,107 @@ The following values are filled in:
 
 * `node`: Set to the instance id, as fetched from 
   [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
-  
 
 ### Start Consul using a process supervisor
 
 TODO: this section depends on what process supervisor we pick
+
+
+## How do you handle encryption?
+
+Consul can encrypt all of its network traffic (see the [encryption docs for 
+details](https://www.consul.io/docs/agent/encryption.html)), but by default, encryption is not enabled in this 
+Blueprint. To enable encryption, you need to do the following:
+
+1. [Gossip encryption: provide an encryption key](#gossip-encryption-provide-an-encryption-key)
+1. [RPC encryption: provide TLS certificates](#rpc-encryption-provide-tls-certificates)
+
+### Gossip encryption: provide an encryption key
+
+To enable Gossip encryption, you need to provide a 16-byte, Base64-encoded encryption key (you can generate it using
+the [consul keygen command](https://www.consul.io/docs/commands/keygen.html)) in the Consul configuration:
+
+```json
+{
+  "encrypt": "cg8StVXbQJ0gPvMd9o7yrg=="
+}
+```
+
+One option is to provide a custom configuration file that includes this encryption key when calling the 
+`install-consul` script from the [consul-install](/modules/consul-install) module. If you do this as part of a Packer
+template, the encryption key will be baked into the AMI you deploy, and every Consul server will be able to use it. 
+
+If the encryption key cannot be baked into the AMI (e.g. because the key is only available at runtime), you can set
+the configuration to the `__REPLACEME__` placeholder value:
+
+```json
+{
+  "encrypt": "__REPLACEME__"
+}
+```
+
+When the server is booting, you can pass the encryption key into the `run-consul` script and it will put the key into
+Consul's config file just before starting Consul:
+
+```
+run-consul --set-config encrypt=cg8StVXbQJ0gPvMd9o7yrg== 
+```
+
+### RPC encryption: provide TLS certificates
+
+To enable RPC encryption, you need to provide the paths CA and signing keys ([here is a tutorial on generating these
+keys](http://russellsimpkins.blogspot.com/2015/10/consul-adding-tls-using-self-signed.html)) in the Consul 
+configuration:
+
+```json
+{
+  "ca_file": "/opt/consul/tls/certs/ca-bundle.crt",
+  "cert_file": "/opt/consul/tls/certs/my.crt",
+  "key_file": "/opt/consul/tls/private/my.key"
+}
+```
+
+You will also want to set the [verify_incoming](https://www.consul.io/docs/agent/options.html#verify_incoming) and
+[verify_outgoing](https://www.consul.io/docs/agent/options.html#verify_outgoing) settings to verify TLS certs on 
+incoming and outgoing connections, respectively:
+
+```json
+{
+  "ca_file": "/opt/consul/tls/certs/ca-bundle.crt",
+  "cert_file": "/opt/consul/tls/certs/my.crt",
+  "key_file": "/opt/consul/tls/private/my.key",
+  "verify_incoming": true,
+  "verify_outgoing": true
+}
+```
+
+One option is to provide a custom configuration file that includes these settings when calling the 
+`install-consul` script from the [consul-install](/modules/consul-install) module. If you do this as part of your 
+Packer template, and that template copies in the CA and signing keys, then everything you need for TLS will be baked 
+into into the AMI you deploy, and every Consul server will be able to use it. 
+
+If the CA and signing keys cannot be baked into the AMI (e.g. because they are only available at runtime), you can set
+these configs to the `__REPLACEME__` placeholder value:
+
+```json
+{
+  "ca_file": "__REPLACEME__",
+  "cert_file": "__REPLACEME__",
+  "key_file": "__REPLACEME__",
+  "verify_incoming": true,
+  "verify_outgoing": true
+}
+```
+
+When the server is booting, you can pass the encryption key into the `run-consul` script and it will put the key into
+Consul's config file just before starting Consul:
+
+```
+run-consul \
+  --set-config ca_file=/opt/consul/tls/certs/ca-bundle.crt \ 
+  --set-config cert_file=/opt/consul/tls/certs/my.crt \ 
+  --set-config key_file=/opt/consul/tls/private/my.key  
+```
 
 ## Package Manager
 
@@ -155,7 +246,9 @@ We need to write and package these scripts in a way that satisfies the following
 
 - **Active community**: We want to use a Package manager with an active community. 
 
-Some of the options we've looked at that work on all major Linux distributions are:
+TODO: pick a package manager!
+
+Here are the options we've looked at that work on all major Linux distributions are:
 
 - [Nix](https://nixos.org/nix/)
     - Purely functional package manager, so dependency versioning, rollback, etc works very cleanly.

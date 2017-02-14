@@ -7,6 +7,8 @@ which you can do using the [consul-ami example](/examples/consul-ami)).
 
 For more info on how the Consul cluster works, check out the [consul-cluster](/modules/consul-cluster) documentation.
 
+
+
 ## Quick start
 
 To deploy a Consul Cluster:
