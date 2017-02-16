@@ -3,123 +3,177 @@
 This folder contains scripts for installing and configuring Consul:
  
 1. `install-consul`: This script installs Consul, its dependencies, and the `run-consul` script.
-1. `run-consul`: This script can be used when a system is first booting up to configure Consul so that it runs
-   on startup and automatically finds other Consul nodes to form a cluster.
+1. `run-consul`: This script can be used when a system is first booting up to run Consul and configure it to 
+   automatically find other Consul nodes to form a cluster.
 
-Note that these scripts are designed to be modular, so they can be combined with other scripts (e.g. you could 
-install Consul and Vault on the same server), and cross-platform, so they should work on all major Linux distributions.
+You can use these scripts together to create a Consul [Amazon Machine Image 
+(AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) that can be deployed across an Auto Scaling Group
+using the [consul-cluster module](/modules/consul-cluster).
+
+These scripts have been tested with: 
+
+* Ubuntu 16.04
+* Amazon Linux
 
 
 
 ## Quick start
 
-The best way to install these scripts on your server is to create a [Packer](https://www.packer.io/) template:
+To use these scripts to install Consul, use `git` to check out a specific version of this repo (see the 
+[releases page](../../../../releases) for version numbers and the CHANGELOG) and run the `install-consul` script:
 
-TODO: we need to figure out how to "package" (and write) these scripts. See the [Package Manager](#package-manager)
-section for a discussion.
+```
+# TODO: update this to the final URL when this Blueprint is released
+git clone --branch <VERSION> https://github.com/gruntwork-io/consul-aws-blueprint.git
+./consul-aws-blueprint/modules/consul-install/install-consul
+```
+
+*(Check out [Is it safe to pipe URLs into bash?](#is-it-safe-to-pipe-urls-into-bash) to understand the security 
+implications.)*
+
+Once the `install-consul` script is finished, Consul will be installed, and you can run it using the `run-consul` 
+script:
+
+```
+run-consul
+```
+
+We recommend creating an [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) 
+with Consul installed by running `install-consul` as part of a [Packer](https://www.packer.io/) template using a
+[shell provisioner](https://www.packer.io/docs/provisioners/shell.html) (see the [consul-ami 
+example](/examples/consul-ami) for a fully-working sample code). You can then deploy the AMI across an Auto
+Scaling Group using the [consul-cluster module](/modules/consul-cluster) (see the [consul-cluster 
+example](/examples/consul-cluster) for fully-working sample code).
+
+You can find more documentation for each script below:
+
+1. [The install-consul script](#the-install-consul-script)
+1. [The run-consul script](#the-run-consul-script)
+
 
 
 
 ## The install-consul script
 
+### Command line Arguments
+
+The `install-consul` script accepts the following arguments, all optional:
+
+* `version VERSION`: Install Consul version VERSION.  
+* `path DIR`: Install Consul into folder DIR.
+
+Example:
+
+```
+install-consul --version 0.7.5 --path /opt/consul
+```
+
+### How it works
+
 The `install-consul` script does the following:
 
-1. [Install the Consul binary](#install-the-consul-binary)
-1. [Create a user for Consul](#create-a-user-for-consul)
-1. [Create an initial Consul configuration](#create-an-initial-consul-configuration)
-1. [Install a process supervisor](#install-a-process-supervisor)
-1. [Install the run-consul script](#install-the-run-consul-script)
+1. [Create a user and folders for Consul](#create-a-user-and-folders-for-consul)
+1. [Install Consul binaries and scripts](#install-consul-binaries-and-scripts)
+1. [Install supervisord](#install-supervisord)
 
-### Install the Consul binary
+#### Create a user and folders for Consul
 
-Download the Consul zip file from the [downloads page](https://www.consul.io/downloads.html) (the version number is 
-configurable), and extract the `consul` binary into `/usr/bin` (this directory is configurable, but should be part of
-`PATH`).
+Create an OS user named `consul`. Create the following folders, all owned by user `consul`:
 
-### Create a user for Consul
-
-Create an OS user named `consul` with execute permissions for the `consul` binary. Create the following folders, all
-owned by user `consul`:
-
-* `/opt/consul`: base directory for Consul data (configurable).
+* `/opt/consul`: base directory for Consul data (configurable via the `--path` argument).
+* `/opt/consul/bin`: directory for Consul binaries.
 * `/opt/consul/data`: directory where the Consul agent can store state.
 * `/opt/consul/config`: directory where the Consul agent looks up configuration.
 
-### Create an initial Consul configuration
+#### Install Consul binaries and scripts
 
-Copy over a basic config file into `/opt/consul/config/consul-base.json`. See 
-[consul-config-default.json](consul-config-default.json) for the default config values. You can override this file with
-your own config file when running the `install-consul` script. Refer to the Consul [configuration 
-documentation](https://www.consul.io/docs/agent/options.html) for available configuration options and what each one
-does.
+Install the following:
 
-Note that some configuration values are not known until runtime (e.g. `bind_addr`), so they show up in 
-[consul-config-default.json](consul-config-default.json) with the placeholder value `__REPLACEME__`. The 
-`run-consul` script is responsible for filling in these values while the server is booting. See 
-the [run-consul script docs](#the-run-consul-script) for details on which variables it fills in. If you
-specified a custom config file, you can use the same `__REPLACEME__` syntax to have those values filled in at runtime.
+* `consul`: Download the Consul zip file from the [downloads page](https://www.consul.io/downloads.html) (the version 
+  number is configurable via the `--version` argument), and extract the `consul` binary into `/opt/consul/bin`.
+* `run-consul`: Copy the `run-consul` script from this module into `/opt/consul/bin`. 
 
-### Install a process supervisor
- 
-We want to run the Consul process on boot and to automatically restart the process if it crashes. To do that, we need
-a process supervisor that works across a variety of Linux distributions. The most popular options are:
+#### Install supervisord
 
-- systemd: available by default on Fedora/RHEL/Ubuntu 16.04.
-- upstart: available by default on Ubuntu before 15.04.
-- initd: available by default on Amazon Linux.
-- supervisord: can be installed separately on most OS's.
- 
-TODO: pick a process supervisor 
-
-### Install the run-consul script
-
-Install the `run-consul` script into `/usr/bin` (this directory is configurable, but should be part of `PATH`).
+Install [supervisord](http://supervisord.org/). We use it as a cross-platform supervisor to ensure Consul is started
+whenever the system boots and restarted if the Consul process crashes.
 
 
 
 ## The run-consul script
 
-The `run-consul` script is meant to be executed when the Consul server is first booting up. The most common way
-to do this is to run it from [User Data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-data-shell-scripts).
- 
-The `run-consul` script does the following:
- 
-1. [Fill in placeholders in the Consul configuration file](#fill-in-placeholders-in-the-consul-configuration-file)
-1. [Start Consul using a process supervisor](#start-consul-using-a-process-supervisor)
- 
-### Fill in placeholders in the Consul configuration file
+### Command line arguments
 
-The `install-consul` script creates a Consul configuration file under `/opt/consul/config/consul-base.json`. This file
-contains placeholders of the format `__REPLACEME__` that the `run-consul` script fills in with dynamic values.
-To fill in a value, pass the argument `--set-config KEY=VALUE` to the `run-consul` script. For example:
+The `run-consul` script accepts one or more arguments of the following format (all optional):
+
+* `-ARG=VALUE`: When running Consul, set argument ARG to value VALUE. May be specified more than once. This
+  is used to set configurations for Consul at runtime. Check out the [Consul Configuration 
+  docs](https://www.consul.io/docs/agent/options.html) for a list of supported arguments.
+
+Example:
 
 ```
-run-consul --set-config datacenter=foo --set-config node=bar 
+run-consul -bootstrap-expect=3 -advertise-addr=11.22.33.44
 ```
 
-The following values are filled in by default:
+#### Default arguments
 
-* `advertise_addr`: Set to the EC2 Instance's private IP address, as fetched from 
+The `run-consul` script sets the following arguments by default:
+
+* `advertise-addr`: Set to the EC2 Instance's private IP address, as fetched from 
   [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
 
-* `bootstrap_expect`: This value should be passed into the script from the Terraform code. It should be set to the 
-  number of EC2 Instances in the cluster (typically 3 or 5).
-  
-* `bind_addr`: Set to the EC2 Instance's private IP address, as fetched from 
+* `bind-addr`: Set to the EC2 Instance's private IP address, as fetched from 
   [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
 
-* `datacenter`: This value should be passed into the script from the Terraform code. It should typically be set to the
-  name of the current AWS region (e.g. `us-east-1`).
-   
-* `retry_join_ec2_tag_value`: This value should be passed into the script from the Terraform code. It should typically
-  be set to the name of the Consul cluster (e.g. `consul-stage`).
+* `config-dir`: Set to `CONSUL_HOME/config`, where `CONSUL_HOME` is the value of the `--path` argument passed to the 
+  `install-consul` script (`/opt/consul` by default).
+
+* `data-dir`: Set to `CONSUL_HOME/data`, where `CONSUL_HOME` is the value of the `--path` argument passed to the 
+  `install-consul` script (`/opt/consul` by default).
+
+* `datacenter`: Set to the current AWS region (e.g. `us-east-1`).
 
 * `node`: Set to the instance id, as fetched from 
   [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
 
-### Start Consul using a process supervisor
+* `server`: Set to true.
 
-TODO: this section depends on what process supervisor we pick
+To override a default value for an argument, pass that argument to the `run-consul` command. For example, to override 
+the default `advertise-addr` value, you would run:
+
+```
+run-consul -advertise-addr=11.22.33.44
+```
+
+#### Recommended arguments
+
+We recommend passing the following arguments to `run-consul`:
+   
+* `retry-join-ec2-tag-key KEY`: Look for EC2 Instances with a tag named KEY and the value specified by the  
+  `retry-join-ec2-tag-value` argument and join them to form a Consul cluster. If you assign a custom tag to all the 
+  instances in your Consul Auto Scaling Group, then each of them will be able to use that tag to automatically find 
+  discover each other using the AWS APIs.
+
+* `retry-join-ec2-tag-value VALUE`: Look for EC2 Instances with the tag name specified by the `retry-join-ec2-tag-key`
+  argument and the value VALUE and join them to form a Consul cluster. If you assign a custom tag to all the 
+  instances in your Consul Auto Scaling Group, then each of them will be able to use that tag to automatically find 
+  discover each other using the AWS APIs.
+  
+* `bootstrap-expect NUMBER`: The number of servers to wait for to form a cluster. You should set this to the size of
+  your Consul Auto Scaling Group.
+  
+### How it works
+
+The `run-consul` command is meant to be executed when the Consul server is first booting up. The most common way
+to do this is to run it as a [User Data
+script](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-data-shell-scripts).
+ 
+When you execute the `run-consul` script, it generates a command to run Consul, which includes all the arguments you 
+pass to it, and configures [supervisord](http://supervisord.org/) to run that command if the system reboots or Consul
+crashes.  
+
+
 
 
 ## How do you handle encryption?
@@ -218,128 +272,4 @@ run-consul \
   --set-config key_file=/opt/consul/tls/private/my.key  
 ```
 
-## Package Manager
 
-We need to write and package these scripts in a way that satisfies the following requirements:
-
-- **Packages**. There needs to be a way to fetch these scripts from a canonical location (e.g. GitHub repo, package 
-  manager repository) at a specific version number (e.g. `v0.0.3` of `install-consul`), much like a package manager. 
-  We don't want people copy/pasting these scripts into their local repos, or it'll make upgrades painful. 
-
-- **Cross-platform**. The packaging system should work on all major Linux distributions.
-
-- **Handles dependencies**. These scripts rely on certain dependencies being installed on the system, such as `curl`,
-  `wget`, `jq`, `aws`, and so on. We need a way to automatically manage and install these dependencies that works
-  across all major Linux distributions. 
-
-- **Simple package manager installation**: We don't want a package manager that takes a dozen steps to install. 
-
-- **Simple client usage**. These are simple scripts, so it shouldn't take a dozen steps to install one. Ideally, we can
-  use a one-liner such as `apt install -y install-consul`, except it should work on all major Linux distributions.
-
-- **Simple publish usage**. We need a fast and reliable way to publish new versions of packages. Ideally, we'd avoid
-  having to publish each update to multiple package repos (apt, yum, etc), especially if that requires any sort of 
-  manual approval (e.g. a PR for each new version). 
-
-- **Testable in dev mode**. You must be able to do local, iterative development on the example code in the 
-  [examples](/examples) folder. That means there is a way to "package" these scripts so that, in dev mode, they are
-  downloaded from your local file system (rather than some package repo such as apt or yum).
-
-- **Active community**: We want to use a Package manager with an active community. 
-
-TODO: pick a package manager!
-
-Here are the options we've looked at that work on all major Linux distributions are:
-
-- [Nix](https://nixos.org/nix/)
-    - Purely functional package manager, so dependency versioning, rollback, etc works very cleanly.
-    - Has dependency-management built-in, though you are subject to what's available in the Nix repos.
-    - Simple to install: `bash <(curl https://nixos.org/nix/install)`.
-    - Simple client usage: `nix-env --install PACKAGE`.
-    - Complicated publish usage. Nix has its own [expression 
-      language](https://nixos.org/nix/manual/#sec-expression-syntax), which I found fairly confusing. The docs are
-      so-so. Creating new packages and pushing new versions seems to require [a pull 
-      request](https://nixos.org/wiki/Create_and_debug_nix_packages).
-    - Not clear how to test in dev mode.  
-    - Community seems fairly active.  
-
-- [tpkg](http://tpkg.github.io/)
-    - Package apps as super-powered tar files.
-    - Has dependency-management built-in, both using native installers (e.g. apt) and tpkg itself.
-    - Hard to install. Requires Ruby and Ruby Gems to be installed first, so every Packer template would have to 
-      install Ruby (e.g. `sudo apt install ruby`), which many people won't want on their production servers, and then 
-      install `tpkg`: `sudo gem install tpkg`. 
-    - Simple client usage: `tpkg --install PACKAGE`.
-    - Relatively simple publish usage: `tpkg --make PATH`. That produces a file you can upload to your own [package 
-      server](http://tpkg.github.io/package_server.html), which can be any web server that hosts the file and a special
-      metadata file. Might be able to use GitHub releases or S3 for this.
-    - Easy to use in dev mode: the `tpkg --make PATH` command makes the package available for local install.   
-    - Is it a dead project? The [GitHub repo](https://github.com/tpkg) has almost no followers. Only a couple commits 
-      in the last few years.
-
-- [Snap](https://snapcraft.io/)
-    - A way to install "apps" on all major Linux distributions. It seems like it's designed for standalone apps and
-      binaries rather than scripting. Packages, called "snaps", are completely isolated from each other and the host OS 
-      (using cgroups?) and can define interfaces, slots, plugs, etc to communicate with each other (a bit like "type 
-      safety").
-    - Does not seem to have dependency management built-in. Or at least, I can't find it.
-    - Simple client usage: `sudo snap install PACKAGE`.
-    - Simple to install: `sudo apt install snapd`. 
-    - Publishing is so-so. You have to sign up for an account in the [Ubuntu 
-      Store](https://myapps.developer.ubuntu.com/), install a separate app (`sudo apt install snapcraft`), login
-      (`snapcraft login`), configure channels (stable, beta, etc); after that, it's an easy `snapcraft push` command 
-      for each new version.
-    - Dev mode usage seems to work well with `snapcraft`.
-    - Community seems fairly active, as this is a project maintained by Canonical.  
-
-- `curl | bash`
-    - Upload our scripts to Git, release them with version numbers, and pipe `curl` into `bash` to run them.
-    - No dependency management is built-in.
-    - Nothing to install! Well, perhaps `curl`, but that's as simple as it gets.
-    - Simple client usage: `curl -Ls https://raw.githubusercontent.com/foo/bar/v0.0.3/consul-install | bash /dev/stdin`.
-      Unfortunately, without any checksum or signature verification, this is a mild security risk if the GitHub repo 
-      gets hijacked. Moreover, this only works for individual files. If the script has dependencies, those have to
-      be downloaded separately.
-    - Simple publish usage: just create a new GitHub release.
-    - Easy to use in dev mode: just change the URL to a local file path.
-    - No need for a community, as we're just using `curl`!   
-
-- [Gruntwork Installer](https://github.com/gruntwork-io/gruntwork-installer)
-    - A slightly more structured version of piping `curl` into `bash`. You specify a GitHub repo, a path, and a version 
-      number and the installer checks out the repo at the specified version, and runs an `install.sh` script in the
-      specified path.
-    - Dependency management is self-serve. It's up to the `install.sh` script to figure out the details.
-    - Simple install: `curl -Ls https://raw.githubusercontent.com/gruntwork-io/gruntwork-installer/master/bootstrap-gruntwork-installer.sh | bash /dev/stdin --version v0.0.14`.
-      Note, this is subject to the same security risks as piping `curl` into `bash`. Since there is just one installer
-      and we don't update it often, we could publish it into apt, yum, etc repos to avoid this problem.
-    - Simple client usage: `gruntwork-install --module-name 'PATH' --repo 'https://github.com/foo/bar' --tag v0.0.3`.
-      Does not currently do checksum or signature verification, but that could be added.
-    - Simple publish usage: just create a new GitHub release. Works with private GitHub repos too.
-    - Easy to use in dev mode: specify a local file path.
-    - Tiny community, but actively maintained by Gruntwork.
-
-- [fpm](https://github.com/jordansissel/fpm)
-    - A script that makes it easy to package your code as native packages (e.g. `.deb`, `.rpm`).
-    - Has dependency management built-in, as you can specify dependencies for each package. 
-    - No install process, as you use your standard OS package managers (i.e. `apt`, `yum`).
-    - Simple client usage: `sudo apt install -y PACKAGE`.
-    - Difficult publish usage: have to package and publish to all major Linux package repos.
-    - Not clear how you use it in dev mode.
-    - Big community, active project.
-
-- Configuration management tools (e.g. [Ansible](https://www.ansible.com/), [Chef](https://www.chef.io/))
-    - Tools built for managing server configuration.
-    - Dependency management is built-in, as most of these tools have ways of leveraging the built-in package managers
-      (e.g. [package command in Chef](https://docs.chef.io/resource_package.html) and [package command in 
-      Ansible](http://docs.ansible.com/ansible/package_module.html)).
-    - Simple install process. Packer can do it automatically for [Chef 
-      Solo](https://www.packer.io/docs/provisioners/chef-solo.html) and you can do it manually for Ansible:
-      `sudo apt install -y ansible`.
-    - Moderately client usage. You first have to download the Chef Recipe or Ansible Playbook from the Blueprint
-      repo (e.g. using a `shell-local` provisioner with `curl`) and then you can use the downloaded recipe or playbook 
-      with the built-in Packer commands (e.g. [chef-solo 
-      Provisioner](https://www.packer.io/docs/provisioners/chef-solo.html) and [ansible-local 
-      Provisioner](https://www.packer.io/docs/provisioners/ansible-local.html)).
-    - Easy publish usage: just create a new GitHub release.
-    - Easy to use in dev mode: use local file paths for the recipes and playbooks.
-    - All these cfg mgmt tools have massive communities.   
