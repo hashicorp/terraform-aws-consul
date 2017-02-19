@@ -1,9 +1,9 @@
 # Consul Cluster
 
 This folder contains a [Terraform](https://www.terraform.io/) module that can be used to deploy a 
-[Consul](https://www.consul.io/) cluster in [AWS](https://aws.amazon.com/). This module is designed to deploy an 
-[Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) that had Consul installed
-via the [consul-install](/modules/consul-install) module in this Blueprint.
+[Consul](https://www.consul.io/) cluster in [AWS](https://aws.amazon.com/) on top of an Auto Scaling Group. This module 
+is designed to deploy an [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) 
+that had Consul installed via the [consul-install](/modules/consul-install) module in this Blueprint.
 
 
 
@@ -48,11 +48,16 @@ Note the following parameters:
   server will run during boot. This is where you can use the `run-consul` script to configure and run Consul. The
   `run-consul` script is one of the scripts installed by the [consul-install](/modules/consul-install) module. 
 
+You can find the other parameters in `vars.tf`.
+
 To deploy the Consul cluster, do the following:
 
 1. Download the module code: `terraform get`
-1. See the plan: `terraform plan`
+1. Check the plan: `terraform plan`
 1. If the plan looks good, deploy: `terraform apply`
+
+This module can also automatically roll out updates to cluster with zero-downtime. See [How do you roll out 
+updates?](#how-do-you-roll-out-updates) for details.
 
 Check out the [consul-cluster example](/examples/consul-cluster) for fully-working sample code. 
 
@@ -68,6 +73,7 @@ This architecture consists of the following resources:
 
 * [Auto Scaling Group](#auto-scaling-group)
 * [EC2 Instance Tags](#ec2-instance-tags)
+* [Elastic Load Balancer](#elastic-load-balancer)
 * [Security Group](#security-group)
 * [IAM Role and Permissions](#iam-role-and-permissions)
 
@@ -79,13 +85,6 @@ Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availabi
 Instances should be running an AMI that has had Consul installed via the [consul-install](/modules/consul-install)
 module. You pass in the ID of the AMI to run using the `ami_id` input parameter.
 
-TODO: should we provide a way to automatically roll out updates across the ASG? We could use the [create_before_destroy
-approach described by Paul Hinze](https://groups.google.com/forum/#!msg/terraform-tool/7Gdhv1OAc80/iNQ93riiLwAJ),
-although we'd need to hook up a load balancer to the ASG. However, that approach creates an entirely new ASG, so all 
-the locally stored data on the nodes of the original ASG would have to be synced to the new nodes. Is this a slow 
-process or a bad approach? Should the nodes be updated in-place instead (mutable infrastructure) using a cfg mgmt 
-tool?
-
 ### EC2 Instance Tags
 
 The ASG adds a tag called `consul-cluster` to each EC2 instance and sets the value of the tag to the name of the 
@@ -95,6 +94,18 @@ Instances with the same tag, and join them to form a cluster (using the
     
 If you need to add custom tags to the EC2 Instances in the ASG, you can specify them in the `custom_tags` input 
 parameter.
+
+### Elastic Load Balancer
+
+This module deploys an [Elastic Load Balancer (ELB)](https://aws.amazon.com/elasticloadbalancing/classicloadbalancer/)
+and configures all the EC2 Instances in the ASG to register with the ELB when booting. The ELB is useful for two 
+reasons:
+
+1. It provides a single endpoint you can use to access the [Consul Web 
+   UI](https://www.consul.io/intro/getting-started/ui.html).
+1. It provides health checks that are integrated with the ASG that allow us to do a zero-downtime deployment of updates 
+   to Consul using purely Terraform code. To do this, we use the `create_before_destroy` lifecycle setting as
+   [described here](https://groups.google.com/forum/#!msg/terraform-tool/7Gdhv1OAc80/iNQ93riiLwAJ).
 
 ### Security Group
 
@@ -115,13 +126,30 @@ The IAM Role ARN is exported as an output variable if you need to add additional
 
 
 
+## How do you roll out updates?
+
+This module sets the `create_before_destroy` parameter to `true` for the ASG (as well as a few other key settings, as
+[described here](https://groups.google.com/forum/#!msg/terraform-tool/7Gdhv1OAc80/iNQ93riiLwAJ)), so any time you 
+update anything in the ASG or its launch configuration, such as specifying a new AMI ID, the next time you run 
+`terraform apply`, the module will automatically roll the update, with zero downtime, as follows:
+
+1. Create a completely new ASG with the same number of instances. 
+1. Each instance in the new ASG will automatically join the Consul cluster and kick out one of the old instances
+   (see the [consul-install docs](/modules/consul-install#do-a-rolling-update-if-a-cluster-already-exists) for 
+   details).
+1. If all the new instances come up and start passing health checks, destroy the old ASG.
+1. If anything goes wrong and the new instances don't come up correctly, destroy the new ASG, and leave the old ASG
+   running as before.
+
+
+
 ## What's NOT included in this module?
 
 This module does NOT handle the following items, which you may want to provide on your own:
 
 * [Monitoring, alerting, log aggregation](#monitoring-alerting-log-aggregation)
 * [VPCs, subnets, route tables](#vpcs-subnets-route-tables)
-* [Load balancer and DNS entries](#load-balancer-and-dns-entries)
+* [DNS entries](#dns-entries)
 
 ### Monitoring, alerting, log aggregation
 
@@ -135,9 +163,9 @@ This module assumes you've already created your network topology (VPC, subnets, 
 pass in the the relevant info about your network topology (e.g. `vpc_id`, `subnet_ids`) as input variables to this 
 module.
 
-### Load balancer and DNS entries
+### DNS entries
 
-This module does not put a load balancer in front of Consul (e.g. as a single endpoint for the `/ui` endpoint) nor
-DNS entries (e.g. in Route 53). These tasks may be added as separate modules in the future.
+This module does not create any DNS entries for Consul (e.g. in Route 53). However, the IDs of the ASG, ELB, and all
+other resources are exported as output variables, so you should be able to add DNS entries yourself.
 
 

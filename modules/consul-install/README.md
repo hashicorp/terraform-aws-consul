@@ -104,7 +104,7 @@ whenever the system boots and restarted if the Consul process crashes.
 
 ### Command line arguments
 
-The `run-consul` script accepts one or more arguments of the following format (all optional):
+The `run-consul` script accepts one or more arguments of the following format:
 
 * `-ARG=VALUE`: When running Consul, set argument ARG to value VALUE. May be specified more than once. This
   is used to set configurations for Consul at runtime. Check out the [Consul Configuration 
@@ -116,6 +116,23 @@ Example:
 run-consul -bootstrap-expect=3 -advertise-addr=11.22.33.44
 ```
 
+#### Required arguments
+
+The following arguments are required:
+   
+* `retry-join-ec2-tag-key KEY`: Look for EC2 Instances with a tag named KEY and the value specified by the  
+  `retry-join-ec2-tag-value` argument and join them to form a Consul cluster. If you assign a custom tag to all the 
+  instances in your Consul Auto Scaling Group, then each of them will be able to use that tag to automatically find 
+  discover each other using the AWS APIs.
+
+* `retry-join-ec2-tag-value VALUE`: Look for EC2 Instances with the tag name specified by the `retry-join-ec2-tag-key`
+  argument and the value VALUE and join them to form a Consul cluster. If you assign a custom tag to all the 
+  instances in your Consul Auto Scaling Group, then each of them will be able to use that tag to automatically find 
+  discover each other using the AWS APIs.
+  
+* `bootstrap-expect CLUSTER_SIZE`: Wait for CLUSTER_SIZE nodes to join to form a cluster. You should set this to the 
+  size of your Consul Auto Scaling Group.
+  
 #### Default arguments
 
 The `run-consul` script sets the following arguments by default:
@@ -139,40 +156,79 @@ The `run-consul` script sets the following arguments by default:
 
 * `server`: Set to true.
 
+* `ui`: Set to true.
+
 To override a default value for an argument, pass that argument to the `run-consul` command. For example, to override 
 the default `advertise-addr` value, you would run:
 
 ```
 run-consul -advertise-addr=11.22.33.44
 ```
-
-#### Recommended arguments
-
-We recommend passing the following arguments to `run-consul`:
-   
-* `retry-join-ec2-tag-key KEY`: Look for EC2 Instances with a tag named KEY and the value specified by the  
-  `retry-join-ec2-tag-value` argument and join them to form a Consul cluster. If you assign a custom tag to all the 
-  instances in your Consul Auto Scaling Group, then each of them will be able to use that tag to automatically find 
-  discover each other using the AWS APIs.
-
-* `retry-join-ec2-tag-value VALUE`: Look for EC2 Instances with the tag name specified by the `retry-join-ec2-tag-key`
-  argument and the value VALUE and join them to form a Consul cluster. If you assign a custom tag to all the 
-  instances in your Consul Auto Scaling Group, then each of them will be able to use that tag to automatically find 
-  discover each other using the AWS APIs.
-  
-* `bootstrap-expect NUMBER`: The number of servers to wait for to form a cluster. You should set this to the size of
-  your Consul Auto Scaling Group.
   
 ### How it works
 
-The `run-consul` command is meant to be executed when the Consul server is first booting up. The most common way
+The `run-consul` script is meant to be executed when the Consul server is first booting up. The most common way
 to do this is to run it as a [User Data
 script](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-data-shell-scripts).
- 
-When you execute the `run-consul` script, it generates a command to run Consul, which includes all the arguments you 
-pass to it, and configures [supervisord](http://supervisord.org/) to run that command if the system reboots or Consul
-crashes.  
 
+When you execute the `run-consul` script, it configures [supervisord](http://supervisord.org/) to run a start script
+for Consul. Here's what that start script does:
+  
+1. [Check if a Consul cluster already exists](#check-if-a-consul-cluster-already-exists)  
+1. [Bootstrap Consul if a cluster doesn't already exist](#bootstrap-consul-if-a_cluster-doesnt-already-exist) 
+1. [Do a rolling update if a cluster already exists](#do-a-rolling-update-if-a-cluster-already-exists)
+ 
+#### Check if a Consul cluster already exists 
+ 
+1. Use the AWS CLI to look up other EC2 Instances with the tags identified by the `retry-join-ec2-tag-key` and
+   `retry-join-ec2-tag-value` arguments.
+1. Call the `/v1/status/leader` endpoint on each node.
+1. If a 200 OK comes back with a JSON body identifying an elected leader, the Consul cluster must already exist.
+1. If a 200 OK comes back without a leader, sleep, and try again. If after 5 minutes, there is still no leader, exit
+   with an error.
+1. If a non-200 OK comes back or there is no response, assume the Consul cluster does not exist.   
+ 
+#### Bootstrap Consul if a cluster doesn't already exist
+ 
+If there isn't already a Consul cluster, we simply execute a command of the following form to bootstrap one:
+
+```
+consul agent -server -bootstrap-expect=<CLUSTER_SIZE> -retry-join-ec2-tag-key=<KEY> -retry-join-ec2-tag-value=<VALUE> [OTHER_ARGS...]
+``` 
+
+#### Do a rolling update if a cluster already exists
+
+If the Consul cluster already exists, then we want to deploy an update. Adding or removing too many nodes in a short 
+time period can lead to (rare) cases where Consul loses its quorum, so we need to roll out the update carefully, adding
+one new node and removing one old node at a time.
+ 
+To do that, all the new nodes will run the following code as they boot:
+ 
+```
+consul lock -http-addr=<NODE_IP>:8500 rolling-update <JOIN_SCRIPT>
+``` 
+
+Where `NODE_IP` is the IP address of one of the existing nodes in the Consul Cluster and `JOIN_SCRIPT` is a script that
+adds the current node to the cluster and removes an old node (the script is described below). We use a 
+[Consul lock](https://www.consul.io/docs/commands/lock.html) to ensure that only one node is joining/leaving at a time;
+all the other servers that are booting will have to wait their turn.
+   
+The `JOIN_SCRIPT` works as follows:   
+   
+1. Have the current node join the cluster. This is done using a command of the following form: 
+
+    ```
+    consul agent -server -retry-join-ec2-tag-key=<KEY> -retry-join-ec2-tag-value=<VALUE> [OTHER_ARGS...]
+    ```
+    
+1. Once the node has successfully joined the cluster, it will deregister one of the older nodes: 
+
+    ```
+    curl -X PUT <OLD_NODE_IP>:8500/v1/agent/leave
+    ```
+
+    Where OLD_NODE_IP is the IP of an older node. Note: we have to ensure `NODE_IP` != `OLD_NODE_IP`, or the 
+    `consul lock` command will exit with an error. 
 
 
 
