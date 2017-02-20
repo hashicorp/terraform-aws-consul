@@ -82,6 +82,9 @@ Create an OS user named `consul`. Create the following folders, all owned by use
 * `/opt/consul/data`: directory where the Consul agent can store state.
 * `/opt/consul/config`: directory where the Consul agent looks up configuration.
 
+If you have custom Consul config (`.json`) files, you may want to copy them into the config directory as part of your
+Packer template after the `install-consul` script finishes.
+
 #### Install Consul binaries and scripts
 
 Install the following:
@@ -240,8 +243,10 @@ Blueprint. To enable encryption, you need to do the following:
 
 ### Gossip encryption: provide an encryption key
 
-To enable Gossip encryption, you need to provide a 16-byte, Base64-encoded encryption key (you can generate it using
-the [consul keygen command](https://www.consul.io/docs/commands/keygen.html)) in the Consul configuration:
+To enable Gossip encryption, you need to provide a 16-byte, Base64-encoded encryption key, which you can generate using
+the [consul keygen command](https://www.consul.io/docs/commands/keygen.html). You can put the key in a Consul config
+file, which you copy into the Consul config dir (default location: `/opt/consul/config`) as part of your Packer 
+template:
 
 ```json
 {
@@ -249,31 +254,18 @@ the [consul keygen command](https://www.consul.io/docs/commands/keygen.html)) in
 }
 ```
 
-One option is to provide a custom configuration file that includes this encryption key when calling the 
-`install-consul` script from the [consul-install](/modules/consul-install) module. If you do this as part of a Packer
-template, the encryption key will be baked into the AMI you deploy, and every Consul server will be able to use it. 
-
-If the encryption key cannot be baked into the AMI (e.g. because the key is only available at runtime), you can set
-the configuration to the `__REPLACEME__` placeholder value:
-
-```json
-{
-  "encrypt": "__REPLACEME__"
-}
-```
-
-When the server is booting, you can pass the encryption key into the `run-consul` script and it will put the key into
-Consul's config file just before starting Consul:
+Alternatively, you can pass the encryption key to the `run-consul` command using the `-encrypt` argument:
 
 ```
-run-consul --set-config encrypt=cg8StVXbQJ0gPvMd9o7yrg== 
+run-consul -encrypt=cg8StVXbQJ0gPvMd9o7yrg== 
 ```
 
 ### RPC encryption: provide TLS certificates
 
-To enable RPC encryption, you need to provide the paths CA and signing keys ([here is a tutorial on generating these
-keys](http://russellsimpkins.blogspot.com/2015/10/consul-adding-tls-using-self-signed.html)) in the Consul 
-configuration:
+To enable RPC encryption, you need to provide the paths to the CA and signing keys ([here is a tutorial on generating 
+these keys](http://russellsimpkins.blogspot.com/2015/10/consul-adding-tls-using-self-signed.html)). You can specify 
+these paths in a Consul config file, which you copy into the Consul config dir (default location: `/opt/consul/config`) 
+as part of your Packer template:
 
 ```json
 {
@@ -297,32 +289,15 @@ incoming and outgoing connections, respectively:
 }
 ```
 
-One option is to provide a custom configuration file that includes these settings when calling the 
-`install-consul` script from the [consul-install](/modules/consul-install) module. If you do this as part of your 
-Packer template, and that template copies in the CA and signing keys, then everything you need for TLS will be baked 
-into into the AMI you deploy, and every Consul server will be able to use it. 
-
-If the CA and signing keys cannot be baked into the AMI (e.g. because they are only available at runtime), you can set
-these configs to the `__REPLACEME__` placeholder value:
-
-```json
-{
-  "ca_file": "__REPLACEME__",
-  "cert_file": "__REPLACEME__",
-  "key_file": "__REPLACEME__",
-  "verify_incoming": true,
-  "verify_outgoing": true
-}
-```
-
-When the server is booting, you can pass the encryption key into the `run-consul` script and it will put the key into
-Consul's config file just before starting Consul:
+Alternatively, you can pass these paths to the `run-consul` command:
 
 ```
 run-consul \
-  --set-config ca_file=/opt/consul/tls/certs/ca-bundle.crt \ 
-  --set-config cert_file=/opt/consul/tls/certs/my.crt \ 
-  --set-config key_file=/opt/consul/tls/private/my.key  
+  -ca-file=/opt/consul/tls/certs/ca-bundle.crt \ 
+  -cert-file=/opt/consul/tls/certs/my.crt \ 
+  -key-file=/opt/consul/tls/private/my.key \
+  -verify-incoming=true \
+  -verify-outgoing=true
 ```
 
 
