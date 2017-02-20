@@ -131,7 +131,7 @@ The IAM Role ARN is exported as an output variable if you need to add additional
 This module sets the `create_before_destroy` parameter to `true` for the ASG (as well as a few other key settings, as
 [described here](https://groups.google.com/forum/#!msg/terraform-tool/7Gdhv1OAc80/iNQ93riiLwAJ)), so any time you 
 update anything in the ASG or its launch configuration, such as specifying a new AMI ID, the next time you run 
-`terraform apply`, the module will automatically roll the update, with zero downtime, as follows:
+`terraform apply`, the module will automatically roll out the update, with zero downtime, as follows:
 
 1. Create a completely new ASG with the same number of instances. 
 1. Each instance in the new ASG will automatically join the Consul cluster and kick out one of the old instances

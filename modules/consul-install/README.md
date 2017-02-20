@@ -28,9 +28,6 @@ git clone --branch <VERSION> https://github.com/gruntwork-io/consul-aws-blueprin
 ./consul-aws-blueprint/modules/consul-install/install-consul
 ```
 
-*(Check out [Is it safe to pipe URLs into bash?](#is-it-safe-to-pipe-urls-into-bash) to understand the security 
-implications.)*
-
 Once the `install-consul` script is finished, Consul will be installed, and you can run it using the `run-consul` 
 script:
 
