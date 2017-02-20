@@ -116,12 +116,13 @@ The `run-consul` script accepts one or more arguments of the following format:
 
 * `-ARG=VALUE`: When running Consul, set argument ARG to value VALUE. May be specified more than once. This
   is used to set configurations for Consul at runtime. Check out the [Consul Configuration 
-  docs](https://www.consul.io/docs/agent/options.html) for a list of supported arguments.
+  docs](https://www.consul.io/docs/agent/options.html) for a list of supported arguments and [required 
+  arguments](#required-arguments) for which arguments are required.
 
 Example:
 
 ```
-run-consul -bootstrap-expect=3 -advertise-addr=11.22.33.44
+run-consul -bootstrap-expect=3 retry-join-ec2-tag-key=consul-cluster retry-join-ec2-tag-value=consul-stage
 ```
 
 #### Required arguments
