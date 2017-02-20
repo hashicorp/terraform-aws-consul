@@ -64,7 +64,7 @@ function assert_not_empty {
 
 # Install steps are based on: http://unix.stackexchange.com/a/291098/215969
 function install_supervisord_debian {
-  sudo apt install -y supervisor
+  sudo apt-get install -y supervisor
   sudo update-rc.d supervisor defaults
   sudo systemctl enable supervisor
 }
@@ -83,21 +83,21 @@ function has_yum {
   [ -n "$(command -v yum)" ]
 }
 
-function has_apt {
-  [ -n "$(command -v apt)" ]
+function has_apt_get {
+  [ -n "$(command -v apt-get)" ]
 }
 
 function install_dependencies {
   log_info "Installing dependencies"
 
-  if $(has_apt); then
-    sudo apt install -y wget unzip
+  if $(has_apt_get); then
+    sudo apt-get install -y wget unzip
     install_supervisord_debian
   elif $(has_yum); then
     sudo yum install -y wget unzip
     install_supervisord_amazon_linux
   else
-    log_error "Could not find apt or yum. Cannot install dependencies on this OS."
+    log_error "Could not find apt-get or yum. Cannot install dependencies on this OS."
     exit 1
   fi
 }
