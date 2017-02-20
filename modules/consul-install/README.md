@@ -25,7 +25,7 @@ To use these scripts to install Consul, use `git` to check out a specific versio
 ```
 # TODO: update this to the final URL when this Blueprint is released
 git clone --branch <VERSION> https://github.com/gruntwork-io/consul-aws-blueprint.git
-./consul-aws-blueprint/modules/consul-install/install-consul
+consul-aws-blueprint/modules/consul-install/install-consul --version 0.7.5
 ```
 
 Once the `install-consul` script is finished, Consul will be installed, and you can run it using the `run-consul` 
@@ -54,15 +54,16 @@ You can find more documentation for each script below:
 
 ### Command line Arguments
 
-The `install-consul` script accepts the following arguments, all optional:
+The `install-consul` script accepts the following arguments:
 
-* `version VERSION`: Install Consul version VERSION.  
-* `path DIR`: Install Consul into folder DIR.
+* `version VERSION`: Install Consul version VERSION. Required. 
+* `path DIR`: Install Consul into folder DIR. Optional.
+* `user USER`: The install dirs will be owned by user USER. Optional.
 
 Example:
 
 ```
-install-consul --version 0.7.5 --path /opt/consul
+install-consul --version 0.7.5
 ```
 
 ### How it works
@@ -72,6 +73,7 @@ The `install-consul` script does the following:
 1. [Create a user and folders for Consul](#create-a-user-and-folders-for-consul)
 1. [Install Consul binaries and scripts](#install-consul-binaries-and-scripts)
 1. [Install supervisord](#install-supervisord)
+1. [Follow-up tasks](#follow-up-tasks)
 
 #### Create a user and folders for Consul
 
@@ -81,9 +83,6 @@ Create an OS user named `consul`. Create the following folders, all owned by use
 * `/opt/consul/bin`: directory for Consul binaries.
 * `/opt/consul/data`: directory where the Consul agent can store state.
 * `/opt/consul/config`: directory where the Consul agent looks up configuration.
-
-If you have custom Consul config (`.json`) files, you may want to copy them into the config directory as part of your
-Packer template after the `install-consul` script finishes.
 
 #### Install Consul binaries and scripts
 
@@ -97,6 +96,15 @@ Install the following:
 
 Install [supervisord](http://supervisord.org/). We use it as a cross-platform supervisor to ensure Consul is started
 whenever the system boots and restarted if the Consul process crashes.
+
+#### Follow-up tasks
+
+After the `install-consul` script finishes running, you may wish to do the following:
+
+1. Add the `bin` directory (default: `/opt/consul/bin`) to your `PATH`.
+1. If you have custom Consul config (`.json`) files, you may want to copy them into the config directory (default:
+   `/opt/consul/config`).
+
 
 
 
@@ -301,3 +309,10 @@ run-consul \
 ```
 
 
+
+## Why use Git to install this code?
+
+We needed an easy way to install these scripts that satisfied a number of requirements, including working on a variety 
+of operating systems and supported versioning. Our current solution is to use `git`, but this may change in the future.
+See [Package Managers](/_docs/package-managers.md) for a full discussion of the requirements, trade-offs, and why we
+picked `git`.

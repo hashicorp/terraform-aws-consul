@@ -1,0 +1,53 @@
+{
+  "variables": {
+    "aws_region": "us-east-1",
+    "ubuntu_ami_id": "ami-6edd3078",
+    "ubuntu_user": "ubuntu",
+    "amazon_linux_ami_id": "ami-0b33d91d",
+    "amazon_linux_user": "ec2-user",
+    "blueprint_version": "v1",
+    "consul_version": "0.7.5"
+  },
+  "builders": [{
+    "ami_name": "consul-ubuntu-{{isotime | clean_ami_name}}",
+    "ami_description": "An Ubuntu 16.04 AMI that has Consul installed.",
+    "instance_type": "t2.micro",
+    "name": "ubuntu-16-ami",
+    "region": "{{user `aws_region`}}",
+    "type": "amazon-ebs",
+    "source_ami": "{{user `ubuntu_ami_id`}}",
+    "ssh_username": "{{user `ubuntu_user`}}"
+  },{
+    "ami_name": "consul-amazon-linux-{{isotime | clean_ami_name}}",
+    "ami_description": "An Amazon Linux AMI that has Consul installed.",
+    "instance_type": "t2.micro",
+    "name": "amazon-linux-ami",
+    "region": "{{user `aws_region`}}",
+    "type": "amazon-ebs",
+    "source_ami": "{{user `amazon_linux_ami_id`}}",
+    "ssh_username": "{{user `amazon_linux_user`}}"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "sudo apt update",
+      "sudo apt install -y git"
+    ],
+    "only": ["ubuntu-16-ami"],
+    "pause_before": "30s"
+  },{
+    "type": "shell",
+    "inline": [
+      "sudo yum -y update",
+      "sudo yum install -y git"
+    ],
+    "only": ["amazon-linux-ami"],
+    "pause_before": "30s"
+  },{
+    "type": "shell",
+    "inline": [
+      "git clone --branch {{user `blueprint_version`}} git@github.com:gruntwork-io/consul-aws-blueprint.git /tmp/consul-aws-blueprint",
+      "/tmp/consul-aws-blueprint/modules/consul-install/install-consul --version {{user `consul_version`}}"
+    ]
+  }]
+}

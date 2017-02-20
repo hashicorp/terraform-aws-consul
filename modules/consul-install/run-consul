@@ -1,0 +1,5 @@
+#!/bin/bash
+# This script is used to start Consul on a server and automatically form or join a Consul cluster.
+
+set -e
+

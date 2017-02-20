@@ -1,6 +1,6 @@
 # Package Managers
 
-To create the scripts in `consul-install`, we had to find a way to write and package the scripts that satsified a 
+To create the scripts in `consul-install`, we had to find a way to write and package the scripts that satisfied a 
 number of requirements. This document captures the requirements, the options we considered, and an explanation of 
 which option we picked and why.
 
