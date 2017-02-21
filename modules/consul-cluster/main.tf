@@ -4,7 +4,9 @@
 
 resource "aws_autoscaling_group" "autoscaling_group" {
   launch_configuration = "${aws_launch_configuration.launch_configuration.name}"
-  vpc_zone_identifier  = ["${var.subnet_ids}"]
+
+  availability_zones  = ["${var.availability_zones}"]
+  vpc_zone_identifier = ["${var.subnet_ids}"]
 
   # Run a fixed number of instances in the ASG
   min_size             = "${var.cluster_size}"

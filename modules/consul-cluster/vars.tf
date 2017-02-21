@@ -19,11 +19,6 @@ variable "vpc_id" {
   description = "The ID of the VPC in which to deploy the Consul cluster"
 }
 
-variable "subnet_ids" {
-  description = "The subnet IDs into which the EC2 Instances should be deployed. We recommend one subnet ID per node in the cluster_size variable."
-  type        = "list"
-}
-
 variable "allowed_inbound_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Consul"
   type        = "list"
@@ -51,6 +46,18 @@ variable "cluster_tag_key" {
 variable "cluster_tag_value" {
   description = "Add a tag with key var.clsuter_tag_key and this value to each Instance in the ASG. This can be used to automatically find other Consul nodes and form a cluster."
   default     = "auto-join"
+}
+
+variable "subnet_ids" {
+  description = "The subnet IDs into which the EC2 Instances should be deployed. We recommend one subnet ID per node in the cluster_size variable. At least one of var.subnet_ids or var.availability_zones must be non-empty."
+  type        = "list"
+  default     = []
+}
+
+variable "availability_zones" {
+  description = "The availability zones into which the EC2 Instances should be deployed. We recommend one availability zone per node in the cluster_size variable. At least one of var.subnet_ids or var.availability_zones must be non-empty."
+  type        = "list"
+  default     = []
 }
 
 variable "ssh_key_name" {
