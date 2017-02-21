@@ -215,10 +215,14 @@ function install {
   assert_not_empty "--path" "$path"
   assert_not_empty "--user" "$user"
 
+  log_info "Starting Consul install"
+
   install_dependencies
   create_consul_user "$user"
   create_consul_install_paths "$path" "$user"
   install_binaries "$version" "$path" "$user"
+
+  log_info "Consul install complete!"
 }
 
 install "$@"

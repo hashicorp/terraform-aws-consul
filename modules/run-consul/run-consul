@@ -187,7 +187,7 @@ EOF
 )
   fi
 
-  log_info "Writing default Consul config file to $config_path"
+  log_info "Creating default Consul config file in $config_path"
   cat > "$config_path" <<EOF
 {
   "advertise_addr": "$instance_ip_address",
@@ -211,7 +211,7 @@ function generate_supervisor_config {
   local readonly consul_bin_dir="$5"
   local readonly consul_user="$6"
 
-  log_info "Writing Supervisor config file to $supervisor_config_path"
+  log_info "Creating Supervisor config file to run Consul in $supervisor_config_path"
   cat > "$supervisor_config_path" <<EOF
 [program:consul]
 command=$consul_bin_dir/consul agent -config-dir $consul_config_dir -data-dir $consul_data_dir
@@ -323,7 +323,9 @@ function run {
     user=$(get_owner_of_path "$config_dir")
   fi
 
-  if [[ "$skip_consul_config" != "true" ]]; then
+  if [[ "$skip_consul_config" == "true" ]]; then
+    log_info "The --skip-consul-config flag is set, so will not generate a default Consul config file."
+  else
     generate_consul_config "$config_dir" "$user" "$cluster_tag_key"
   fi
 
