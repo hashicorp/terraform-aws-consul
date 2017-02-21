@@ -161,7 +161,7 @@ function install_binaries {
   sudo ln -s "$consul_dest_path" "$SYSTEM_BIN_DIR/consul"
 
   log_info "Copying Consul run script to $run_consul_dest_path"
-  sudo mv "$SCRIPT_DIR/run-consul" "$run_consul_dest_path"
+  sudo mv "$SCRIPT_DIR/../run-consul/run-consul" "$run_consul_dest_path"
   sudo chmod a+x "$run_consul_dest_path"
 }
 

@@ -24,7 +24,7 @@ module "consul_cluster" {
   # Configure and start Consul during boot 
   user_data = <<-EOF
               #!/bin/bash
-              run-consul
+              /opt/consul/bin/run-consul
               EOF
   
   # ... See vars.tf for the other parameters you must define for the consul-cluster module
@@ -45,8 +45,9 @@ Note the following parameters:
   
 * `user_data`: Use this parameter to specify a [User 
   Data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-data-shell-scripts) script that each
-  server will run during boot. This is where you can use the `run-consul` script to configure and run Consul. The
-  `run-consul` script is one of the scripts installed by the [install-consul](/modules/install-consul) module. 
+  server will run during boot. This is where you can use the [run-consul script](/modules/run-consul) to configure and 
+  run Consul. The `run-consul` script is one of the scripts installed by the [install-consul](/modules/install-consul) 
+  module. 
 
 You can find the other parameters in `vars.tf`.
 
