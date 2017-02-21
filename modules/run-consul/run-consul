@@ -9,7 +9,6 @@ readonly COLOR_ERROR='\033[0;31m'
 readonly COLOR_END='\033[0m'
 
 readonly DEFAULT_CONSUL_CLUSTER_TAG_KEY="consul-cluster"
-readonly DEFAULT_CONSUL_CLUSTER_TAG_VALUE="consul"
 readonly AWS_ASG_TAG_KEY="aws:autoscaling:groupName"
 
 readonly CONSUL_CONFIG_FILE="default.json"
@@ -28,6 +27,7 @@ function print_usage {
   echo
   echo "Options:"
   echo
+  echo -e "  --cluster-tag-key\t\tAutomatically form a cluster with Instances that have this tag key and the same tag value as the current Instance. Optional. Default: $DEFAULT_CONSUL_CLUSTER_TAG_KEY."
   echo -e "  --config-dir\t\tThe path to the Consul config folder. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --data-dir\t\tThe path to the Consul data folder. Optional. Default is the absolute path of '../data', relative to this script."
   echo -e "  --log-dir\t\tThe path to the Consul log folder. Optional. Default is the absolute path of '../log', relative to this script."
@@ -135,24 +135,6 @@ function get_cluster_size {
   fi
 }
 
-function get_cluster_tag {
-  local readonly instance_tags="$1"
-  local cluster_tag=""
-
-  cluster_tag=$(get_tag_value "$instance_tags" "$DEFAULT_CONSUL_CLUSTER_TAG_KEY")
-
-  if [[ -z "$cluster_tag" ]]; then
-    cluster_tag=$(get_tag_value "$instance_tags" "$AWS_ASG_TAG_KEY")
-  fi
-
-  if [[ -z "$cluster_tag" ]]; then
-    log_warn "Could not find either a $DEFAULT_CONSUL_CLUSTER_TAG_KEY or $AWS_ASG_TAG_KEY tag on this EC2 Instance. Using default tag value $DEFAULT_CONSUL_CLUSTER_TAG_VALUE."
-    cluster_tag="$DEFAULT_CONSUL_CLUSTER_TAG_VALUE"
-  fi
-
-  echo "$cluster_tag"
-}
-
 # Get the value for a specific tag from the tags JSON returned by the AWS describe-tags:
 # https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-tags.html
 function get_tag_value {
@@ -174,6 +156,7 @@ function assert_is_installed {
 function generate_consul_config {
   local readonly config_dir="$1"
   local readonly user="$2"
+  local readonly cluster_tag_key="$3"
   local readonly config_path="$config_dir/$CONSUL_CONFIG_FILE"
 
   local instance_id=""
@@ -188,7 +171,21 @@ function generate_consul_config {
   instance_region=$(get_instance_region)
   instance_tags=$(get_instance_tags "$instance_id" "$instance_region")
   cluster_size=$(get_cluster_size "$instance_tags" "$instance_region")
-  cluster_tag_value=$(get_cluster_tag "$instance_tags")
+  cluster_tag_value=$(get_tag_value "$instance_tags" "$cluster_tag_key")
+
+  local retry_join_json=""
+  if [[ -z "$cluster_tag_value" ]]; then
+    log_warn "Did not find a value for the tag $cluster_tag_key. Will not automatically try to form a cluster based on EC2 tags."
+  else
+    retry_join_json=$(cat <<EOF
+  "retry_join_ec2": {
+    "tag_key": "$cluster_tag_key",
+    "tag_value": "$cluster_tag_value",
+    "region": "$instance_region"
+  },
+EOF
+)
+  fi
 
   log_info "Writing default Consul config file to $config_path"
   cat > "$config_path" <<EOF
@@ -198,11 +195,7 @@ function generate_consul_config {
   "bootstrap_expect": $cluster_size,
   "datacenter": "$instance_region",
   "node_name": "$instance_id",
-  "retry_join_ec2": {
-    "tag_key": "$DEFAULT_CONSUL_CLUSTER_TAG_KEY",
-    "tag_value": "$cluster_tag_value",
-    "region": "$instance_region"
-  },
+  $retry_join_json
   "server": true,
   "ui": true
 }
@@ -241,7 +234,7 @@ function start_consul {
 # Based on: http://unix.stackexchange.com/a/7732/215969
 function get_owner_of_path {
   local readonly path="$1"
-  ls -ld "$path" | awk '${print $3}'
+  ls -ld "$path" | awk '{print $3}'
 }
 
 function run {
@@ -250,6 +243,7 @@ function run {
   local log_dir=""
   local bin_dir=""
   local user=""
+  local cluster_tag_key="$DEFAULT_CONSUL_CLUSTER_TAG_KEY"
   local skip_consul_config="false"
   local all_args=()
 
@@ -280,6 +274,11 @@ function run {
       --user)
         assert_not_empty "$key" "$2"
         user="$2"
+        shift
+        ;;
+      --cluster-tag-key)
+        assert_not_empty "$key" "$2"
+        cluster_tag_key="$2"
         shift
         ;;
       --skip-consul-config)
@@ -325,7 +324,7 @@ function run {
   fi
 
   if [[ "$skip_consul_config" != "true" ]]; then
-    generate_consul_config "$config_dir" "$user"
+    generate_consul_config "$config_dir" "$user" "$cluster_tag_key"
   fi
 
   generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$data_dir" "$log_dir" "$bin_dir" "$user"

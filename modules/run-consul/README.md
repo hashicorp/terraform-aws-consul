@@ -46,6 +46,8 @@ See the [consul-cluster example](/examples/consul-cluster) for fully-working sam
 
 The `run-consul` script accepts the following arguments, all optional:
 
+* `cluster-tag-key`\t\tAutomatically form a cluster with Instances that have this tag key and the same tag value as the 
+  current Instance. Default is `consul-cluster`.
 * `config-dir`: The path to the Consul config folder. Default is to take the absolute path of `../config`, relative to 
   the `run-consul` script itself.
 * `data-dir`: The path to the Consul config folder. Default is to take the absolute path of `../data`, relative to 
@@ -57,7 +59,7 @@ The `run-consul` script accepts the following arguments, all optional:
 Example:
 
 ```
-/opt/consul/bin/run-consul --config-dir /custom/path/to/consul/config
+/opt/consul/bin/run-consul --cluster-tag-key consul-cluster
 ```
 
 
@@ -97,10 +99,10 @@ available.
 * [retry_join_ec2](https://www.consul.io/docs/agent/options.html#retry_join_ec2): Look up the EC2 Instances tags
   (using the [describe-tags API](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-tags.html)) and set the
   following keys for this setting:
-    * [tag_key](https://www.consul.io/docs/agent/options.html#tag_key): Set to `consul-cluster`.
-    * [tag_value](https://www.consul.io/docs/agent/options.html#tag_value): Set to the value of this EC2 Instance's
-      `consul-cluster` tag. If it doesn't have such a tag, use the name of the Auto Scaling Group from the 
-      `aws:autoscaling:groupName` tag. If that tag doesn't exist either, fallback to `consul`.
+    * [tag_key](https://www.consul.io/docs/agent/options.html#tag_key): Set to the value of the `--cluster-tag-key`
+      argument.
+    * [tag_value](https://www.consul.io/docs/agent/options.html#tag_value): Set to the value this EC2 Instance has for
+      the `tag_key`. If the key is not set, then the `retry_join_ec2` setting will NOT be included in the config file.
     * [region](https://www.consul.io/docs/agent/options.html#region): Set to the current AWS region (e.g. `us-east-1`), 
       as fetched from [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
       
