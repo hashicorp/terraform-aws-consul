@@ -109,7 +109,7 @@ resource "aws_security_group_rule" "allow_ssh_inbound" {
   type        = "ingress"
   from_port   = "${var.ssh_port}"
   to_port     = "${var.ssh_port}"
-  protocol    = "udp"
+  protocol    = "tcp"
   cidr_blocks = ["${var.allowed_ssh_cidr_blocks}"]
 
   security_group_id = "${aws_security_group.lc_security_group.id}"

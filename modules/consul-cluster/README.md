@@ -78,6 +78,7 @@ This architecture consists of the following resources:
 * [Security Group](#security-group)
 * [IAM Role and Permissions](#iam-role-and-permissions)
 
+
 ### Auto Scaling Group
 
 This module runs Consul on top of an [Auto Scaling Group (ASG)](https://aws.amazon.com/autoscaling/). Typically, you
@@ -86,11 +87,13 @@ Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availabi
 Instances should be running an AMI that has had Consul installed via the [install-consul](/modules/install-consul)
 module. You pass in the ID of the AMI to run using the `ami_id` input parameter.
 
+
 ### EC2 Instance Tags
 
 This module allows you to specify a tag to add to each EC2 instance in the ASG. We recommend using this tag with the
 [retry_join_ec2](https://www.consul.io/docs/agent/options.html?#retry_join_ec2) configuration to allow the EC2 
 Instances to find each other and automatically form a cluster.     
+
 
 ### Security Group
 
@@ -100,6 +103,7 @@ Each EC2 Instance in the ASG has a Security Group that allows:
 * All the inbound ports specified in the [Consul documentation](https://www.consul.io/docs/agent/options.html?#ports-used)
 
 The Security Group ID is exported as an output variable if you need to add additional rules. 
+
 
 ### IAM Role and Permissions
 
@@ -145,6 +149,62 @@ We will add a script in the future to automate this process (PRs are welcome!).
 
 
 
+## Security
+
+Here are some of the main security considerations to keep in mind when using this module:
+
+1. [Encryption in transit](#encryption-in-transit)
+1. [Encryption at rest](#encryption-at-rest)
+1. [Dedicated instances](#dedicated-instances)
+1. [Security groups](#security-groups)
+1. [SSH access](#ssh-access)
+
+
+### Encryption in transit
+
+Consul can encrypt all of its network traffic. For instructions on enabling network encryption, have a look at the
+[How do you handle encryption documentation](/modules/run-consul#how-do-you-handle-encryption).
+
+
+### Encryption at rest
+
+The EC2 Instances in the cluster store all their data on the root EBS Volume. To enable encryption for the data at
+rest, you must enable encryption in your Consul AMI. If you're creating the AMI using Packer (e.g. as shown in
+the [consul-ami example](/examples/consul-ami)), you need to set the [encrypt_boot 
+parameter](https://www.packer.io/docs/builders/amazon-ebs.html#encrypt_boot) to `true`.  
+
+
+### Dedicated instances
+
+If you wish to use dedicated instances, you can set the `tenancy` parameter to `"dedicated"` in this module. 
+
+
+### Security groups
+
+This module attaches a security group to each EC2 Instance that allows inbound requests as follows:
+
+* **Consul**: For all the [ports used by Consul](https://www.consul.io/docs/agent/options.html#ports), you can 
+  use the `allowed_inbound_cidr_blocks` parameter to control the list of 
+  [CIDR blocks](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing) that will be allowed access.  
+
+* **SSH**: For the SSH port (default: 22), you can use the `allowed_ssh_cidr_blocks` parameter to control the list of   
+  [CIDR blocks](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing) that will be allowed access. 
+  
+Note that all the ports mentioned above are configurable via the `xxx_port` variables (e.g. `server_rpc_port`). See
+[vars.tf](vars.tf) for the full list.  
+  
+  
+
+### SSH access
+
+You can associate an [EC2 Key Pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) with each
+of the EC2 Instances in this cluster by specifying the Key Pair's name in the `ssh_key_name` variable. If you don't
+want to associate a Key Pair with these servers, set `ssh_key_name` to an empty string.
+
+
+
+
+
 ## What's NOT included in this module?
 
 This module does NOT handle the following items, which you may want to provide on your own:
@@ -153,17 +213,20 @@ This module does NOT handle the following items, which you may want to provide o
 * [VPCs, subnets, route tables](#vpcs-subnets-route-tables)
 * [DNS entries](#dns-entries)
 
+
 ### Monitoring, alerting, log aggregation
 
 This module does not include anything for monitoring, alerting, or log aggregation. All ASGs and EC2 Instances come 
 with limited [CloudWatch](https://aws.amazon.com/cloudwatch/) metrics built-in, but beyond that, you will have to 
 provide your own solutions.
 
+
 ### VPCs, subnets, route tables
 
 This module assumes you've already created your network topology (VPC, subnets, route tables, etc). You will need to 
 pass in the the relevant info about your network topology (e.g. `vpc_id`, `subnet_ids`) as input variables to this 
 module.
+
 
 ### DNS entries
 
