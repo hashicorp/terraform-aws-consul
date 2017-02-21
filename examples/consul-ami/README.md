@@ -23,8 +23,8 @@ To build the Consul AMI:
 1. Configure your AWS credentials using one of the [options supported by the AWS 
    SDK](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html). Usually, the easiest option is to
    set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
-1. Update the `variables` section of the `consul.json` Packer template to configure the region, base AMI IDs, and
-   which versions of Consul and this blueprint you wish to use.
+1. Update the `variables` section of the `consul.json` Packer template to configure the AWS region, blueprint version, 
+   and Consul version you wish to use.
 1. Run `packer build consul.json`.
 
 When the build finishes, it will output the IDs of the new AMIs. To see how to deploy one of these AMIs, check out the 

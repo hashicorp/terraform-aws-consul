@@ -1,12 +1,9 @@
 {
   "variables": {
     "aws_region": "us-east-1",
-    "ubuntu_ami_id": "ami-6edd3078",
-    "ubuntu_user": "ubuntu",
-    "amazon_linux_ami_id": "ami-0b33d91d",
-    "amazon_linux_user": "ec2-user",
     "blueprint_version": "v1",
-    "consul_version": "0.7.5"
+    "consul_version": "0.7.5",
+    "github_oauth_token": "{{env `GITHUB_OAUTH_TOKEN`}}"
   },
   "builders": [{
     "ami_name": "consul-ubuntu-{{isotime | clean_ami_name}}",
@@ -15,8 +12,18 @@
     "name": "ubuntu-16-ami",
     "region": "{{user `aws_region`}}",
     "type": "amazon-ebs",
-    "source_ami": "{{user `ubuntu_ami_id`}}",
-    "ssh_username": "{{user `ubuntu_user`}}"
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "architecture": "x86_64",
+        "name": "*ubuntu-xenial-16.04-amd64-server-*",
+        "block-device-mapping.volume-type": "gp2",
+        "root-device-type": "ebs"
+      },
+      "owners": ["099720109477"],
+      "most_recent": true
+    },
+    "ssh_username": "ubuntu"
   },{
     "ami_name": "consul-amazon-linux-{{isotime | clean_ami_name}}",
     "ami_description": "An Amazon Linux AMI that has Consul installed.",
@@ -24,8 +31,18 @@
     "name": "amazon-linux-ami",
     "region": "{{user `aws_region`}}",
     "type": "amazon-ebs",
-    "source_ami": "{{user `amazon_linux_ami_id`}}",
-    "ssh_username": "{{user `amazon_linux_user`}}"
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "architecture": "x86_64",
+        "name": "*amzn-ami-hvm-*",
+        "block-device-mapping.volume-type": "gp2",
+        "root-device-type": "ebs"
+      },
+      "owners": ["amazon"],
+      "most_recent": true
+    },
+    "ssh_username": "ec2-user"
   }],
   "provisioners": [{
     "type": "shell",
@@ -46,8 +63,8 @@
   },{
     "type": "shell",
     "inline": [
-      "git clone --branch {{user `blueprint_version`}} git@github.com:gruntwork-io/consul-aws-blueprint.git /tmp/consul-aws-blueprint",
-      "/tmp/consul-aws-blueprint/modules/consul-install/install-consul --version {{user `consul_version`}}"
+      "git clone --branch {{user `blueprint_version`}} https://{{user `github_oauth_token`}}@github.com/gruntwork-io/consul-aws-blueprint.git /tmp/consul-aws-blueprint",
+      "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}"
     ]
   }]
 }
