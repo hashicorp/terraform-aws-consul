@@ -1,4 +1,5 @@
 {
+  "min_packer_version": "0.12.0",
   "variables": {
     "aws_region": "us-east-1",
     "blueprint_version": "v1",

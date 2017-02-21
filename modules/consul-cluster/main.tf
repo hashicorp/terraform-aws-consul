@@ -1,4 +1,12 @@
 # ---------------------------------------------------------------------------------------------------------------------
+# THESE TEMPLATES REQUIRE TERRAFORM VERSION 0.8 AND ABOVE
+# ---------------------------------------------------------------------------------------------------------------------
+
+terraform {
+  required_version = "~> 0.8.0"
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
 # CREATE AN AUTO SCALING GROUP (ASG) TO RUN CONSUL
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -54,7 +62,6 @@ resource "aws_launch_configuration" "launch_configuration" {
   root_block_device {
     volume_type           = "${var.root_volume_type}"
     volume_size           = "${var.root_volume_size}"
-    iops                  = "${var.root_volume_iops}"
     delete_on_termination = "${var.root_volume_delete_on_termination}"
   }
 

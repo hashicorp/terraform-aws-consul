@@ -101,11 +101,6 @@ variable "root_volume_size" {
   default     = 50
 }
 
-variable "root_volume_iops" {
-  description = "The amount of provisioned IOPS. This must be set with a var.root_volume_type of io1, but can be left blank for other types."
-  default     = ""
-}
-
 variable "root_volume_delete_on_termination" {
   description = "Whether the volume should be destroyed on instance termination."
   default     = true
