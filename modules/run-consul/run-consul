@@ -226,9 +226,9 @@ EOF
 }
 
 function start_consul {
-  log_info "Reloading Supervisor config to start Consul"
+  log_info "Reloading Supervisor config and starting Consul"
   supervisorctl reread
-  supervisorctl update
+  supervisorctl start consul
 }
 
 # Based on: http://unix.stackexchange.com/a/7732/215969
