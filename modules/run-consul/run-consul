@@ -32,7 +32,7 @@ function print_usage {
   echo -e "  --data-dir\t\tThe path to the Consul data folder. Optional. Default is the absolute path of '../data', relative to this script."
   echo -e "  --log-dir\t\tThe path to the Consul log folder. Optional. Default is the absolute path of '../log', relative to this script."
   echo -e "  --bin-dir\t\tThe path to the folder with Consul binary. Optional. Default is the absolute path of the parent folder of this script."
-  echo -e "  --user\t\t\tThe user to run Consul as. Optional. Default is to use the owner of --config-dir."
+  echo -e "  --user\t\tThe user to run Consul as. Optional. Default is to use the owner of --config-dir."
   echo -e "  --skip-consul-config\tIf this flag is set, don't generate a Consul configuration file. Optional. Default is false."
   echo
   echo "Example:"
@@ -245,11 +245,6 @@ function get_owner_of_path {
 }
 
 function run {
-  assert_is_installed "supervisorctl"
-  assert_is_installed "aws"
-  assert_is_installed "curl"
-  assert_is_installed "jq"
-
   local config_dir=""
   local data_dir=""
   local log_dir=""
@@ -303,6 +298,11 @@ function run {
 
     shift
   done
+
+  assert_is_installed "supervisorctl"
+  assert_is_installed "aws"
+  assert_is_installed "curl"
+  assert_is_installed "jq"
 
   if [[ -z "$config_dir" ]]; then
     config_dir=$(cd "$SCRIPT_DIR/../config" && pwd)
