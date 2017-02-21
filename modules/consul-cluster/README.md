@@ -21,10 +21,14 @@ module "consul_cluster" {
   # Specify the ID of the Consul AMI. You should build this using the scripts in the install-consul module.
   ami_id = "ami-abcd1234"
   
-  # Configure and start Consul during boot 
+  # Add this tag to each node in the cluster
+  cluster_tag_key   = "consul-cluster"
+  cluster_tag_value = "consul-stage"
+  
+  # Configure and start Consul during boot. It will automatically form a cluster with all nodes that have that same tag. 
   user_data = <<-EOF
               #!/bin/bash
-              /opt/consul/bin/run-consul
+              /opt/consul/bin/run-consul --cluster-tag-key consul-cluster
               EOF
   
   # ... See vars.tf for the other parameters you must define for the consul-cluster module
@@ -84,7 +88,7 @@ module. You pass in the ID of the AMI to run using the `ami_id` input parameter.
 
 ### EC2 Instance Tags
 
-This module allows you to specify tags to add to each EC2 instance in the ASG. We recommend using these tags with the
+This module allows you to specify a tag to add to each EC2 instance in the ASG. We recommend using this tag with the
 [retry_join_ec2](https://www.consul.io/docs/agent/options.html?#retry_join_ec2) configuration to allow the EC2 
 Instances to find each other and automatically form a cluster.     
 
@@ -99,9 +103,9 @@ The Security Group ID is exported as an output variable if you need to add addit
 
 ### IAM Role and Permissions
 
-Each EC2 Instance in the ASG has an IAM Role attached. The IAM permissions attached to this role are:
-
-* `ec2:DescribeInstances`: Used to look up EC2 tags.
+Each EC2 Instance in the ASG has an IAM Role attached. We attach a small set of IAM permissions to this role as well
+that each EC2 Instance will use to automatically discover the other Instances in its ASG and form a cluster with them.
+See the [run-consul required permissions docs](/modules/run-consul#required-permissions) for details.
 
 The IAM Role ARN is exported as an output variable if you need to add additional permissions. 
 

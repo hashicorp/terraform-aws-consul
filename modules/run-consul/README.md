@@ -145,7 +145,6 @@ at all using the `--skip-consul-config` flag:
 The `run-consul` script assumes it is running on an EC2 Instance with an [IAM 
 Role](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) that has the following permissions:
 
-* `ec2:DescribeInstances`
 * `ec2:DescribeTags`
 * `autoscaling:DescribeAutoScalingGroups`
 
