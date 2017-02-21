@@ -1,6 +1,6 @@
 # Consul AMI
 
-This folder shows an example of how to use the [consul-install](/modules/consul-install) module with 
+This folder shows an example of how to use the [install-consul](/modules/install-consul) module with 
 [Packer](https://www.packer.io/) to create [Amazon Machine Images 
 (AMIs)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) that have Consul installed on top of:
  
@@ -11,7 +11,7 @@ These AMIs will have [Consul](https://www.consul.io/) installed and configured t
 boot-up. To see how to deploy this AMI, check out the [consul-cluster example](/examples/consul-cluster). 
 
 For more info on Consul installation and configuration, check out the 
-[consul-install](/modules/consul-install) documentation.
+[install-consul](/modules/install-consul) documentation.
 
 
 

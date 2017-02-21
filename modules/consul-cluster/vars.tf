@@ -3,7 +3,7 @@ variable "cluster_name" {
 }
 
 variable "ami_id" {
-  description = "The ID of the AMI to run in this cluster. Should be an AMI that had Consul installed and configured by the consul-install module."
+  description = "The ID of the AMI to run in this cluster. Should be an AMI that had Consul installed and configured by the install-consul module."
 }
 
 variable "instance_type" {
@@ -25,11 +25,11 @@ variable "cluster_size" {
 }
 
 variable "user_data" {
-  description = "A User Data script to execute while the server is booting. You should pass in a bash script that executes the run-consul script, which should have been installed in the Consul AMI by the consul-install module."
+  description = "A User Data script to execute while the server is booting. You should pass in a bash script that executes the run-consul script, which should have been installed in the Consul AMI by the install-consul module."
 }
 
-variable "custom_tags" {
-  description = "Custom tags to add to the EC2 Instances in the ASG"
+variable "tags" {
+  description = "Tags to add to each EC2 Instance in the ASG"
   type = "map"
   default = {}
 }
