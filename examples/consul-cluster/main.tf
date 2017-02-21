@@ -54,9 +54,10 @@ data "template_file" "user_data" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# DEPLOY CONSUL IN THE DEFAULT VPC AND SUBNETS
-# Using the default VPC makes this example easy to run and test, but in a production deployment, we strongly recommend
-# deploying into a custom VPC and private subnets.
+# DEPLOY CONSUL IN THE DEFAULT VPC AND AVAILABILITY ZONES
+# Using the default VPC and all availability zones makes this example easy to run and test, but in a production
+# deployment, we strongly recommend deploying into a custom VPC and private subnets (the latter specified via the
+# subnet_ids parameter in the consul-cluster module).
 # ---------------------------------------------------------------------------------------------------------------------
 
 data "aws_vpc" "default" {
