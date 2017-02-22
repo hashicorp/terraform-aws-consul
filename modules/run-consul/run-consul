@@ -83,24 +83,24 @@ function assert_not_empty {
 
 function lookup_path_in_instance_metadata {
   local readonly path="$1"
-	curl --silent --location "$EC2_INSTANCE_METADATA_URL/$path/"
+  curl --silent --location "$EC2_INSTANCE_METADATA_URL/$path/"
 }
 
 function lookup_path_in_instance_dynamic_data {
   local readonly path="$1"
-	curl --silent --location "$EC2_INSTANCE_DYNAMIC_DATA_URL/$path/"
+  curl --silent --location "$EC2_INSTANCE_DYNAMIC_DATA_URL/$path/"
 }
 
 function get_instance_ip_address {
-	lookup_path_in_instance_metadata "local-ipv4"
+  lookup_path_in_instance_metadata "local-ipv4"
 }
 
 function get_instance_id {
-	lookup_path_in_instance_metadata "instance-id"
+  lookup_path_in_instance_metadata "instance-id"
 }
 
 function get_instance_region {
-	lookup_path_in_instance_dynamic_data "instance-identity/document" | jq -r ".region"
+  lookup_path_in_instance_dynamic_data "instance-identity/document" | jq -r ".region"
 }
 
 function get_instance_tags {

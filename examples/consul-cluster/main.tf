@@ -35,9 +35,9 @@ module "consul" {
 
   # To make testing easier, we are allowing requests from any IP address here, but in a production deployment, we
   # strongly recommend you limit this to the IP address ranges of known, trusted servers.
-  ssh_key_name = "${var.ssh_key_name}"
   allowed_ssh_cidr_blocks = ["0.0.0.0/0"]
   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
+  ssh_key_name = "${var.ssh_key_name}"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
