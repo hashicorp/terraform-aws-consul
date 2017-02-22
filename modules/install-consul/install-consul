@@ -13,11 +13,6 @@ readonly DEFAULT_CONSUL_USER="consul"
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SYSTEM_BIN_DIR="/usr/local/bin"
 
-readonly COLOR_INFO='\033[0;32m'
-readonly COLOR_WARN='\033[1;33m'
-readonly COLOR_ERROR='\033[0;31m'
-readonly COLOR_END='\033[0m'
-
 function print_usage {
   echo
   echo "Usage: install-consul [OPTIONS]"
@@ -37,25 +32,24 @@ function print_usage {
 
 function log {
   local readonly level="$1"
-  local readonly color="$2"
-  local readonly message="$3"
+  local readonly message="$2"
   local readonly timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-  >&2 echo -e "${color}${timestamp} [${level}] [install-consul] ${message}${COLOR_END}"
+  >&2 echo -e "${timestamp} [${level}] [install-consul] ${message}"
 }
 
 function log_info {
   local readonly message="$1"
-  log "INFO" "$COLOR_INFO" "$message"
+  log "INFO" "$message"
 }
 
 function log_warn {
   local readonly message="$1"
-  log "WARN" "$COLOR_WARN" "$message"
+  log "WARN" "$message"
 }
 
 function log_error {
   local readonly message="$1"
-  log "ERROR" "$COLOR_ERROR" "$message"
+  log "ERROR" "$message"
 }
 
 function assert_not_empty {
