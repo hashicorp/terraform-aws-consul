@@ -227,7 +227,6 @@ module.
 
 ### DNS entries
 
-This module does not create any DNS entries for Consul (e.g. in Route 53). However, the IDs of the ASG, ELB, and all
-other resources are exported as output variables, so you should be able to add DNS entries yourself.
+This module does not create any DNS entries for Consul (e.g. in Route 53).
 
 
