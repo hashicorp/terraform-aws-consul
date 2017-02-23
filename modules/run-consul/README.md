@@ -73,7 +73,7 @@ documentation](https://www.consul.io/docs/agent/options.html#configuration-files
 available.
   
   
-## Default configuration
+### Default configuration
 
 `run-consul` sets the following configuration values by default:
   
