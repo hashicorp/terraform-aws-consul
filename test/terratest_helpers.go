@@ -3,11 +3,11 @@ package test
 import (
 	"github.com/gruntwork-io/terratest/packer"
 	"github.com/gruntwork-io/terratest"
-	"os"
 	"log"
 	"testing"
-	"github.com/gruntwork-io/terratest/shell"
 )
+
+const CONSUL_AMI_TEMPLATE_VAR_REGION = "aws_region"
 
 // Deploy the given terraform code
 func deploy(t *testing.T, terratestOptions *terratest.TerratestOptions) {
@@ -19,14 +19,11 @@ func deploy(t *testing.T, terratestOptions *terratest.TerratestOptions) {
 
 // Use Packer to build the AMI in the given packer template, with the given build name, and return the AMI's ID
 func buildAmi(t *testing.T, packerTemplatePath string, packerBuildName string, resourceCollection *terratest.RandomResourceCollection, logger *log.Logger) string {
-	branchName := getCurrentBranchName(t, logger)
-
 	options := packer.PackerOptions{
 		Template: packerTemplatePath,
 		Only: packerBuildName,
 		Vars: map[string]string{
-			"aws_region": resourceCollection.AwsRegion,
-			"blueprint_version": branchName,
+			CONSUL_AMI_TEMPLATE_VAR_REGION: resourceCollection.AwsRegion,
 		},
 	}
 
@@ -63,21 +60,4 @@ func createBaseTerratestOptions(t *testing.T, testName string, templatePath stri
 
 	return terratestOptions
 }
-
-// Return the name of the current branch. We need this so that when the Packer build runs gruntwork-install, it uses
-// the latest code checked into the branch we're on now and not what's in a published release from before.
-func getCurrentBranchName(t *testing.T, logger *log.Logger) string {
-	branchNameFromCircleCi := os.Getenv("CIRCLE_BRANCH")
-	if branchNameFromCircleCi != "" {
-		return branchNameFromCircleCi
-	}
-
-	branchName, err := shell.RunCommandAndGetOutput(shell.Command{Command: "git", Args: []string{"rev-parse", "--symbolic-full-name", "--abbrev-ref", "HEAD"}}, logger)
-	if err != nil {
-		t.Fatalf("Failed to get current branch name due to error: %v", err)
-	}
-
-	return branchName
-}
-
 

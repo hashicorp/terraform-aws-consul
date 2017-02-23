@@ -10,9 +10,11 @@ import (
 	"time"
 	"fmt"
 	"github.com/hashicorp/consul/api"
+	"path/filepath"
 )
 
-const CONSUL_CLUSTER_EXAMPLE_PATH = "../examples/consul-cluster"
+const REPO_ROOT = "../"
+const CONSUL_CLUSTER_EXAMPLE_REL_PATH = "examples/consul-cluster"
 const CONSUL_CLUSTER_EXAMPLE_VAR_AMI_ID = "ami_id"
 const CONSUL_CLUSTER_EXAMPLE_VAR_ASG_NAME = "asg_name"
 const CONSUL_CLUSTER_EXAMPLE_VAR_AWS_REGION = "aws_region"
@@ -24,17 +26,17 @@ const CONSUL_AMI_EXAMPLE_PATH = "../examples/consul-ami/consul.json"
 
 // Test the consul-cluster example by:
 //
-// 1. Copying the Terraform code to a temp folder so tests can run in parallel without their state files overwriting
-//    each other.
+// 1. Copying the code in this repo to a temp folder so tests on the Terraform code can run in parallel without the
+//    state files overwriting each other.
 // 2. Building the AMI in the consul-ami example with the given build name
 // 3. Deploying that AMI using the consul-cluster Terraform code
 // 4. Checking that the Consul cluster comes up within a reasonable time period and can respond to requests
 func runConsulClusterTest(t *testing.T, testName string, packerBuildName string) {
-	terraformCodePath := copyTerraformCodeToToTmpFolder(t, CONSUL_CLUSTER_EXAMPLE_PATH)
-	defer os.RemoveAll(terraformCodePath)
+	rootTempPath := copyRepoToTempFolder(t, REPO_ROOT)
+	defer os.RemoveAll(rootTempPath)
 
 	resourceCollection := createBaseRandomResourceCollection(t)
-	terratestOptions := createBaseTerratestOptions(t, testName, terraformCodePath, resourceCollection)
+	terratestOptions := createBaseTerratestOptions(t, testName, filepath.Join(rootTempPath, CONSUL_CLUSTER_EXAMPLE_REL_PATH), resourceCollection)
 	defer terratest.Destroy(terratestOptions, resourceCollection)
 
 	logger := terralog.NewLogger(testName)

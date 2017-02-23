@@ -16,6 +16,7 @@ For more info on how the Consul cluster works, check out the [consul-cluster](/m
 
 To deploy a Consul Cluster:
 
+1. `git clone` this repo to your computer.
 1. Build a Consul AMI. See the [consul-ami example](/examples/consul-ami) documentation for instructions. Make sure to
    note down the ID of the AMI.
 1. Install [Terraform](https://www.terraform.io/).
