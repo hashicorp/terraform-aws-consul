@@ -8,17 +8,18 @@ tool that you can use for service discovery and key/value storage.
 
 This Blueprint includes:
 
-* [install-consul](/modules/install-consul): This module can be used to install Consul. It can be used in a 
+* [install-consul](/modules/install-consul): This module installs Consul using a
   [Packer](https://www.packer.io/) template to create a Consul 
   [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html).
 
-* [run-consul](/modules/run-consul): This module can be used to configure and run Consul. It can be used in a 
-  [User Data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-data-shell-scripts) 
-  script to fire up Consul while the server is booting.
-
-* [consul-cluster](/modules/consul-cluster): Terraform code to deploy a Consul AMI across an [Auto Scaling 
+* [consul-cluster](/modules/consul-cluster): The module includes Terraform code to deploy a Consul AMI across an [Auto Scaling 
   Group](https://aws.amazon.com/autoscaling/). 
-
+  
+* [run-consul](/modules/run-consul): This module includes the scripts to configure and run Consul. It is used
+  by the above Packer module at build-time to set configurations, and by the Terraform module at runtime 
+  with [User Data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-data-shell-scripts)
+  to create the cluster.
+ 
 
 
 ## What's a Blueprint?
@@ -54,12 +55,12 @@ Each Blueprint has the following folder structure:
 * [examples](/examples): This folder contains examples of how to use the modules.
 * [test](/test): Automated tests for the modules and examples.
 
-There two steps to using this blueprint to deploy a Consul cluster:
+There are two steps to using this blueprint to deploy a Consul cluster:
 
 1. Create a Consul AMI using the Packer template in the [install-consul module](/modules/install-consul)
 1. Deploy that AMI across an Auto Scaling Group using the Terraform [consul-cluster module](/modules/consul-cluster). This will execute the [run-consul script](/modules/run-consul) during boot on each Instance in the Auto Scaling Group to form the Consul cluster
 
-Click on each of the modules above for more details.
+Click on each of the modules above for more details and examples. 
 
 
 
