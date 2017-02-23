@@ -55,12 +55,6 @@ Note the following parameters:
 
 You can find the other parameters in [vars.tf](vars.tf).
 
-To deploy the Consul cluster, do the following:
-
-1. Download the module code: `terraform get`
-1. Check the plan: `terraform plan`
-1. If the plan looks good, deploy: `terraform apply`
-
 Check out the [consul-cluster example](/examples/consul-cluster) for fully-working sample code. 
 
 
