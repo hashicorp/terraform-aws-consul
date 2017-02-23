@@ -4,6 +4,8 @@ This repo contains a Blueprint for how to deploy a [Consul](https://www.consul.i
 [AWS](https://aws.amazon.com/) using [Terraform](https://www.terraform.io/). Consul is a distributed, highly-available 
 tool that you can use for service discovery and key/value storage. 
 
+![Consul architecture](/_docs/architecture.png)
+
 This Blueprint includes:
 
 * [install-consul](/modules/install-consul): This module can be used to install Consul. It can be used in a 
