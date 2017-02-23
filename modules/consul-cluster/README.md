@@ -98,6 +98,8 @@ Each EC2 Instance in the ASG has a Security Group that allows:
 
 The Security Group ID is exported as an output variable if you need to add additional rules. 
 
+Check out the [Security section](#security) for more details. 
+
 
 ### IAM Role and Permissions
 
