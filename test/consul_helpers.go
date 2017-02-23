@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"github.com/hashicorp/consul/api"
 	"path/filepath"
+	"errors"
 )
 
 const REPO_ROOT = "../"
@@ -90,7 +91,7 @@ func testConsulCluster(t *testing.T, nodeIpAddress string, logger *log.Logger) {
 		}
 
 		if leader == "" {
-			return "", fmt.Errorf("Consul cluster returned an empty leader response, so a leader must not have been elected yet.")
+			return "", errors.New("Consul cluster returned an empty leader response, so a leader must not have been elected yet.")
 		}
 
 		return leader, nil
