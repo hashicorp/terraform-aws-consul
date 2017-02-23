@@ -53,7 +53,7 @@ Note the following parameters:
   run Consul. The `run-consul` script is one of the scripts installed by the [install-consul](/modules/install-consul) 
   module. 
 
-You can find the other parameters in `vars.tf`.
+You can find the other parameters in [vars.tf](vars.tf).
 
 To deploy the Consul cluster, do the following:
 
