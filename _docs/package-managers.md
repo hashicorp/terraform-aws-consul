@@ -1,6 +1,6 @@
 # Package Managers
 
-To create the scripts in `consul-install`, we had to find a way to write and package the scripts that satsified a 
+To create the scripts in `install-consul`, we had to find a way to write and package the scripts that satisfied a 
 number of requirements. This document captures the requirements, the options we considered, and an explanation of 
 which option we picked and why.
 
@@ -101,7 +101,7 @@ to use it in dev mode.
 - **Description**: Upload our scripts to Git, release them with version numbers, and pipe `curl` into `bash` to run them.
 - **Dependency Management**: No.
 - **Install process**: Simple. Nothing to install! Well, perhaps `curl`, but that's as simple as it gets.
-- **Client usage**: Simple. `curl -Ls https://raw.githubusercontent.com/foo/bar/v0.0.3/consul-install | bash /dev/stdin`.
+- **Client usage**: Simple. `curl -Ls https://raw.githubusercontent.com/foo/bar/v0.0.3/install-consul | bash /dev/stdin`.
   Unfortunately, without any checksum or signature verification, this is a mild security risk if the GitHub repo 
   gets hijacked. Moreover, this only works for individual files. If the script has dependencies, those have to
   be downloaded separately.
