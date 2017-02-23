@@ -24,13 +24,13 @@ This Blueprint includes:
 ## What's a Blueprint?
 
 A Blueprint is a canonical, reusable, best-practices definition for how to run a single piece of infrastructure, such 
-as a database or server cluster. Each Blueprint is created primarily using [Terraform](https://www.terraform.io/), 
-includes automated tests, examples, and documentation, and is maintained both by the open source community and 
+as a database or server cluster. Each Blueprint is created using [Terraform](https://www.terraform.io/), and
+includes automated tests, examples, and documentation. It is maintained both by the open source community and 
 companies that provide commercial support. 
 
-Instead of having to figure out the details of how to run a piece of infrastructure from scratch, you can reuse 
+Instead of figuring out the details of how to run a piece of infrastructure from scratch, you can reuse 
 existing code that has been proven in production. And instead of maintaining all that infrastructure code yourself, 
-you can leverage the work of the Blueprint community and maintainers, and pick up infrastructure improvements through
+you can leverage the work of the Blueprint community to pick up infrastructure improvements through
 a version number bump.
  
  
@@ -46,7 +46,7 @@ This Blueprint is maintained by [Gruntwork](http://www.gruntwork.io/). If you ne
 
 
 
-## How do you use this Blueprint?
+## How to use this Blueprint
 
 Each Blueprint has the following folder structure:
 
@@ -54,13 +54,10 @@ Each Blueprint has the following folder structure:
 * [examples](/examples): This folder contains examples of how to use the modules.
 * [test](/test): Automated tests for the modules and examples.
 
-The basic idea for using this Blueprint is to:
+There two steps to using this blueprint to deploy a Consul cluster:
 
-1. Use the scripts from the [install-consul module](/modules/install-consul) in a Packer template to create a Consul 
-   AMI.
-1. Deploy that AMI across an Auto Scaling Group using the [consul-cluster module](/modules/consul-cluster).
-1. Execute the [run-consul script](/modules/run-consul) during boot on each Instance in the Auto Scaling Group to 
-   have that Instance automatically find other Instances and form a Consul cluster.
+1. Create a Consul AMI using the Packer template in the [install-consul module](/modules/install-consul)
+1. Deploy that AMI across an Auto Scaling Group using the Terraform [consul-cluster module](/modules/consul-cluster). This will execute the [run-consul script](/modules/run-consul) during boot on each Instance in the Auto Scaling Group to form the Consul cluster
 
 Click on each of the modules above for more details.
 
