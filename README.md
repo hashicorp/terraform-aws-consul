@@ -54,8 +54,11 @@ Each Blueprint has the following folder structure:
 
 The basic idea for using this Blueprint is to:
 
-1. Use the scripts from the [install-consul](/modules/install-consul) in a Packer template to create a Consul AMI.
-1. Deploy that AMI using the [consul-cluster](/modules/consul-cluster) module.
+1. Use the scripts from the [install-consul module](/modules/install-consul) in a Packer template to create a Consul 
+   AMI.
+1. Deploy that AMI across an Auto Scaling Group using the [consul-cluster module](/modules/consul-cluster).
+1. Execute the [run-consul script](/modules/run-consul) during boot on each Instance in the Auto Scaling Group to 
+   have that Instance automatically find other Instances and form a Consul cluster.
 
 Click on each of the modules above for more details.
 
