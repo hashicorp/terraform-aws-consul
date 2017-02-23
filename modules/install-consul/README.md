@@ -1,7 +1,7 @@
 # Consul Install Script
 
-This folder contains a script for installing Consul and its dependencies. You can use this script, along with the
-[run-consul script](/modules/run-consul) it installs to create a Consul [Amazon Machine Image 
+This folder contains a script for installing Consul and its dependencies. Use this script along with the
+[run-consul script](/modules/run-consul) to create a Consul [Amazon Machine Image 
 (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) that can be deployed in 
 [AWS](https://aws.amazon.com/) across an Auto Scaling Group using the [consul-cluster module](/modules/consul-cluster).
 
@@ -27,7 +27,7 @@ consul-aws-blueprint/modules/install-consul/install-consul --version 0.7.5
 ```
 
 The `install-consul` script will install Consul, its dependencies, and the [run-consul script](/modules/run-consul).
-You can then run the `run-consul` script when the server is booting to start Consul and configure it to automatically 
+The `run-consul` script is also run when the server is booting to start Consul and configure it to automatically 
 join other nodes to form a cluster.
 
 We recommend running the `install-consul` script as part of a [Packer](https://www.packer.io/) template to create a
