@@ -60,9 +60,8 @@ There are two steps to using this blueprint to deploy a Consul cluster:
 1. Create a Consul AMI using the Packer template in the [install-consul module](/modules/install-consul)
 1. Deploy that AMI across an Auto Scaling Group using the Terraform [consul-cluster module](/modules/consul-cluster). This will execute the [run-consul script](/modules/run-consul) during boot on each Instance in the Auto Scaling Group to form the Consul cluster
 
-Click on each of the modules above for more details. For example implementations of these modules,
-view the [example for building a Consul AMI](/examples/consul-ami) and
-[example for deploying that AMI with Terraform](/examples/consul-cluster).
+Use the [Quick Start Guide](/examples/consul-cluster#quick-start) to walk through building
+a Consul AMI and provisioning a Consul cluster.
 
 
 
