@@ -46,7 +46,7 @@ See the [consul-cluster example](/examples/consul-cluster) for fully-working sam
 
 The `run-consul` script accepts the following arguments, all optional:
 
-* `cluster-tag-key`\t\tAutomatically form a cluster with Instances that have this tag key and the same tag value as the 
+* `cluster-tag-key`: Automatically form a cluster with Instances that have this tag key and the same tag value as the 
   current Instance. Default is `consul-cluster`.
 * `config-dir`: The path to the Consul config folder. Default is to take the absolute path of `../config`, relative to 
   the `run-consul` script itself.
