@@ -102,7 +102,7 @@ func testConsulCluster(t *testing.T, nodeIpAddress string, logger *log.Logger) {
 // Create a Consul client
 func createConsulClient(t *testing.T, ipAddress string) *api.Client {
 	config := api.DefaultConfig()
-	config.Address = ipAddress
+	config.Address = fmt.Sprintf("%s:8500", ipAddress)
 
 	client, err := api.NewClient(config)
 	if err != nil {
