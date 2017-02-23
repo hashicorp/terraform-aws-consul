@@ -103,9 +103,10 @@ Check out the [Security section](#security) for more details.
 
 ### IAM Role and Permissions
 
-Each EC2 Instance in the ASG has an IAM Role attached. We attach a small set of IAM permissions to this role as well
-that each EC2 Instance will use to automatically discover the other Instances in its ASG and form a cluster with them.
-See the [run-consul required permissions docs](/modules/run-consul#required-permissions) for details.
+Each EC2 Instance in the ASG has an [IAM Role](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) attached. 
+We give this IAM role a small set of IAM permissions that each EC2 Instance can use to automatically discover the other 
+Instances in its ASG and form a cluster with them. See the [run-consul required permissions 
+docs](/modules/run-consul#required-permissions) for details.
 
 The IAM Role ARN is exported as an output variable if you need to add additional permissions. 
 
