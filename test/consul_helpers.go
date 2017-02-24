@@ -108,6 +108,7 @@ func testConsulCluster(t *testing.T, nodeIpAddress string, logger *log.Logger) {
 func createConsulClient(t *testing.T, ipAddress string) *api.Client {
 	config := api.DefaultConfig()
 	config.Address = fmt.Sprintf("%s:8500", ipAddress)
+	config.HttpClient.Timeout = 5 * time.Second
 
 	client, err := api.NewClient(config)
 	if err != nil {
