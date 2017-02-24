@@ -19,25 +19,25 @@ module "consul" {
   # source = "git::git@github.com:gruntwork-io/consul-aws-blueprint.git//modules/consul-cluster?ref=v0.0.1"
   source = "../../modules/consul-cluster"
 
-  cluster_name = "${var.cluster_name}"
-  cluster_size = "${var.cluster_size}"
+  cluster_name  = "${var.cluster_name}"
+  cluster_size  = "${var.cluster_size}"
   instance_type = "t2.micro"
 
   # The EC2 Instances will use these tags to automatically discover each other and form a cluster
   cluster_tag_key   = "${var.cluster_tag_key}"
   cluster_tag_value = "${var.cluster_name}"
 
-  ami_id        = "${var.ami_id}"
-  user_data     = "${data.template_file.user_data.rendered}"
+  ami_id    = "${var.ami_id}"
+  user_data = "${data.template_file.user_data.rendered}"
 
   vpc_id             = "${data.aws_vpc.default.id}"
   availability_zones = ["${data.aws_availability_zones.all.names}"]
 
-  # To make testing easier, we are allowing requests from any IP address here, but in a production deployment, we
-  # strongly recommend you limit this to the IP address ranges of known, trusted servers.
-  allowed_ssh_cidr_blocks = ["0.0.0.0/0"]
+  # To make testing easier, we allow Consul and SSH requests from any IP address here but in a production
+  # deployment, we strongly recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.
+  allowed_ssh_cidr_blocks     = ["0.0.0.0/0"]
   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
-  ssh_key_name = "${var.ssh_key_name}"
+  ssh_key_name                = "${var.ssh_key_name}"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

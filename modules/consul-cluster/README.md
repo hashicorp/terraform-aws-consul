@@ -23,7 +23,7 @@ module "consul_cluster" {
   
   # Add this tag to each node in the cluster
   cluster_tag_key   = "consul-cluster"
-  cluster_tag_value = "consul-stage"
+  cluster_tag_value = "consul-cluster-example"
   
   # Configure and start Consul during boot. It will automatically form a cluster with all nodes that have that same tag. 
   user_data = <<-EOF
@@ -56,6 +56,100 @@ Note the following parameters:
 You can find the other parameters in [vars.tf](vars.tf).
 
 Check out the [consul-cluster example](/examples/consul-cluster) for fully-working sample code. 
+
+
+
+
+## How do you connect to the Consul cluster?
+
+### Using the HTTP API from your own computer
+
+If you want to connect to the cluster from your own computer, the easiest way is to use the [HTTP 
+API](https://www.consul.io/docs/agent/http.html). Note that this only works if the Consul cluster is running in public 
+subnets and/or your default VPC (as in the [consul-cluster example](/examples/consul-cluster)), which is OK for testing
+and experimentation, but NOT recommended for production usage.
+
+To use the HTTP API, you first need to get the public IP address of one of the Consul Instances. You can get the IPs of 
+all the Consul Instances using the [AWS CLI](https://aws.amazon.com/cli/) and 
+[jq](https://stedolan.github.io/jq/) as follows:
+
+```
+aws ec2 describe-instances \
+  --region us-east-1 \
+  --filter "Name=tag:consul-cluster,Values=consul-cluster-example" "Name=instance-state-name,Values=running" | \
+  jq -r '.Reservations[].Instances[].PublicIpAddress'
+  
+11.22.33.44
+11.22.33.55
+11.22.33.66
+```
+
+Copy and paste one of these IPs and use it with the `members` command to see a list of cluster nodes:
+
+```
+> consul members -rpc-addr=<INSTANCE_IP_ADDR>:8400
+
+Node                 Address             Status  Type    Build  Protocol  DC
+i-02dbaa6ab6defffd5  172.31.0.127:8301   alive   server  0.7.5  2         us-east-1
+i-0614bc1bb3d8c3a5e  172.31.41.172:8301  alive   server  0.7.5  2         us-east-1
+i-072d920b2a927c48b  172.31.55.82:8301   alive   server  0.7.5  2         us-east-1
+```
+
+You can also try inserting a value:
+
+```
+> consul kv put -http-addr=<INSTANCE_IP_ADDR>:8500 foo bar
+
+Success! Data written to: foo
+```
+
+And reading that value back:
+ 
+```
+> consul kv get -http-addr=<INSTANCE_IP_ADDR>:8500 foo
+
+bar
+```
+
+Finally, you can try opening up the Consul UI in your browser at the URL `http://<INSTANCE_IP_ADDR>:8500/ui/`.
+
+![Consul UI](/_docs/consul-ui-screenshot.png)
+
+
+### Using the Consul agent on another EC2 Instance
+
+The easiest way to run [Consul agent](https://www.consul.io/docs/agent/basics.html) and have it connect to the Consul 
+cluster is to use the same EC2 tags the Consul servers use to discover each other during bootstrapping. 
+
+For example, imagine you deployed a Consul cluster in `us-east-1` as follows:
+
+<!-- TODO: update this to the final URL -->
+
+```hcl
+module "consul_cluster" {
+  source = "github.com/gruntwork-io/consul-aws-blueprint//modules/consul-cluster?ref=v0.0.1"
+
+  # Add this tag to each node in the cluster
+  cluster_tag_key   = "consul-cluster"
+  cluster_tag_value = "consul-cluster-example"
+  
+  # ... Other params omitted ... 
+}
+```
+
+Using the `retry-join-ec2-xxx` params, you can connect run a Consul agent on an EC2 Instance as follows: 
+
+```
+consul agent -retry-join-ec2-tag-key=consul-cluster -retry-join-ec2-tag-value=consul-cluster-example -data-dir=/tmp/consul
+```
+
+Two important notes about this command:
+
+1. By default, the Consul cluster nodes advertise their *private* IP addresses, so the command above only works from 
+   EC2 Instances inside the same VPC (or any VPC with proper peering connections and route table entries).
+1. In order to look up the EC2 tags, the EC2 Instance where you're running this command must have an IAM role with
+   the `ec2:DescribeInstances` permission.
+
 
 
 
