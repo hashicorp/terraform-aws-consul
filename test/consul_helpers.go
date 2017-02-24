@@ -72,7 +72,7 @@ func checkConsulClusterIsWorking(t *testing.T, terratestOptions *terratest.Terra
 // 3. The cluster has elected a leader
 func testConsulCluster(t *testing.T, nodeIpAddress string, logger *log.Logger) {
 	consulClient := createConsulClient(t, nodeIpAddress)
-	maxRetries := 30
+	maxRetries := 60
 	sleepBetweenRetries := 10 * time.Second
 
 	leader, err := util.DoWithRetry("Check Consul members", maxRetries, sleepBetweenRetries, logger, func() (string, error) {
