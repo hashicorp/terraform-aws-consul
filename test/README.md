@@ -21,7 +21,9 @@ clean up.
 
 
 
-## Prerequisites
+## Running the tests
+
+### Prerequisites
 
 - Install the latest version of [Go](https://golang.org/).
 - Install [glide](https://glide.sh/) for Go dependency management.
@@ -31,8 +33,7 @@ clean up.
   set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
 
 
-
-## One-time setup
+### One-time setup
 
 Download Go dependencies using glide:
 
@@ -42,8 +43,7 @@ glide install
 ```
 
 
-
-## Run all the tests
+### Run all the tests
 
 ```bash
 cd test
@@ -51,8 +51,7 @@ go test -v -timeout 60m
 ```
 
 
-
-## Run a specific test
+### Run a specific test
 
 To run a specific test called `TestFoo`:
 
@@ -60,3 +59,6 @@ To run a specific test called `TestFoo`:
 cd test
 go test -v -timeout 60m -run TestFoo
 ```
+
+
+  

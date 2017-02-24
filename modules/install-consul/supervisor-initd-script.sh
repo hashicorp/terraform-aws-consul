@@ -44,7 +44,7 @@ prog=supervisord
 pidfile=${PIDFILE-/tmp/supervisord.pid}
 lockfile=${LOCKFILE-/var/lock/subsys/supervisord}
 STOP_TIMEOUT=${STOP_TIMEOUT-60}
-OPTIONS="${OPTIONS--c /etc/supervisord.conf}"
+OPTIONS="${OPTIONS--c /etc/supervisor/supervisord.conf}"
 RETVAL=0
 
 start() {
