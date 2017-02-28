@@ -1,9 +1,9 @@
 # Consul Cluster
 
-This folder contains a [Terraform](https://www.terraform.io/) module that can be used to deploy a 
+This folder contains a [Terraform](https://www.terraform.io/) module to deploy a 
 [Consul](https://www.consul.io/) cluster in [AWS](https://aws.amazon.com/) on top of an Auto Scaling Group. This module 
 is designed to deploy an [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) 
-that had Consul installed via the [install-consul](/modules/install-consul) module in this Blueprint.
+that has Consul installed via the [install-consul](/modules/install-consul) module in this Blueprint.
 
 
 
@@ -78,7 +78,7 @@ This architecture consists of the following resources:
 This module runs Consul on top of an [Auto Scaling Group (ASG)](https://aws.amazon.com/autoscaling/). Typically, you
 should run the ASG with 3 or 5 EC2 Instances spread across multiple [Availability 
 Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html). Each of the EC2
-Instances should be running an AMI that has had Consul installed via the [install-consul](/modules/install-consul)
+Instances should be running an AMI that has Consul installed via the [install-consul](/modules/install-consul)
 module. You pass in the ID of the AMI to run using the `ami_id` input parameter.
 
 
