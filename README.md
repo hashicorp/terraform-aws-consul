@@ -24,14 +24,14 @@ To deploy Consul servers using this Blueprint:
 1. Create a Consul AMI using a Packer template that references the [install-consul module](/modules/install-consul).
    Here is an [example Packer template](/examples/consul-ami#quick-start). 
 1. Deploy that AMI across an Auto Scaling Group using the Terraform [consul-cluster module](/modules/consul-cluster) 
-   and execute the [run-consul script](/modules/run-consul), with `--server` set to `true`, during boot on each 
+   and execute the [run-consul script](/modules/run-consul) with the `--server` flag during boot on each 
    Instance in the Auto Scaling Group to form the Consul cluster. Here is [an example Terraform 
    configuration](/examples/consul-cluster#quick-start) to provision a Consul cluster.
 
 To deploy Consul clients using this Blueprint:
  
 1. Use the [install-consul module](/modules/install-consul) to install Consul alongside your application code.
-1. Before booting your app, execute the [run-consul script](/modules/run-consul), with `--server` set to `false`.
+1. Before booting your app, execute the [run-consul script](/modules/run-consul) with `--client` flag.
 1. Your app can now using the local Consul agent for service discovery and key/value storage. 
  
  

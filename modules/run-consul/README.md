@@ -18,13 +18,13 @@ module](/modules/install-consul). The default install path is `/opt/consul/bin`,
 you run:
 
 ```
-/opt/consul/bin/run-consul --server true
+/opt/consul/bin/run-consul --server
 ```
 
 To start Consul in client mode, you run:
  
 ```
-/opt/consul/bin/run-consul --server false
+/opt/consul/bin/run-consul --client
 ```
 
 This will:
@@ -53,7 +53,8 @@ See the [consul-cluster example](/examples/consul-cluster) for fully-working sam
 
 The `run-consul` script accepts the following arguments:
 
-* `server` (required): Set to true to run in server mode and false to run in client mode.
+* `server` (optional): If set, run in server mode. Exactly one of `--server` or `--client` must be set.
+* `client` (optional): If set, run in client mode. Exactly one of `--server` or `--client` must be set. 
 * `cluster-tag-key` (optional): Automatically form a cluster with Instances that have this tag key and the tag value
   in `--cluster-tag-value`. Default is `consul-servers`.
 * `cluster-tag-value` (optional): Automatically form a cluster with Instances that have the tag key in 
@@ -69,7 +70,7 @@ The `run-consul` script accepts the following arguments:
 Example:
 
 ```
-/opt/consul/bin/run-consul --server true --cluster-tag-key consul-cluster --cluster-tag-value prod-cluster 
+/opt/consul/bin/run-consul --server --cluster-tag-key consul-cluster --cluster-tag-value prod-cluster 
 ```
 
 
@@ -93,7 +94,7 @@ available.
 * [bind_addr](https://www.consul.io/docs/agent/options.html#bind_addr): Set to the EC2 Instance's private IP address, 
   as fetched from [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
 
-* [bootstrap_expect](https://www.consul.io/docs/agent/options.html#bootstrap_expect): If `--server` is set to true, 
+* [bootstrap_expect](https://www.consul.io/docs/agent/options.html#bootstrap_expect): If `--server` is set, 
   set this config based on the EC2 Instance's tags (using the 
   [describe-tags API](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-tags.html)): 
     * If there is a `aws:autoscaling:groupName` tag, that means this EC2 Instance is part of an Auto Scaling Group 
@@ -120,7 +121,7 @@ available.
     * [region](https://www.consul.io/docs/agent/options.html#region): Set to the current AWS region (e.g. `us-east-1`), 
       as fetched from [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
       
-* [server](https://www.consul.io/docs/agent/options.html#server): Set to the value of `--server`.
+* [server](https://www.consul.io/docs/agent/options.html#server): Set to true if `--server` is set.
 
 * [ui](https://www.consul.io/docs/agent/options.html#ui): Set to true.
 
@@ -150,7 +151,7 @@ If you want to override *all* the default settings, you can tell `run-consul` no
 at all using the `--skip-consul-config` flag:
 
 ```
-/opt/consul/bin/run-consul --server true --skip-consul-config
+/opt/consul/bin/run-consul --server --skip-consul-config
 ```
 
 
