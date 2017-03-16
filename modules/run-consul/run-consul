@@ -3,8 +3,6 @@
 
 set -e
 
-readonly DEFAULT_CONSUL_CLUSTER_TAG_KEY="consul-servers"
-readonly DEFAULT_CONSUL_CLUSTER_TAG_VALUE="auto-join"
 readonly AWS_ASG_TAG_KEY="aws:autoscaling:groupName"
 
 readonly CONSUL_CONFIG_FILE="default.json"
@@ -25,8 +23,8 @@ function print_usage {
   echo
   echo -e "  --server\t\tIf set, run in server mode. Optional. Exactly one of --server or --client must be set."
   echo -e "  --client\t\tIf set, run in client mode. Optional. Exactly one of --server or --client must be set."
-  echo -e "  --cluster-tag-key\tAutomatically form a cluster with Instances that have this tag key and the tag value in --cluster-tag-value. Optional. Default: $DEFAULT_CONSUL_CLUSTER_TAG_KEY."
-  echo -e "  --cluster-tag-value\tAutomatically form a cluster with Instances that have the tag key in --cluster-tag-key and this tag value. Optional. Default: $DEFAULT_CONSUL_CLUSTER_TAG_VALUE."
+  echo -e "  --cluster-tag-key\tAutomatically form a cluster with Instances that have this tag key and the tag value in --cluster-tag-value. Optional."
+  echo -e "  --cluster-tag-value\tAutomatically form a cluster with Instances that have the tag key in --cluster-tag-key and this tag value. Optional."
   echo -e "  --config-dir\t\tThe path to the Consul config folder. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --data-dir\t\tThe path to the Consul data folder. Optional. Default is the absolute path of '../data', relative to this script."
   echo -e "  --log-dir\t\tThe path to the Consul log folder. Optional. Default is the absolute path of '../log', relative to this script."
@@ -242,8 +240,8 @@ function run {
   local log_dir=""
   local bin_dir=""
   local user=""
-  local cluster_tag_key="$DEFAULT_CONSUL_CLUSTER_TAG_KEY"
-  local cluster_tag_value="$DEFAULT_CONSUL_CLUSTER_TAG_VALUE"
+  local cluster_tag_key=""
+  local cluster_tag_value=""
   local skip_consul_config="false"
   local all_args=()
 

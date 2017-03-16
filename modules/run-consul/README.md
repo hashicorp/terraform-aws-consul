@@ -56,9 +56,9 @@ The `run-consul` script accepts the following arguments:
 * `server` (optional): If set, run in server mode. Exactly one of `--server` or `--client` must be set.
 * `client` (optional): If set, run in client mode. Exactly one of `--server` or `--client` must be set. 
 * `cluster-tag-key` (optional): Automatically form a cluster with Instances that have this tag key and the tag value
-  in `--cluster-tag-value`. Default is `consul-servers`.
+  in `--cluster-tag-value`.
 * `cluster-tag-value` (optional): Automatically form a cluster with Instances that have the tag key in 
-  `--cluster-tag-key` and this tag value. Default is `auto-join`.
+  `--cluster-tag-key` and this tag value.
 * `config-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../config`, 
   relative to the `run-consul` script itself.
 * `data-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../data`, 
