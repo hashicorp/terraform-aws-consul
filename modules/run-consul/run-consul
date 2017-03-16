@@ -41,7 +41,7 @@ function log {
   local readonly level="$1"
   local readonly message="$2"
   local readonly timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-  >&2 echo -e "${timestamp} [${level}] [install-consul] ${message}"
+  >&2 echo -e "${timestamp} [${level}] [run-consul] ${message}"
 }
 
 function log_info {
