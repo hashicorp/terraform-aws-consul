@@ -10,4 +10,4 @@ set -e
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 # These variables are passed in via Terraform template interplation
-/opt/consul/bin/run-consul --cluster-tag-key "${cluster_tag_key}"
+/opt/consul/bin/run-consul --server true --cluster-tag-key "${cluster_tag_key}"

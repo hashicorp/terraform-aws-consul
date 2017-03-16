@@ -22,6 +22,7 @@ function print_usage {
   echo
   echo "Options:"
   echo
+  echo -e "  --server\t\tSet to true to run in server mode and false to run in client mode. Required."
   echo -e "  --cluster-tag-key\t\tAutomatically form a cluster with Instances that have this tag key and the same tag value as the current Instance. Optional. Default: $DEFAULT_CONSUL_CLUSTER_TAG_KEY."
   echo -e "  --config-dir\t\tThe path to the Consul config folder. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --data-dir\t\tThe path to the Consul data folder. Optional. Default is the absolute path of '../data', relative to this script."
@@ -32,7 +33,7 @@ function print_usage {
   echo
   echo "Example:"
   echo
-  echo "  run-consul --config-dir /custom/path/to/consul/config"
+  echo "  run-consul --server true --config-dir /custom/path/to/consul/config"
 }
 
 function log {
@@ -73,6 +74,24 @@ function assert_not_empty {
     print_usage
     exit 1
   fi
+}
+
+function assert_one_of {
+  local readonly arg_name="$1"
+  local readonly arg_value="$2"
+  shift 2
+  local readonly valid_values=($@)
+  local valid_value
+
+  for valid_value in "${valid_values[@]}"; do
+    if [[ "$arg_value" == "$valid_value" ]]; then
+      return
+    fi
+  done
+
+  log_error "The value for '$arg_name' must be one of: [${valid_values[@]}]. Found: '$arg_value'."
+  print_usage
+  exit 1
 }
 
 function lookup_path_in_instance_metadata {
@@ -148,9 +167,10 @@ function assert_is_installed {
 }
 
 function generate_consul_config {
-  local readonly config_dir="$1"
-  local readonly user="$2"
-  local readonly cluster_tag_key="$3"
+  local readonly server="$1"
+  local readonly config_dir="$2"
+  local readonly user="$3"
+  local readonly cluster_tag_key="$4"
   local readonly config_path="$config_dir/$CONSUL_CONFIG_FILE"
 
   local instance_id=""
@@ -181,17 +201,22 @@ EOF
 )
   fi
 
+  local bootstrap_expect=""
+  if [[ "$server" == "true" ]]; then
+    bootstrap_expect="\"bootstrap_expect\": $cluster_size,"
+  fi
+
   log_info "Creating default Consul config file in $config_path"
   cat > "$config_path" <<EOF
 {
   "advertise_addr": "$instance_ip_address",
   "bind_addr": "$instance_ip_address",
-  "bootstrap_expect": $cluster_size,
+  $bootstrap_expect
   "client_addr": "0.0.0.0",
   "datacenter": "$instance_region",
   "node_name": "$instance_id",
   $retry_join_json
-  "server": true,
+  "server": $server,
   "ui": true
 }
 EOF
@@ -233,6 +258,7 @@ function get_owner_of_path {
 }
 
 function run {
+  local server=""
   local config_dir=""
   local data_dir=""
   local log_dir=""
@@ -246,6 +272,10 @@ function run {
     local key="$1"
 
     case "$key" in
+      --server)
+        server="$2"
+        shift
+        ;;
       --config-dir)
         assert_not_empty "$key" "$2"
         config_dir="$2"
@@ -293,6 +323,8 @@ function run {
     shift
   done
 
+  assert_one_of "--server" "$server" "true" "false"
+
   assert_is_installed "supervisorctl"
   assert_is_installed "aws"
   assert_is_installed "curl"
@@ -321,7 +353,7 @@ function run {
   if [[ "$skip_consul_config" == "true" ]]; then
     log_info "The --skip-consul-config flag is set, so will not generate a default Consul config file."
   else
-    generate_consul_config "$config_dir" "$user" "$cluster_tag_key"
+    generate_consul_config "$server" "$config_dir" "$user" "$cluster_tag_key"
   fi
 
   generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$data_dir" "$log_dir" "$bin_dir" "$user"

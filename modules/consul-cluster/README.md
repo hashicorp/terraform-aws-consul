@@ -28,7 +28,7 @@ module "consul_cluster" {
   # Configure and start Consul during boot. It will automatically form a cluster with all nodes that have that same tag. 
   user_data = <<-EOF
               #!/bin/bash
-              /opt/consul/bin/run-consul --cluster-tag-key consul-cluster
+              /opt/consul/bin/run-consul --server true --cluster-tag-key consul-cluster
               EOF
   
   # ... See vars.tf for the other parameters you must define for the consul-cluster module

@@ -17,7 +17,7 @@ This script assumes you installed it, plus all of its dependencies (including Co
 module](/modules/install-consul). The default install path is `/opt/consul/bin`, so to start Consul, you just run:
 
 ```
-/opt/consul/bin/run-consul
+/opt/consul/bin/run-consul --server true
 ```
 
 This will:
@@ -44,22 +44,23 @@ See the [consul-cluster example](/examples/consul-cluster) for fully-working sam
 
 ## Command line Arguments
 
-The `run-consul` script accepts the following arguments, all optional:
+The `run-consul` script accepts the following arguments:
 
-* `cluster-tag-key`: Automatically form a cluster with Instances that have this tag key and the same tag value as the 
-  current Instance. Default is `consul-cluster`.
-* `config-dir`: The path to the Consul config folder. Default is to take the absolute path of `../config`, relative to 
-  the `run-consul` script itself.
-* `data-dir`: The path to the Consul config folder. Default is to take the absolute path of `../data`, relative to 
-  the `run-consul` script itself.
-* `user`: The user to run Consul as. Default is to use the owner of `config-dir`.
-* `skip-consul-config`: If this flag is set, don't generate a Consul configuration file. This is useful if you have
-  a custom configuration file and don't want to use any of of the default settings from `run-consul`. 
+* `server` (required): Set to true to run in server mode and false to run in client mode.
+* `cluster-tag-key` (optional): Automatically form a cluster with Instances that have this tag key and the same tag 
+  value as the current Instance. Default is `consul-cluster`.
+* `config-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../config`, 
+  relative to the `run-consul` script itself.
+* `data-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../data`, 
+  relative to the `run-consul` script itself.
+* `user` (optional): The user to run Consul as. Default is to use the owner of `config-dir`.
+* `skip-consul-config` (optional): If this flag is set, don't generate a Consul configuration file. This is useful if 
+  you have a custom configuration file and don't want to use any of of the default settings from `run-consul`. 
 
 Example:
 
 ```
-/opt/consul/bin/run-consul --cluster-tag-key consul-cluster
+/opt/consul/bin/run-consul --server true --cluster-tag-key consul-cluster
 ```
 
 
@@ -83,8 +84,9 @@ available.
 * [bind_addr](https://www.consul.io/docs/agent/options.html#bind_addr): Set to the EC2 Instance's private IP address, 
   as fetched from [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
 
-* [bootstrap_expect](https://www.consul.io/docs/agent/options.html#bootstrap_expect): Set this based on the EC2 
-  Instance's tags (using the [describe-tags API](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-tags.html)): 
+* [bootstrap_expect](https://www.consul.io/docs/agent/options.html#bootstrap_expect): If `--server` is set to true, 
+  set this config based on the EC2 Instance's tags (using the 
+  [describe-tags API](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-tags.html)): 
     * If there is a `aws:autoscaling:groupName` tag, that means this EC2 Instance is part of an Auto Scaling Group 
       (ASG), so set this config to the desired capacity of the ASG (fetched via the [describe-auto-scaling-groups 
       API](https://docs.aws.amazon.com/cli/latest/reference/autoscaling/describe-auto-scaling-groups.html)). 
@@ -109,7 +111,7 @@ available.
     * [region](https://www.consul.io/docs/agent/options.html#region): Set to the current AWS region (e.g. `us-east-1`), 
       as fetched from [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
       
-* [server](https://www.consul.io/docs/agent/options.html#server): Set to true.
+* [server](https://www.consul.io/docs/agent/options.html#server): Set to the value of `--server`.
 
 * [ui](https://www.consul.io/docs/agent/options.html#ui): Set to true.
 
@@ -139,7 +141,7 @@ If you want to override *all* the default settings, you can tell `run-consul` no
 at all using the `--skip-consul-config` flag:
 
 ```
-/opt/consul/bin/run-consul --skip-consul-config
+/opt/consul/bin/run-consul --server true --skip-consul-config
 ```
 
 
