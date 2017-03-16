@@ -14,10 +14,17 @@ There is a good chance it will work on other flavors of Debian, CentOS, and RHEL
 ## Quick start
 
 This script assumes you installed it, plus all of its dependencies (including Consul itself), using the [install-consul 
-module](/modules/install-consul). The default install path is `/opt/consul/bin`, so to start Consul, you just run:
+module](/modules/install-consul). The default install path is `/opt/consul/bin`, so to start Consul in server mode, 
+you run:
 
 ```
 /opt/consul/bin/run-consul --server true
+```
+
+To start Consul in client mode, you run:
+ 
+```
+/opt/consul/bin/run-consul --server false
 ```
 
 This will:

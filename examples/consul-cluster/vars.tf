@@ -12,7 +12,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 variable "ami_id" {
-  description = "The ID of the AMI to run in the cluster. This should be an AMI built from the Packer template under examples/consul-ami/consul.json."
+  description = "The ID of the AMI to run in the cluster. This should be an AMI built from the Packer template under examples/consul-ami/consul.json. To keep this example simple, we run the same AMI on both server and client nodes, but in real-world usage, your client nodes would also run your apps."
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -27,12 +27,17 @@ variable "aws_region" {
 
 variable "cluster_name" {
   description = "What to name the Consul cluster and all of its associated resources"
-  default     = "consul-cluster-example"
+  default     = "consul-example"
 }
 
-variable "cluster_size" {
-  description = "The number of EC2 Instances to have in the Consul cluster. We strongly recommend using 3 or 5."
+variable "num_servers" {
+  description = "The number of Consul server nodes to deploy. We strongly recommend using 3 or 5."
   default     = 3
+}
+
+variable "num_clients" {
+  description = "The number of Consul client nodes to deploy. You typically run the Consul client alongside your apps, so set this value to however many Instances make sense for your app code."
+  default     = 6
 }
 
 variable "cluster_tag_key" {

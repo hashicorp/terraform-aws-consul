@@ -17,11 +17,16 @@ import (
 const REPO_ROOT = "../"
 const CONSUL_CLUSTER_EXAMPLE_REL_PATH = "examples/consul-cluster"
 const CONSUL_CLUSTER_EXAMPLE_VAR_AMI_ID = "ami_id"
-const CONSUL_CLUSTER_EXAMPLE_VAR_ASG_NAME = "asg_name"
 const CONSUL_CLUSTER_EXAMPLE_VAR_AWS_REGION = "aws_region"
 const CONSUL_CLUSTER_EXAMPLE_VAR_CLUSTER_NAME = "cluster_name"
-const CONSUL_CLUSTER_EXAMPLE_VAR_CLUSTER_SIZE = "cluster_size"
-const CONSUL_CLUSTER_EXAMPLE_DEFAULT_CLUSTER_SIZE = 3
+const CONSUL_CLUSTER_EXAMPLE_VAR_NUM_SERVERS = "num_servers"
+const CONSUL_CLUSTER_EXAMPLE_VAR_NUM_CLIENTS = "num_clients"
+
+const CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS = 3
+const CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS = 6
+
+const CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME = "asg_name_servers"
+const CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME = "asg_name_clients"
 
 const CONSUL_AMI_EXAMPLE_PATH = "../examples/consul-ami/consul.json"
 
@@ -46,19 +51,25 @@ func runConsulClusterTest(t *testing.T, testName string, packerBuildName string)
 	terratestOptions.Vars = map[string]interface{} {
 		CONSUL_CLUSTER_EXAMPLE_VAR_AWS_REGION: resourceCollection.AwsRegion,
 		CONSUL_CLUSTER_EXAMPLE_VAR_CLUSTER_NAME: testName + resourceCollection.UniqueId,
-		CONSUL_CLUSTER_EXAMPLE_VAR_CLUSTER_SIZE: CONSUL_CLUSTER_EXAMPLE_DEFAULT_CLUSTER_SIZE,
+		CONSUL_CLUSTER_EXAMPLE_VAR_NUM_SERVERS: CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS,
+		CONSUL_CLUSTER_EXAMPLE_VAR_NUM_CLIENTS: CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS,
 		CONSUL_CLUSTER_EXAMPLE_VAR_AMI_ID: amiId,
 	}
 
 	deploy(t, terratestOptions)
-	checkConsulClusterIsWorking(t, terratestOptions, resourceCollection, logger)
+
+	// Check the Consul servers
+	checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME, terratestOptions, resourceCollection, logger)
+
+	// Check the Consul clients
+	checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terratestOptions, resourceCollection, logger)
 }
 
 // Check that the Consul cluster comes up within a reasonable time period and can respond to requests
-func checkConsulClusterIsWorking(t *testing.T, terratestOptions *terratest.TerratestOptions, resourceCollection *terratest.RandomResourceCollection, logger *log.Logger) {
-	asgName, err := terratest.Output(terratestOptions, CONSUL_CLUSTER_EXAMPLE_VAR_ASG_NAME)
+func checkConsulClusterIsWorking(t *testing.T, asgNameOutputVar string, terratestOptions *terratest.TerratestOptions, resourceCollection *terratest.RandomResourceCollection, logger *log.Logger) {
+	asgName, err := terratest.Output(terratestOptions, asgNameOutputVar)
 	if err != nil {
-		t.Fatalf("Could not read output %s due to error: %v", CONSUL_CLUSTER_EXAMPLE_VAR_ASG_NAME, err)
+		t.Fatalf("Could not read output %s due to error: %v", asgNameOutputVar, err)
 	}
 
 	nodeIpAddress := getIpAddressOfAsgInstance(t, asgName, resourceCollection.AwsRegion)
@@ -81,8 +92,8 @@ func testConsulCluster(t *testing.T, nodeIpAddress string, logger *log.Logger) {
 			return "", err
 		}
 
-		if len(members) != CONSUL_CLUSTER_EXAMPLE_DEFAULT_CLUSTER_SIZE {
-			return "", fmt.Errorf("Expected the cluster to have %d members, but found %d", CONSUL_CLUSTER_EXAMPLE_DEFAULT_CLUSTER_SIZE, len(members))
+		if len(members) != CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS {
+			return "", fmt.Errorf("Expected the cluster to have %d members, but found %d", CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS, len(members))
 		}
 
 		leader, err := consulClient.Status().Leader()
