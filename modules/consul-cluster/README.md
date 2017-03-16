@@ -240,6 +240,21 @@ We will add a script in the future to automate this process (PRs are welcome!).
 
 
 
+## What happens if a node crashes?
+
+There are two ways a Consul node may go down:
+ 
+1. The Consul process may crash. In that case, `supervisor` should restart it automatically.
+1. The EC2 Instance running Consul dies. In that case, the Auto Scaling Group should launch a replacement automatically. 
+   Note that in this case, since the Consul agent did not exit gracefully, and the replacement will have a different ID,
+   you may have to manually clean out the old nodes using the [force-leave
+   command](https://www.consul.io/docs/commands/force-leave.html). We may add a script to do this 
+   automatically in the future. For more info, see the [Consul Outage 
+   documentation](https://www.consul.io/docs/guides/outage.html).
+
+
+
+
 ## Security
 
 Here are some of the main security considerations to keep in mind when using this module:
