@@ -1,5 +1,5 @@
 output "num_servers" {
-  value = "${var.num_servers}"
+  value = "${module.consul_servers.cluster_size}"
 }
 
 output "asg_name_servers" {
@@ -23,7 +23,7 @@ output "security_group_id_servers" {
 }
 
 output "num_clients" {
-  value = "${var.num_clients}"
+  value = "${module.consul_clients.cluster_size}"
 }
 
 output "asg_name_clients" {

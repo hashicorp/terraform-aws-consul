@@ -54,8 +54,10 @@ See the [consul-cluster example](/examples/consul-cluster) for fully-working sam
 The `run-consul` script accepts the following arguments:
 
 * `server` (required): Set to true to run in server mode and false to run in client mode.
-* `cluster-tag-key` (optional): Automatically form a cluster with Instances that have this tag key and the same tag 
-  value as the current Instance. Default is `consul-cluster`.
+* `cluster-tag-key` (optional): Automatically form a cluster with Instances that have this tag key and the tag value
+  in `--cluster-tag-value`. Default is `consul-servers`.
+* `cluster-tag-value` (optional): Automatically form a cluster with Instances that have the tag key in 
+  `--cluster-tag-key` and this tag value. Default is `auto-join`.
 * `config-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../config`, 
   relative to the `run-consul` script itself.
 * `data-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../data`, 
@@ -67,7 +69,7 @@ The `run-consul` script accepts the following arguments:
 Example:
 
 ```
-/opt/consul/bin/run-consul --server true --cluster-tag-key consul-cluster
+/opt/consul/bin/run-consul --server true --cluster-tag-key consul-cluster --cluster-tag-value prod-cluster 
 ```
 
 

@@ -76,7 +76,7 @@ all the Consul Instances using the [AWS CLI](https://aws.amazon.com/cli/) and
 ```
 aws ec2 describe-instances \
   --region us-east-1 \
-  --filter "Name=tag:consul-cluster,Values=consul-cluster-example" "Name=instance-state-name,Values=running" | \
+  --filter "Name=tag:consul-servers,Values=consul-example" "Name=instance-state-name,Values=running" | \
   jq -r '.Reservations[].Instances[].PublicIpAddress'
   
 11.22.33.44

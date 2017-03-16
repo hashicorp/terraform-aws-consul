@@ -50,13 +50,17 @@ data "template_file" "user_data_server" {
   template = "${file("${path.module}/user-data.sh")}"
 
   vars {
-    cluster_tag_key = "${var.cluster_tag_key}"
-    server          = "true"
+    cluster_tag_key   = "${var.cluster_tag_key}"
+    cluster_tag_value = "${var.cluster_name}"
+    server            = "true"
   }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY THE CONSUL CLIENT NODES
+# Note that you do not have to use the consul-cluster module to deploy your clients. We do so simply because it
+# provides a convenient way to deploy an Auto Scaling Group with the necessary IAM and security group permissions for
+# Consul, but feel free to deploy those clients however you choose (e.g. a single EC2 Instance, a Docker cluster, etc).
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "consul_clients" {
@@ -69,8 +73,7 @@ module "consul_clients" {
   cluster_size  = "${var.num_clients}"
   instance_type = "t2.micro"
 
-  # The EC2 Instances will use these tags to automatically discover each other and form a cluster
-  cluster_tag_key   = "${var.cluster_tag_key}"
+  cluster_tag_key   = "consul-clients"
   cluster_tag_value = "${var.cluster_name}"
 
   ami_id    = "${var.ami_id}"
@@ -95,8 +98,9 @@ data "template_file" "user_data_client" {
   template = "${file("${path.module}/user-data.sh")}"
 
   vars {
-    cluster_tag_key = "${var.cluster_tag_key}"
-    server          = "false"
+    cluster_tag_key   = "${var.cluster_tag_key}"
+    cluster_tag_value = "${var.cluster_name}"
+    server            = "false"
   }
 }
 
