@@ -11,6 +11,6 @@ func TestConsulClusterWithUbuntuAmi(t *testing.T) {
 
 func TestConsulClusterWithAmazonLinuxAmi(t *testing.T) {
 	t.Parallel()
-	runConsulClusterTest(t, "TestConsulAmazonLinux", "amazon-linux-ami")
+	runConsulClusterTest(t, "TestConsulAmznLnx", "amazon-linux-ami")
 }
 

@@ -40,7 +40,7 @@ variable "cluster_size" {
 
 variable "cluster_tag_key" {
   description = "Add a tag with this key and the value var.cluster_tag_value to each Instance in the ASG. This can be used to automatically find other Consul nodes and form a cluster."
-  default     = "consul-cluster"
+  default     = "consul-servers"
 }
 
 variable "cluster_tag_value" {

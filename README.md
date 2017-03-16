@@ -2,7 +2,10 @@
 
 This repo contains a Blueprint for how to deploy a [Consul](https://www.consul.io/) cluster on 
 [AWS](https://aws.amazon.com/) using [Terraform](https://www.terraform.io/). Consul is a distributed, highly-available 
-tool that you can use for service discovery and key/value storage. 
+tool that you can use for service discovery and key/value storage. A Consul cluster typically includes a small number
+of server nodes, which are responsible for being part of the [consensus 
+quorum](https://www.consul.io/docs/internals/consensus.html), and a larger number of client nodes, which you typically 
+run alongside your apps:
 
 ![Consul architecture](/_docs/architecture.png)
 
@@ -16,12 +19,21 @@ Each Blueprint has the following folder structure:
 * [examples](/examples): This folder contains examples of how to use the modules.
 * [test](/test): Automated tests for the modules and examples.
 
-There are two steps to deploy a Consul cluster using this Blueprint:
+To deploy Consul servers using this Blueprint:
 
 1. Create a Consul AMI using a Packer template that references the [install-consul module](/modules/install-consul).
- Here is an [example Packer template](/examples/consul-ami#quick-start). 
-1. Deploy that AMI across an Auto Scaling Group using the Terraform [consul-cluster module](/modules/consul-cluster). This will execute the [run-consul script](/modules/run-consul) during boot on each Instance in the Auto Scaling Group to form the Consul cluster. Here is 
- [an example Terraform configuration](/examples/consul-cluster#quick-start) to provision a Consul cluster.
+   Here is an [example Packer template](/examples/consul-ami#quick-start). 
+1. Deploy that AMI across an Auto Scaling Group using the Terraform [consul-cluster module](/modules/consul-cluster) 
+   and execute the [run-consul script](/modules/run-consul) with the `--server` flag during boot on each 
+   Instance in the Auto Scaling Group to form the Consul cluster. Here is [an example Terraform 
+   configuration](/examples/consul-cluster#quick-start) to provision a Consul cluster.
+
+To deploy Consul clients using this Blueprint:
+ 
+1. Use the [install-consul module](/modules/install-consul) to install Consul alongside your application code.
+1. Before booting your app, execute the [run-consul script](/modules/run-consul) with `--client` flag.
+1. Your app can now using the local Consul agent for service discovery and key/value storage. 
+ 
  
 
 
@@ -54,8 +66,8 @@ This Blueprint is maintained by [Gruntwork](http://www.gruntwork.io/). If you ne
   [Packer](https://www.packer.io/) template to create a Consul 
   [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html).
 
-* [consul-cluster](/modules/consul-cluster): The module includes Terraform code to deploy a Consul AMI across an [Auto Scaling 
-  Group](https://aws.amazon.com/autoscaling/). 
+* [consul-cluster](/modules/consul-cluster): The module includes Terraform code to deploy a Consul AMI across an [Auto 
+  Scaling Group](https://aws.amazon.com/autoscaling/). 
   
 * [run-consul](/modules/run-consul): This module includes the scripts to configure and run Consul. It is used
   by the above Packer module at build-time to set configurations, and by the Terraform module at runtime 

@@ -1,23 +1,47 @@
-output "asg_name" {
-  value = "${module.consul.asg_name}"
+output "num_servers" {
+  value = "${module.consul_servers.cluster_size}"
 }
 
-output "cluster_size" {
-  value = "${module.consul.cluster_size}"
+output "asg_name_servers" {
+  value = "${module.consul_servers.asg_name}"
 }
 
-output "launch_config_name" {
-  value = "${module.consul.launch_config_name}"
+output "launch_config_name_servers" {
+  value = "${module.consul_servers.launch_config_name}"
 }
 
-output "iam_role_arn" {
-  value = "${module.consul.iam_role_arn}"
+output "iam_role_arn_servers" {
+  value = "${module.consul_servers.iam_role_arn}"
 }
 
-output "iam_role_id" {
-  value = "${module.consul.iam_role_id}"
+output "iam_role_id_servers" {
+  value = "${module.consul_servers.iam_role_id}"
 }
 
-output "security_group_id" {
-  value = "${module.consul.security_group_id}"
+output "security_group_id_servers" {
+  value = "${module.consul_servers.security_group_id}"
+}
+
+output "num_clients" {
+  value = "${module.consul_clients.cluster_size}"
+}
+
+output "asg_name_clients" {
+  value = "${module.consul_clients.asg_name}"
+}
+
+output "launch_config_name_clients" {
+  value = "${module.consul_clients.launch_config_name}"
+}
+
+output "iam_role_arn_clients" {
+  value = "${module.consul_clients.iam_role_arn}"
+}
+
+output "iam_role_id_clients" {
+  value = "${module.consul_clients.iam_role_id}"
+}
+
+output "security_group_id_clients" {
+  value = "${module.consul_clients.security_group_id}"
 }
