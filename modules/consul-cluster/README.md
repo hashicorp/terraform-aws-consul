@@ -90,9 +90,15 @@ Copy and paste one of these IPs and use it with the `members` command to see a l
 > consul members -rpc-addr=<INSTANCE_IP_ADDR>:8400
 
 Node                 Address             Status  Type    Build  Protocol  DC
-i-02dbaa6ab6defffd5  172.31.0.127:8301   alive   server  0.7.5  2         us-east-1
-i-0614bc1bb3d8c3a5e  172.31.41.172:8301  alive   server  0.7.5  2         us-east-1
-i-072d920b2a927c48b  172.31.55.82:8301   alive   server  0.7.5  2         us-east-1
+i-0051c3ea00e9691a0  172.31.35.148:8301  alive   client  0.7.5  2         us-east-1
+i-00aea529cce1761d4  172.31.47.236:8301  alive   client  0.7.5  2         us-east-1
+i-01bc94ccfa032d82d  172.31.27.193:8301  alive   client  0.7.5  2         us-east-1
+i-04271e97808f15d63  172.31.25.174:8301  alive   server  0.7.5  2         us-east-1
+i-0483b07abe49ea7ff  172.31.5.42:8301    alive   client  0.7.5  2         us-east-1
+i-098fb1ebd5ca443bf  172.31.55.203:8301  alive   client  0.7.5  2         us-east-1
+i-0eb961b6825f7871c  172.31.65.9:8301    alive   client  0.7.5  2         us-east-1
+i-0ee6dcf715adbff5f  172.31.67.235:8301  alive   server  0.7.5  2         us-east-1
+i-0fd0e63682a94b245  172.31.54.84:8301   alive   server  0.7.5  2         us-east-1
 ```
 
 You can also try inserting a value:
