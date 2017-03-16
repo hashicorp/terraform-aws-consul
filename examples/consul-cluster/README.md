@@ -2,7 +2,7 @@
 
 This folder shows an example of Terraform code that uses the [consul-cluster](/modules/consul-cluster) module to deploy 
 a [Consul](https://www.consul.io/) cluster in [AWS](https://aws.amazon.com/). The cluster consists of two Auto Scaling
-Groups (ASGs): one with a small number of Consul server nodes, which are responsible for being part of the [concensus 
+Groups (ASGs): one with a small number of Consul server nodes, which are responsible for being part of the [consensus 
 quorum](https://www.consul.io/docs/internals/consensus.html), and one with a larger number of client nodes, which 
 would typically run alongside your apps:
 

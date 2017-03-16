@@ -3,7 +3,7 @@
 This repo contains a Blueprint for how to deploy a [Consul](https://www.consul.io/) cluster on 
 [AWS](https://aws.amazon.com/) using [Terraform](https://www.terraform.io/). Consul is a distributed, highly-available 
 tool that you can use for service discovery and key/value storage. A Consul cluster typically includes a small number
-of server nodes, which are responsible for being part of the [concensus 
+of server nodes, which are responsible for being part of the [consensus 
 quorum](https://www.consul.io/docs/internals/consensus.html), and a larger number of client nodes, which you typically 
 run alongside your apps:
 
