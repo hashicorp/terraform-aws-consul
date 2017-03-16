@@ -85,6 +85,7 @@ func testConsulCluster(t *testing.T, nodeIpAddress string, logger *log.Logger) {
 	consulClient := createConsulClient(t, nodeIpAddress)
 	maxRetries := 60
 	sleepBetweenRetries := 10 * time.Second
+	expectedMembers := CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS + CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS
 
 	leader, err := util.DoWithRetry("Check Consul members", maxRetries, sleepBetweenRetries, logger, func() (string, error) {
 		members, err := consulClient.Agent().Members(false)
@@ -92,8 +93,8 @@ func testConsulCluster(t *testing.T, nodeIpAddress string, logger *log.Logger) {
 			return "", err
 		}
 
-		if len(members) != CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS {
-			return "", fmt.Errorf("Expected the cluster to have %d members, but found %d", CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS, len(members))
+		if len(members) != expectedMembers {
+			return "", fmt.Errorf("Expected the cluster to have %d members, but found %d", expectedMembers, len(members))
 		}
 
 		leader, err := consulClient.Status().Leader()
