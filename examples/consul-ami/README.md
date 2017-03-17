@@ -41,30 +41,34 @@ exactly, except for one change: we recommend replacing the `file` provisioner wi
 provisioner. Instead of:
 
 ```json
-"provisioners": [{
-  "type": "file",
-  "source": "{{template_dir}}/../../../consul-aws-blueprint",
-  "destination": "/tmp"
-},{
-  "type": "shell",
-  "inline": [
-    "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}"
-  ],
-  "pause_before": "30s"
-}]
+{
+  "provisioners": [{
+    "type": "file",
+    "source": "{{template_dir}}/../../../consul-aws-blueprint",
+    "destination": "/tmp"
+  },{
+    "type": "shell",
+    "inline": [
+      "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}"
+    ],
+    "pause_before": "30s"
+  }]
+}
 ```
 
 Your code should look more like this:
 
 ```json
-"provisioners": [{
-  "type": "shell",
-  "inline": [
-    "git clone --branch <BLUEPRINT_VERSION> https://github.com/gruntwork-io/consul-aws-blueprint.git"
-    "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}"
-  ],
-  "pause_before": "30s"
-}]
+{
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "git clone --branch <BLUEPRINT_VERSION> https://github.com/gruntwork-io/consul-aws-blueprint.git /tmp/consul-aws-blueprint",
+      "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}"
+    ],
+    "pause_before": "30s"
+  }]
+}
 ```
 
 You should replace `<BLUEPRINT_VERSION>` in the code above with the version of this blueprint that you want to use (see
