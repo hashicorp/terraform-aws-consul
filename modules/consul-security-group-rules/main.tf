@@ -92,22 +92,3 @@ resource "aws_security_group_rule" "allow_dns_udp_inbound" {
   security_group_id = "${var.security_group_id}"
 }
 
-resource "aws_security_group_rule" "allow_ssh_inbound" {
-  type        = "ingress"
-  from_port   = "${var.ssh_port}"
-  to_port     = "${var.ssh_port}"
-  protocol    = "tcp"
-  cidr_blocks = ["${var.allowed_ssh_cidr_blocks}"]
-
-  security_group_id = "${var.security_group_id}"
-}
-
-resource "aws_security_group_rule" "allow_all_outbound" {
-  type        = "egress"
-  from_port   = 0
-  to_port     = 0
-  protocol    = "-1"
-  cidr_blocks = ["0.0.0.0/0"]
-
-  security_group_id = "${var.security_group_id}"
-}

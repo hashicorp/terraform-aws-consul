@@ -17,12 +17,6 @@ variable "allowed_inbound_cidr_blocks" {
 # These parameters have reasonable defaults.
 # ---------------------------------------------------------------------------------------------------------------------
 
-variable "allowed_ssh_cidr_blocks" {
-  description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow SSH connections"
-  type        = "list"
-  default     = []
-}
-
 variable "server_rpc_port" {
   description = "The port used by servers to handle incoming requests from other agents."
   default     = 8300
@@ -51,9 +45,4 @@ variable "http_api_port" {
 variable "dns_port" {
   description = "The port used to resolve DNS queries."
   default     = 8600
-}
-
-variable "ssh_port" {
-  description = "The port used for SSH connections"
-  default     = 22
 }

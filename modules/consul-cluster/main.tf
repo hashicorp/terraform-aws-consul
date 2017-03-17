@@ -94,8 +94,29 @@ resource "aws_security_group" "lc_security_group" {
   }
 }
 
+resource "aws_security_group_rule" "allow_ssh_inbound" {
+  type        = "ingress"
+  from_port   = "${var.ssh_port}"
+  to_port     = "${var.ssh_port}"
+  protocol    = "tcp"
+  cidr_blocks = ["${var.allowed_ssh_cidr_blocks}"]
+
+  security_group_id = "${aws_security_group.lc_security_group.id}"
+}
+
+resource "aws_security_group_rule" "allow_all_outbound" {
+  type        = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.lc_security_group.id}"
+}
+
+
 # ---------------------------------------------------------------------------------------------------------------------
-# THE INBOUND/OUTBOUND RULES FOR THE SECURITY GROUP COME FROM THE CONSUL-SECURITY-GROUP-RULES MODULE
+# THE CONSUL-SPECIFIC INBOUND/OUTBOUND RULES COME FROM THE CONSUL-SECURITY-GROUP-RULES MODULE
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "security_group_rules" {
@@ -103,7 +124,6 @@ module "security_group_rules" {
 
   security_group_id           = "${aws_security_group.lc_security_group.id}"
   allowed_inbound_cidr_blocks = ["${var.allowed_inbound_cidr_blocks}"]
-  allowed_ssh_cidr_blocks     = ["${var.allowed_ssh_cidr_blocks}"]
 
   server_rpc_port = "${var.server_rpc_port}"
   cli_rpc_port    = "${var.cli_rpc_port}"
@@ -111,7 +131,6 @@ module "security_group_rules" {
   serf_wan_port   = "${var.serf_wan_port}"
   http_api_port   = "${var.http_api_port}"
   dns_port        = "${var.dns_port}"
-  ssh_port        = "${var.ssh_port}"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
