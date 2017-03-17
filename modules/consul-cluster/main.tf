@@ -76,3 +76,94 @@ resource "aws_launch_configuration" "launch_configuration" {
     create_before_destroy = true
   }
 }
+
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE A SECURITY GROUP TO CONTROL WHAT REQUESTS CAN GO IN AND OUT OF EACH EC2 INSTANCE
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_security_group" "lc_security_group" {
+  name_prefix = "${var.cluster_name}"
+  description = "Security group for the ${var.cluster_name} launch configuration"
+  vpc_id      = "${var.vpc_id}"
+
+  # aws_launch_configuration.launch_configuration in this module sets create_before_destroy to true, which means
+  # everything it depends on, including this resource, must set it as well, or you'll get cyclic dependency errors
+  # when you try to do a terraform destroy.
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# THE INBOUND/OUTBOUND RULES FOR THE SECURITY GROUP COME FROM THE CONSUL-SECURITY-GROUP-RULES MODULE
+# ---------------------------------------------------------------------------------------------------------------------
+
+module "security_group_rules" {
+  source = "../consul-security-group-rules"
+
+  security_group_id           = "${aws_security_group.lc_security_group.id}"
+  allowed_inbound_cidr_blocks = ["${var.allowed_inbound_cidr_blocks}"]
+  allowed_ssh_cidr_blocks     = ["${var.allowed_ssh_cidr_blocks}"]
+
+  server_rpc_port = "${var.server_rpc_port}"
+  cli_rpc_port    = "${var.cli_rpc_port}"
+  serf_lan_port   = "${var.serf_lan_port}"
+  serf_wan_port   = "${var.serf_wan_port}"
+  http_api_port   = "${var.http_api_port}"
+  dns_port        = "${var.dns_port}"
+  ssh_port        = "${var.ssh_port}"
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ATTACH AN IAM ROLE TO EACH EC2 INSTANCE
+# We can use the IAM role to grant the instance IAM permissions so we can use the AWS CLI without having to figure out
+# how to get our secret AWS access keys onto the box.
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_iam_instance_profile" "instance_profile" {
+  name_prefix = "${var.cluster_name}"
+  path        = "${var.instance_profile_path}"
+  roles       = ["${aws_iam_role.instance_role.name}"]
+
+  # aws_launch_configuration.launch_configuration in this module sets create_before_destroy to true, which means
+  # everything it depends on, including this resource, must set it as well, or you'll get cyclic dependency errors
+  # when you try to do a terraform destroy.
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_iam_role" "instance_role" {
+  name_prefix        = "${var.cluster_name}"
+  assume_role_policy = "${data.aws_iam_policy_document.instance_role.json}"
+
+  # aws_iam_instance_profile.instance_profile in this module sets create_before_destroy to true, which means
+  # everything it depends on, including this resource, must set it as well, or you'll get cyclic dependency errors
+  # when you try to do a terraform destroy.
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+data "aws_iam_policy_document" "instance_role" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# THE IAM POLICIES COME FROM THE CONSUL-IAM-POLICIES MODULE
+# ---------------------------------------------------------------------------------------------------------------------
+
+module "iam_policies" {
+  source = "../consul-iam-policies"
+
+  iam_role_id = "${aws_iam_role.instance_role.id}"
+}
