@@ -4,22 +4,28 @@ This folder contains a [Terraform](https://www.terraform.io/) module that define
 [Consul](https://www.consul.io/) cluster to control the traffic that is allowed to go in and out of the cluster. 
 
 Normally, you'd get these rules by default if you're using the [consul-cluster module](/examples/consul-cluster), but if 
-you're running Consul on top of a different cluster (e.g. you're co-locating Consul with Nomad), then you can use this 
-module to add the necessary security group rules that that cluster.
+you're running Consul on top of a different cluster, then you can use this module to add the necessary security group 
+rules to that cluster. For example, imagine you were using the [nomad-cluster 
+module](https://github.com/gruntwork-io/nomad-aws-blueprint/tree/master/modules/nomad-cluster) to run a cluster of 
+servers that have both Nomad and Consul on each node:
 
+```hcl
+module "nomad_servers" {
+  source = "git::git@github.com:gruntwork-io/nomad-aws-blueprint.git//modules/nomad-cluster?ref=v0.0.1"
+  
+  # This AMI has both Nomad and Consul installed
+  ami_id = "ami-1234abcd"
+}
+```
 
-
-
-## How do you use this module?
-
-This folder defines a [Terraform module](https://www.terraform.io/docs/modules/usage.html), which you can use in your
-code by adding a `module` configuration and setting its `source` parameter to URL of this folder:
+The `nomad-cluster` module will provide the security group rules for Nomad, but not for Consul. To ensure those servers
+have the necessary ports open for using Consul, you can use this module as follows:
 
 ```hcl
 module "security_group_rules" {
-  source = "github.com/gruntwork-io/consul-aws-blueprint//modules/consul-security-group-rules?ref=v0.0.1"
+  source = "git::git@github.com:gruntwork-io/consul-aws-blueprint.git//modules/consul-security-group-rules?ref=v0.0.2"
 
-  security_group_id = "${module.some_cluster.security_group_id}"
+  security_group_id = "${module.nomad_servers.security_group_id}"
   
   # ... (other params omitted) ...
 }

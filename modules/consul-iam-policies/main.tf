@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------------------------------------------------
-# ATTACH AN IAM POLICY THAT ALLOWS THE CONSUL NODES TO AUTOAMTICALLY DISCOVER EACH OTHER AND FORM A CLUSTER
+# ATTACH AN IAM POLICY THAT ALLOWS THE CONSUL NODES TO AUTOMATICALLY DISCOVER EACH OTHER AND FORM A CLUSTER
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_iam_role_policy" "auto_discover_cluster" {
