@@ -131,6 +131,15 @@ function get_cluster_size {
   fi
 }
 
+# Get the value for a specific tag from the tags JSON returned by the AWS describe-tags:
+# https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-tags.html
+function get_tag_value {
+  local readonly tags="$1"
+  local readonly tag_key="$2"
+
+  echo "$tags" | jq -r ".Tags[] | select(.Key == \"$tag_key\") | .Value"
+}
+
 function assert_is_installed {
   local readonly name="$1"
 
