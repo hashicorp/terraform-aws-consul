@@ -33,7 +33,10 @@ To deploy Consul clients using this Blueprint:
 1. Use the [install-consul module](/modules/install-consul) to install Consul alongside your application code.
 1. Before booting your app, execute the [run-consul script](/modules/run-consul) with `--client` flag.
 1. Your app can now using the local Consul agent for service discovery and key/value storage. 
- 
+1. Optionally, you can use the [install-dnsmasq module](/modules/install-dnsmasq) to configure Consul as the DNS for a
+   specific domain so that URLs such as `foo.service.consul` resolve automatically to the IP address(es) for a service 
+   `foo` registered in Consul.
+   
  
 
 
@@ -60,6 +63,9 @@ This Blueprint is maintained by [Gruntwork](http://www.gruntwork.io/). If you ne
 * Blueprints that meet compliance requirements, such as HIPAA.
 * Consulting & Training on AWS, Terraform, and DevOps.
 
+
+
+
 ## Code included in this Blueprint:
 
 * [install-consul](/modules/install-consul): This module installs Consul using a
@@ -73,6 +79,16 @@ This Blueprint is maintained by [Gruntwork](http://www.gruntwork.io/). If you ne
   by the above Packer module at build-time to set configurations, and by the Terraform module at runtime 
   with [User Data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-data-shell-scripts)
   to create the cluster.
+
+* [install-dnsmasq module](/modules/install-dnsmasq): Install [Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html)
+  and configure it to forward requests for a specific domain to Consul. This allows you to use Consul as a DNS server
+  for URLs such as `foo.service.consul`.
+
+* [consul-iam-policies](/modules/consul-iam-policies): Defines the IAM policies necessary for a Consul cluster. 
+
+* [consul-security-group-rules](/modules/consul-security-group-rules): Defines the security group rules used by a 
+  Consul cluster to control the traffic that is allowed to go in and out of the cluster.
+
 
 
 

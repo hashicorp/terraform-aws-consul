@@ -50,7 +50,8 @@
   },{
     "type": "shell",
     "inline": [
-      "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}"
+      "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}",
+      "/tmp/consul-aws-blueprint/modules/install-dnsmasq/install-dnsmasq"
     ],
     "pause_before": "30s"
   }]
