@@ -10,8 +10,9 @@ top of:
 
 These AMIs will have [Consul](https://www.consul.io/) installed and configured to automatically join a cluster during 
 boot-up. They also have [Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) installed and configured to use 
-Consul for DNS lookups of the `.consul` domain (e.g. `foo.service.consul`). To see how to deploy this AMI, check out 
-the [consul-cluster example](/examples/consul-cluster). 
+Consul for DNS lookups of the `.consul` domain (e.g. `foo.service.consul`) (see [registering 
+services](https://www.consul.io/intro/getting-started/services.html) for instructions on how to register your services
+in Consul). To see how to deploy this AMI, check out the [consul-cluster example](/examples/consul-cluster). 
 
 For more info on Consul installation and configuration, check out the 
 [install-consul](/modules/install-consul) and [install-dnsmasq](/modules/install-dnsmasq) documentation.

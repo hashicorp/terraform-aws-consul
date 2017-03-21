@@ -34,8 +34,9 @@ To deploy Consul clients using this Blueprint:
 1. Before booting your app, execute the [run-consul script](/modules/run-consul) with `--client` flag.
 1. Your app can now using the local Consul agent for service discovery and key/value storage. 
 1. Optionally, you can use the [install-dnsmasq module](/modules/install-dnsmasq) to configure Consul as the DNS for a
-   specific domain so that URLs such as `foo.service.consul` resolve automatically to the IP address(es) for a service 
-   `foo` registered in Consul.
+   specific domain (e.g. `.consul`) so that URLs such as `foo.service.consul` resolve automatically to the IP 
+   address(es) for a service `foo` registered in Consul (all other domain names will be continue to resolve using the
+   default resolver on the OS).
    
  
 

@@ -7,7 +7,7 @@
 
 set -e
 
-readonly DEFAULT_CONSUL_DOMAIN="CONSUL"
+readonly DEFAULT_CONSUL_DOMAIN="consul"
 readonly DEFAULT_CONSUL_IP="127.0.0.1"
 readonly DEFAULT_CONSUL_DNS_PORT=8600
 
