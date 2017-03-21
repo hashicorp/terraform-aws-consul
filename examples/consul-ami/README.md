@@ -1,17 +1,21 @@
 # Consul AMI
 
-This folder shows an example of how to use the [install-consul](/modules/install-consul) module with 
-[Packer](https://www.packer.io/) to create [Amazon Machine Images 
-(AMIs)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) that have Consul installed on top of:
+This folder shows an example of how to use the [install-consul](/modules/install-consul) and 
+[install-dnsmasq](/modules/install-dnsmasq) modules with [Packer](https://www.packer.io/) to create [Amazon Machine 
+Images (AMIs)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) that have Consul and Dnsmasq installed on 
+top of:
  
 1. Ubuntu 16.04
 1. Amazon Linux
 
 These AMIs will have [Consul](https://www.consul.io/) installed and configured to automatically join a cluster during 
-boot-up. To see how to deploy this AMI, check out the [consul-cluster example](/examples/consul-cluster). 
+boot-up. They also have [Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) installed and configured to use 
+Consul for DNS lookups of the `.consul` domain (e.g. `foo.service.consul`) (see [registering 
+services](https://www.consul.io/intro/getting-started/services.html) for instructions on how to register your services
+in Consul). To see how to deploy this AMI, check out the [consul-cluster example](/examples/consul-cluster). 
 
 For more info on Consul installation and configuration, check out the 
-[install-consul](/modules/install-consul) documentation.
+[install-consul](/modules/install-consul) and [install-dnsmasq](/modules/install-dnsmasq) documentation.
 
 
 
@@ -24,8 +28,8 @@ To build the Consul AMI:
 1. Configure your AWS credentials using one of the [options supported by the AWS 
    SDK](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html). Usually, the easiest option is to
    set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
-1. Update the `variables` section of the `consul.json` Packer template to configure the AWS region and Consul version 
-   you wish to use.
+1. Update the `variables` section of the `consul.json` Packer template to configure the AWS region, Consul version, and 
+   Dnsmasq version you wish to use.
 1. Run `packer build consul.json`.
 
 When the build finishes, it will output the IDs of the new AMIs. To see how to deploy one of these AMIs, check out the 
@@ -49,7 +53,8 @@ provisioner. Instead of:
   },{
     "type": "shell",
     "inline": [
-      "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}"
+      "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}",
+      "/tmp/consul-aws-blueprint/modules/install-dnsmasq/install-dnsmasq"
     ],
     "pause_before": "30s"
   }]
@@ -64,7 +69,8 @@ Your code should look more like this:
     "type": "shell",
     "inline": [
       "git clone --branch <BLUEPRINT_VERSION> https://github.com/gruntwork-io/consul-aws-blueprint.git /tmp/consul-aws-blueprint",
-      "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}"
+      "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}",
+      "/tmp/consul-aws-blueprint/modules/install-dnsmasq/install-dnsmasq"
     ],
     "pause_before": "30s"
   }]
