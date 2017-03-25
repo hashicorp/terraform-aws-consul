@@ -73,6 +73,8 @@ function has_apt_get {
 }
 
 function install_dnsmasq {
+  local readonly consul_ip="$1"
+
   log_info "Installing Dnsmasq"
 
   if $(has_apt_get); then
@@ -81,6 +83,8 @@ function install_dnsmasq {
   elif $(has_yum); then
     sudo yum update -y
     sudo yum install -y dnsmasq
+    sudo echo "prepend domain-name-servers $consul_ip;" >> "/etc/dhcp/dhclient.conf"
+    sudo chkconfig dnsmasq on
   else
     log_error "Could not find apt-get or yum. Cannot install on this OS."
     exit 1
@@ -99,8 +103,8 @@ function write_consul_config {
 # Enable forward lookup of the '$consul_domain' domain:
 server=/${consul_domain}/${consul_ip}#${consul_port}
 
-# Accept DNS queries only from hosts whose address is on a local subnet.
-local-service
+listen-address=127.0.0.1
+bind-interfaces
 EOF
 }
 
@@ -143,7 +147,7 @@ function install {
   done
 
   log_info "Starting Dnsmasq install"
-  install_dnsmasq
+  install_dnsmasq "$consul_ip"
   write_consul_config "$consul_domain" "$consul_ip" "$consul_dns_port"
   log_info "Dnsmasq install complete!"
 }
