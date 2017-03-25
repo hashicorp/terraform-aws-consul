@@ -83,7 +83,7 @@ function install_dnsmasq {
   elif $(has_yum); then
     sudo yum update -y
     sudo yum install -y dnsmasq
-    sudo echo "prepend domain-name-servers $consul_ip;" >> "/etc/dhcp/dhclient.conf"
+    echo "prepend domain-name-servers $consul_ip;" | sudo tee -a "/etc/dhcp/dhclient.conf" > /dev/null
     sudo chkconfig dnsmasq on
   else
     log_error "Could not find apt-get or yum. Cannot install on this OS."
