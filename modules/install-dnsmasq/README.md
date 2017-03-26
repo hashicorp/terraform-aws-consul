@@ -55,3 +55,14 @@ Example:
 ```
 install-dnsmasq
 ```
+
+
+
+
+## Troubleshooting
+
+Add the `+trace` argument to `dig` commands to more clearly see what's going on:
+
+```
+dig vault.service.consul +trace
+```
