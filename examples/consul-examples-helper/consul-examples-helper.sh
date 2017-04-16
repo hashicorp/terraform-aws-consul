@@ -169,6 +169,7 @@ function run {
   assert_is_installed "aws"
   assert_is_installed "jq"
   assert_is_installed "terraform"
+  assert_is_installed "consul"
 
   local server_ips
   server_ips=$(get_all_consul_server_ips)
