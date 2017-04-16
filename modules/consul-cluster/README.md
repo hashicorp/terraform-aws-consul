@@ -69,25 +69,26 @@ API](https://www.consul.io/docs/agent/http.html). Note that this only works if t
 subnets and/or your default VPC (as in the [consul-cluster example](/examples/consul-cluster)), which is OK for testing
 and experimentation, but NOT recommended for production usage.
 
-To use the HTTP API, you first need to get the public IP address of one of the Consul Instances. You can get the IPs of 
-all the Consul Instances using the [AWS CLI](https://aws.amazon.com/cli/) and 
-[jq](https://stedolan.github.io/jq/) as follows:
+To use the HTTP API, you first need to get the public IP address of one of the Consul Servers. You can find Consul 
+servers by using AWS tags. If you're running the [consul-cluster example](/examples/consul-cluster), the 
+[get-consul-server-ip.sh script](/examples/consul-cluster/get-consul-server-ip.sh) will do the tag lookup for you 
+automatically (note, you must have the [AWS CLI](https://aws.amazon.com/cli/) and [jq](https://stedolan.github.io/jq/)
+installed):
 
 ```
-aws ec2 describe-instances \
-  --region us-east-1 \
-  --filter "Name=tag:consul-servers,Values=consul-example" "Name=instance-state-name,Values=running" | \
-  jq -r '.Reservations[].Instances[].PublicIpAddress'
-  
-11.22.33.44
-11.22.33.55
-11.22.33.66
+> get-consul-server-ip.sh
+
+Your Consul servers are running at the following IP addresses:
+
+34.200.218.123
+34.205.127.138
+34.201.165.11
 ```
 
-Copy and paste one of these IPs and use it with the `members` command to see a list of cluster nodes:
+You can use one of these IP addresses with the `members` command to see a list of cluster nodes:
 
 ```
-> consul members -rpc-addr=<INSTANCE_IP_ADDR>:8400
+> consul members -rpc-addr=11.22.33.44:8400
 
 Node                 Address             Status  Type    Build  Protocol  DC
 i-0051c3ea00e9691a0  172.31.35.148:8301  alive   client  0.7.5  2         us-east-1
@@ -104,7 +105,7 @@ i-0fd0e63682a94b245  172.31.54.84:8301   alive   server  0.7.5  2         us-eas
 You can also try inserting a value:
 
 ```
-> consul kv put -http-addr=<INSTANCE_IP_ADDR>:8500 foo bar
+> consul kv put -http-addr=11.22.33.44:8500 foo bar
 
 Success! Data written to: foo
 ```
@@ -112,12 +113,12 @@ Success! Data written to: foo
 And reading that value back:
  
 ```
-> consul kv get -http-addr=<INSTANCE_IP_ADDR>:8500 foo
+> consul kv get -http-addr=11.22.33.44:8500 foo
 
 bar
 ```
 
-Finally, you can try opening up the Consul UI in your browser at the URL `http://<INSTANCE_IP_ADDR>:8500/ui/`.
+Finally, you can try opening up the Consul UI in your browser at the URL `http://11.22.33.44:8500/ui/`.
 
 ![Consul UI](/_docs/consul-ui-screenshot.png)
 

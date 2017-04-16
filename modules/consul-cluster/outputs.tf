@@ -21,3 +21,11 @@ output "iam_role_id" {
 output "security_group_id" {
   value = "${aws_security_group.lc_security_group.id}"
 }
+
+output "cluster_tag_key" {
+  value = "${var.cluster_tag_key}"
+}
+
+output "cluster_tag_value" {
+  value = "${var.cluster_tag_value}"
+}

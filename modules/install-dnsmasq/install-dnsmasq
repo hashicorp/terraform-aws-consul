@@ -14,6 +14,8 @@ readonly DEFAULT_CONSUL_DNS_PORT=8600
 readonly DNS_MASQ_CONFIG_DIR="/etc/dnsmasq.d"
 readonly CONSUL_DNS_MASQ_CONFIG_FILE="$DNS_MASQ_CONFIG_DIR/10-consul"
 
+readonly SCRIPT_NAME="$(basename "$0")"
+
 function print_usage {
   echo
   echo "Usage: install-dnsmasq [OPTIONS]"
@@ -35,7 +37,7 @@ function log {
   local readonly level="$1"
   local readonly message="$2"
   local readonly timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-  >&2 echo -e "${timestamp} [${level}] [install-dnsmasq] ${message}"
+  >&2 echo -e "${timestamp} [${level}] [$SCRIPT_NAME] ${message}"
 }
 
 function log_info {

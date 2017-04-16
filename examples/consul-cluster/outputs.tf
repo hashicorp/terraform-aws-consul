@@ -45,3 +45,15 @@ output "iam_role_id_clients" {
 output "security_group_id_clients" {
   value = "${module.consul_clients.security_group_id}"
 }
+
+output "aws_region" {
+  value = "${var.aws_region}"
+}
+
+output "consul_servers_cluster_tag_key" {
+  value = "${module.consul_servers.cluster_tag_key}"
+}
+
+output "consul_servers_cluster_tag_value" {
+  value = "${module.consul_servers.cluster_tag_value}"
+}
