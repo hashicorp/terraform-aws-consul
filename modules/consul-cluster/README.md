@@ -71,12 +71,12 @@ and experimentation, but NOT recommended for production usage.
 
 To use the HTTP API, you first need to get the public IP address of one of the Consul Servers. You can find Consul 
 servers by using AWS tags. If you're running the [consul-cluster example](/examples/consul-cluster), the 
-[get-consul-server-ip.sh script](/examples/consul-cluster/get-consul-server-ip.sh) will do the tag lookup for you 
-automatically (note, you must have the [AWS CLI](https://aws.amazon.com/cli/) and [jq](https://stedolan.github.io/jq/)
-installed):
+[consul-examples-helper.sh script](/examples/consul-examples-helper/consul-examples-helper.sh) will do the tag lookup 
+for you automatically (note, you must have the [AWS CLI](https://aws.amazon.com/cli/), 
+[jq](https://stedolan.github.io/jq/), and the [Consul agent](https://www.consul.io/) installed locally):
 
 ```
-> get-consul-server-ip.sh
+> ../consul-examples-helper/consul-examples-helper.sh
 
 Your Consul servers are running at the following IP addresses:
 
