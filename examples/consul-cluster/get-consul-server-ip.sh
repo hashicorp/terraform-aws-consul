@@ -108,7 +108,7 @@ function wait_for_all_consul_servers_to_register {
     # exit with an error.
     local readonly members=$(consul members -rpc-addr="$server_ip:8400")
     local readonly server_members=$(echo "$members" | grep "server")
-    local readonly num_servers=$(echo "$server_members" | wc -l)
+    local readonly num_servers=$(echo "$server_members" | wc -l | tr -d ' ')
 
     if [[ "$num_servers" -eq "$expected_num_servers" ]]; then
       log_info "All $expected_num_servers Consul servers have registered in the cluster!"
