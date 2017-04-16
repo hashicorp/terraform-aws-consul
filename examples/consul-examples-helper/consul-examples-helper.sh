@@ -5,6 +5,8 @@
 # 2. Print out the IP addresses of the Consul servers.
 # 3. Print out some example commands you can run against your Consul servers.
 
+set -e
+
 readonly SCRIPT_NAME="$(basename "$0")"
 
 readonly MAX_RETRIES=30
