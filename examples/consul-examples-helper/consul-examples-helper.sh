@@ -1,4 +1,9 @@
 #!/bin/bash
+# A script that is meant to be used with the Consul cluster examples to:
+#
+# 1. Wait for the Consul server cluster to come up.
+# 2. Print out the IP addresses of the Consul servers.
+# 3. Print out some example commands you can run against your Consul servers.
 
 readonly SCRIPT_NAME="$(basename "$0")"
 
