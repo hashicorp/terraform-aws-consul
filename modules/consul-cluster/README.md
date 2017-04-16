@@ -70,7 +70,7 @@ subnets and/or your default VPC (as in the [consul-cluster example](/examples/co
 and experimentation, but NOT recommended for production usage.
 
 To use the HTTP API, you first need to get the public IP address of one of the Consul Servers. You can find Consul 
-servers by using AWS tags. If you're running the [consul-cluster example](/examples/consul-cluster), you the 
+servers by using AWS tags. If you're running the [consul-cluster example](/examples/consul-cluster), the 
 [get-consul-server-ip.sh script](/examples/consul-cluster/get-consul-server-ip.sh) will do the tag lookup for you 
 automatically (note, you must have the [AWS CLI](https://aws.amazon.com/cli/) and [jq](https://stedolan.github.io/jq/)
 installed):
@@ -78,10 +78,14 @@ installed):
 ```
 > get-consul-server-ip.sh
 
-Found Consul server at IP: 11.22.33.44
+Your Consul servers are running at the following IP addresses:
+
+34.200.218.123
+34.205.127.138
+34.201.165.11
 ```
 
-You can use this IP address with the `members` command to see a list of cluster nodes:
+You can use one of these IP addresses with the `members` command to see a list of cluster nodes:
 
 ```
 > consul members -rpc-addr=11.22.33.44:8400

@@ -103,7 +103,7 @@ function wait_for_all_consul_servers_to_register {
   log_info "Waiting for $expected_num_servers Consul servers to register in the cluster"
 
   for (( i=1; i<="$MAX_RETRIES"; i++ )); do
-    log_info "Running consul members command against server at IP address $server_ip"
+    log_info "Running 'consul members' command against server at IP address $server_ip"
     # Intentionally use local and readonly here so that this script doesn't exit if the consul members or grep commands
     # exit with an error.
     local readonly members=$(consul members -rpc-addr="$server_ip:8400")
