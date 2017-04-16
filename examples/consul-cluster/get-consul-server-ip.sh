@@ -151,7 +151,8 @@ function print_instructions {
   instructions+=("consul members -rpc-addr=$server_ip:8400")
   instructions+=("consul kv put -http-addr=$server_ip:8500 foo bar")
   instructions+=("consul kv get -http-addr=$server_ip:8500 foo")
-  instructions+=("\nTo see the Consul UI, open the following URL in your web browser: http://$server_ip:8500/ui/\n")
+  instructions+=("\nTo see the Consul UI, open the following URL in your web browser:\n")
+  instructions+=("http://$server_ip:8500/ui/\n")
 
   local instructions_str
   instructions_str=$(join "\n" "${instructions[@]}")
