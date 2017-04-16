@@ -68,22 +68,59 @@ function join {
   printf "%s$separator" "${values[@]}" | sed "s/$separator$//"
 }
 
-function get_consul_server_ip {
+function get_all_consul_server_ips {
+  local expected_num_servers
+  expected_num_servers=$(get_required_terraform_output "num_servers")
+
+  log_info "Looking up public IP addresses for $expected_num_servers Consul server EC2 Instances."
+
   local ips
   local i
 
   for (( i=1; i<="$MAX_RETRIES"; i++ )); do
     ips=($(get_consul_cluster_ips))
-    if [[ "${#ips[@]}" -gt 0 ]]; then
-      echo "${ips[0]}"
+    if [[ "${#ips[@]}" -eq "$expected_num_servers" ]]; then
+      log_info "Found all $expected_num_servers public IP addresses!"
+      echo "${ips[@]}"
       return
     else
-      log_warn "Did not find any Consul servers. They may still be booting. Will sleep for $SLEEP_BETWEEN_RETRIES_SEC and try again."
+      log_warn "Found ${#ips[@]} of $expected_num_servers public IP addresses. Will sleep for $SLEEP_BETWEEN_RETRIES_SEC and try again."
       sleep "$SLEEP_BETWEEN_RETRIES_SEC"
     fi
   done
 
-  log_error "Failed to find any Consul servers after $MAX_RETRIES retries."
+  log_error "Failed to find the IP addresses for $expected_num_servers Consul server EC2 Instances after $MAX_RETRIES retries."
+  exit 1
+}
+
+function wait_for_all_consul_servers_to_register {
+  local readonly server_ips=($@)
+  local readonly server_ip="${server_ips[0]}"
+
+  local expected_num_servers
+  expected_num_servers=$(get_required_terraform_output "num_servers")
+
+  log_info "Waiting for $expected_num_servers Consul servers to register in the cluster"
+
+  for (( i=1; i<="$MAX_RETRIES"; i++ )); do
+    log_info "Running consul members command against server at IP address $server_ip"
+    # Intentionally use local and readonly here so that this script doesn't exit if the consul members or grep commands
+    # exit with an error.
+    local readonly members=$(consul members -rpc-addr="$server_ip:8400")
+    local readonly server_members=$(echo "$members" | grep "server")
+    local readonly num_servers=$(echo "$server_members" | wc -l)
+
+    if [[ "$num_servers" -eq "$expected_num_servers" ]]; then
+      log_info "All $expected_num_servers Consul servers have registered in the cluster!"
+      return
+    else
+      log_info "$num_servers out of $expected_num_servers Consul servers have registered in the cluster."
+      log_info "Sleeping for $SLEEP_BETWEEN_RETRIES_SEC and will check again."
+      sleep "$SLEEP_BETWEEN_RETRIES_SEC"
+    fi
+  done
+
+  log_error "Did not find $expected_num_servers Consul servers registered after $MAX_RETRIES retries."
   exit 1
 }
 
@@ -105,10 +142,11 @@ function get_consul_cluster_ips {
 }
 
 function print_instructions {
-  local readonly server_ip="$1"
+  local readonly server_ips=($@)
+  local readonly server_ip="${server_ips[0]}"
 
   local instructions=()
-  instructions+=("\nFound Consul server at IP address: $server_ip\n")
+  instructions+=("\nYour Consul servers are running at the following IP addresses:\n\n${server_ips[@]}\n")
   instructions+=("Some commands for you to try:\n")
   instructions+=("consul members -rpc-addr=$server_ip:8400")
   instructions+=("consul kv put -http-addr=$server_ip:8500 foo bar")
@@ -126,10 +164,11 @@ function run {
   assert_is_installed "jq"
   assert_is_installed "terraform"
 
-  local server_ip
-  server_ip=$(get_consul_server_ip)
+  local server_ips
+  server_ips=$(get_all_consul_server_ips)
 
-  print_instructions "$server_ip"
+  wait_for_all_consul_servers_to_register "$server_ips"
+  print_instructions "$server_ips"
 }
 
 run
