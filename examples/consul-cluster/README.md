@@ -33,5 +33,5 @@ To deploy a Consul Cluster:
 1. If the plan looks good, run `terraform apply`.
 1. Run the [consul-examples-helper.sh script](/examples/consul-examples-helper/consul-examples-helper.sh) to 
    print out the IP addresses of the Consul servers and some example commands you can run to interact with the cluster:
-   `consul-examples-helper/consul-examples-helper.sh`.
+   `../consul-examples-helper/consul-examples-helper.sh`.
 
