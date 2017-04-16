@@ -1,5 +1,5 @@
-hash: 7ba4a244d85f60e70f117f70fcdf0295751498aedcb7186b3d7f6ba01513d7d1
-updated: 2017-04-16T14:06:01.628991195+01:00
+hash: c35337a3e1ffc0327030c022fbbf949ee6a16a09085ab43eacde6ba03a3edce4
+updated: 2017-04-16T17:17:04.210514261+01:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 00fb2125993965df739fa3398b03bef3eb2e198f
@@ -55,7 +55,7 @@ imports:
   - terraform
   - util
 - name: github.com/hashicorp/consul
-  version: 21f2d5ad0c02af6c4b32d8fd04f7c81e9b002d41
+  version: 402636ff2db998edef392ac6d59210d2170b3ebf
   subpackages:
   - api
 - name: github.com/hashicorp/go-cleanhttp

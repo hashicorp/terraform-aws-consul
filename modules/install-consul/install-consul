@@ -32,7 +32,7 @@ function print_usage {
   echo
   echo "Example:"
   echo
-  echo "  install-consul --version 0.7.5"
+  echo "  install-consul --version 0.8.0"
 }
 
 function log {

@@ -2,7 +2,7 @@
   "min_packer_version": "0.12.0",
   "variables": {
     "aws_region": "us-east-1",
-    "consul_version": "0.7.5"
+    "consul_version": "0.8.0"
   },
   "builders": [{
     "ami_name": "consul-ubuntu-{{isotime | clean_ami_name}}",

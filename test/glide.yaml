@@ -8,7 +8,7 @@ import:
   vcs: git
   version: v0.3.1
 - package: github.com/hashicorp/consul
-  version: v0.7.5
+  version: v0.8.0
 - package: github.com/aws/aws-sdk-go
   version: v1.6.27
   subpackages:
