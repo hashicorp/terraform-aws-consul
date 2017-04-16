@@ -31,6 +31,6 @@ To deploy a Consul Cluster:
 1. Run `terraform get`.
 1. Run `terraform plan`.
 1. If the plan looks good, run `terraform apply`.
-1. Run the `get-consul-server-ip.sh` script to get the IP address of one of the Consul servers and some example 
+1. Run the `get-consul-server-ip.sh` script to print out the IP addresses of the Consul servers and some example 
    commands you can run to interact with the cluster!
 
