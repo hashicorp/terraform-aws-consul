@@ -91,7 +91,7 @@ function get_all_consul_server_ips {
       echo "${ips[@]}"
       return
     else
-      log_warn "Found ${#ips[@]} of $expected_num_servers public IP addresses. Will sleep for $SLEEP_BETWEEN_RETRIES_SEC and try again."
+      log_warn "Found ${#ips[@]} of $expected_num_servers public IP addresses. Will sleep for $SLEEP_BETWEEN_RETRIES_SEC seconds and try again."
       sleep "$SLEEP_BETWEEN_RETRIES_SEC"
     fi
   done
@@ -122,7 +122,7 @@ function wait_for_all_consul_servers_to_register {
       return
     else
       log_info "$num_servers out of $expected_num_servers Consul servers have registered in the cluster."
-      log_info "Sleeping for $SLEEP_BETWEEN_RETRIES_SEC and will check again."
+      log_info "Sleeping for $SLEEP_BETWEEN_RETRIES_SEC seconds and will check again."
       sleep "$SLEEP_BETWEEN_RETRIES_SEC"
     fi
   done
