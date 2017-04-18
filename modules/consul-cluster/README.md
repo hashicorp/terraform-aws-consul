@@ -71,12 +71,12 @@ and experimentation, but NOT recommended for production usage.
 
 To use the HTTP API, you first need to get the public IP address of one of the Consul Servers. You can find Consul 
 servers by using AWS tags. If you're running the [consul-cluster example](/examples/consul-cluster), the 
-[get-consul-server-ip.sh script](/examples/consul-cluster/get-consul-server-ip.sh) will do the tag lookup for you 
-automatically (note, you must have the [AWS CLI](https://aws.amazon.com/cli/) and [jq](https://stedolan.github.io/jq/)
-installed):
+[consul-examples-helper.sh script](/examples/consul-examples-helper/consul-examples-helper.sh) will do the tag lookup 
+for you automatically (note, you must have the [AWS CLI](https://aws.amazon.com/cli/), 
+[jq](https://stedolan.github.io/jq/), and the [Consul agent](https://www.consul.io/) installed locally):
 
 ```
-> get-consul-server-ip.sh
+> ../consul-examples-helper/consul-examples-helper.sh
 
 Your Consul servers are running at the following IP addresses:
 
@@ -91,15 +91,15 @@ You can use one of these IP addresses with the `members` command to see a list o
 > consul members -rpc-addr=11.22.33.44:8400
 
 Node                 Address             Status  Type    Build  Protocol  DC
-i-0051c3ea00e9691a0  172.31.35.148:8301  alive   client  0.7.5  2         us-east-1
-i-00aea529cce1761d4  172.31.47.236:8301  alive   client  0.7.5  2         us-east-1
-i-01bc94ccfa032d82d  172.31.27.193:8301  alive   client  0.7.5  2         us-east-1
-i-04271e97808f15d63  172.31.25.174:8301  alive   server  0.7.5  2         us-east-1
-i-0483b07abe49ea7ff  172.31.5.42:8301    alive   client  0.7.5  2         us-east-1
-i-098fb1ebd5ca443bf  172.31.55.203:8301  alive   client  0.7.5  2         us-east-1
-i-0eb961b6825f7871c  172.31.65.9:8301    alive   client  0.7.5  2         us-east-1
-i-0ee6dcf715adbff5f  172.31.67.235:8301  alive   server  0.7.5  2         us-east-1
-i-0fd0e63682a94b245  172.31.54.84:8301   alive   server  0.7.5  2         us-east-1
+i-0051c3ea00e9691a0  172.31.35.148:8301  alive   client  0.8.0  2         us-east-1
+i-00aea529cce1761d4  172.31.47.236:8301  alive   client  0.8.0  2         us-east-1
+i-01bc94ccfa032d82d  172.31.27.193:8301  alive   client  0.8.0  2         us-east-1
+i-04271e97808f15d63  172.31.25.174:8301  alive   server  0.8.0  2         us-east-1
+i-0483b07abe49ea7ff  172.31.5.42:8301    alive   client  0.8.0  2         us-east-1
+i-098fb1ebd5ca443bf  172.31.55.203:8301  alive   client  0.8.0  2         us-east-1
+i-0eb961b6825f7871c  172.31.65.9:8301    alive   client  0.8.0  2         us-east-1
+i-0ee6dcf715adbff5f  172.31.67.235:8301  alive   server  0.8.0  2         us-east-1
+i-0fd0e63682a94b245  172.31.54.84:8301   alive   server  0.8.0  2         us-east-1
 ```
 
 You can also try inserting a value:

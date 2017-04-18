@@ -1,4 +1,11 @@
 #!/bin/bash
+# A script that is meant to be used with the Consul cluster examples to:
+#
+# 1. Wait for the Consul server cluster to come up.
+# 2. Print out the IP addresses of the Consul servers.
+# 3. Print out some example commands you can run against your Consul servers.
+
+set -e
 
 readonly SCRIPT_NAME="$(basename "$0")"
 
@@ -84,7 +91,7 @@ function get_all_consul_server_ips {
       echo "${ips[@]}"
       return
     else
-      log_warn "Found ${#ips[@]} of $expected_num_servers public IP addresses. Will sleep for $SLEEP_BETWEEN_RETRIES_SEC and try again."
+      log_warn "Found ${#ips[@]} of $expected_num_servers public IP addresses. Will sleep for $SLEEP_BETWEEN_RETRIES_SEC seconds and try again."
       sleep "$SLEEP_BETWEEN_RETRIES_SEC"
     fi
   done
@@ -115,7 +122,7 @@ function wait_for_all_consul_servers_to_register {
       return
     else
       log_info "$num_servers out of $expected_num_servers Consul servers have registered in the cluster."
-      log_info "Sleeping for $SLEEP_BETWEEN_RETRIES_SEC and will check again."
+      log_info "Sleeping for $SLEEP_BETWEEN_RETRIES_SEC seconds and will check again."
       sleep "$SLEEP_BETWEEN_RETRIES_SEC"
     fi
   done
@@ -128,6 +135,7 @@ function get_consul_cluster_ips {
   local aws_region
   local cluster_tag_key
   local cluster_tag_value
+  local instances
 
   aws_region=$(get_required_terraform_output "aws_region")
   cluster_tag_key=$(get_required_terraform_output "consul_servers_cluster_tag_key")
@@ -135,10 +143,11 @@ function get_consul_cluster_ips {
 
   log_info "Fetching public IP addresses for EC2 Instances in $aws_region with tag $cluster_tag_key=$cluster_tag_value"
 
-  aws ec2 describe-instances \
+  instances=$(aws ec2 describe-instances \
     --region "$aws_region" \
-    --filter "Name=tag:$cluster_tag_key,Values=$cluster_tag_value" "Name=instance-state-name,Values=running" | \
-    jq -r '.Reservations[].Instances[].PublicIpAddress'
+    --filter "Name=tag:$cluster_tag_key,Values=$cluster_tag_value" "Name=instance-state-name,Values=running")
+
+  echo "$instances" | jq -r '.Reservations[].Instances[].PublicIpAddress'
 }
 
 function print_instructions {
@@ -146,13 +155,13 @@ function print_instructions {
   local readonly server_ip="${server_ips[0]}"
 
   local instructions=()
-  instructions+=("\nYour Consul servers are running at the following IP addresses:\n\n${server_ips[@]}\n")
+  instructions+=("\nYour Consul servers are running at the following IP addresses:\n\n${server_ips[@]/#/    }\n")
   instructions+=("Some commands for you to try:\n")
-  instructions+=("consul members -rpc-addr=$server_ip:8400")
-  instructions+=("consul kv put -http-addr=$server_ip:8500 foo bar")
-  instructions+=("consul kv get -http-addr=$server_ip:8500 foo")
+  instructions+=("    consul members -rpc-addr=$server_ip:8400")
+  instructions+=("    consul kv put -http-addr=$server_ip:8500 foo bar")
+  instructions+=("    consul kv get -http-addr=$server_ip:8500 foo")
   instructions+=("\nTo see the Consul UI, open the following URL in your web browser:\n")
-  instructions+=("http://$server_ip:8500/ui/\n")
+  instructions+=("    http://$server_ip:8500/ui/\n")
 
   local instructions_str
   instructions_str=$(join "\n" "${instructions[@]}")
@@ -164,6 +173,7 @@ function run {
   assert_is_installed "aws"
   assert_is_installed "jq"
   assert_is_installed "terraform"
+  assert_is_installed "consul"
 
   local server_ips
   server_ips=$(get_all_consul_server_ips)
