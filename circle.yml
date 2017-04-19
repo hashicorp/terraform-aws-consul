@@ -1,4 +1,8 @@
 machine:
+  pre:
+    # Configure the CircleCI machine user
+    - git config --global user.name "gruntwork-ci"
+    - git config --global user.email "ci@gruntwork.io"
   environment:
     PATH: $PATH:$HOME/terraform:$HOME/packer:$HOME/glide/linux-amd64
 
@@ -6,7 +10,9 @@ dependencies:
   override:
     # Install the gruntwork-module-circleci-helpers and use it to configure the build environment and run tests.
     - curl -Ls https://raw.githubusercontent.com/gruntwork-io/gruntwork-installer/master/bootstrap-gruntwork-installer.sh | bash /dev/stdin --version v0.0.14
-    - gruntwork-install --module-name "gruntwork-module-circleci-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.3.10"
+    - gruntwork-install --module-name "gruntwork-module-circleci-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.3.11"
+    - gruntwork-install --module-name "build-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.3.11"
+    - gruntwork-install --module-name "aws-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.3.11"
     - configure-environment-for-gruntwork-module --go-src-path test
 
   cache_directories:
@@ -17,3 +23,10 @@ dependencies:
 test:
   override:
     - run-go-tests --path test
+
+deployment:
+  release:
+    tag: /v.*/
+    commands:
+      # If a new release is tagged in GitHub, build the AMI and publish it to all regions
+      - $CIRCLE_PROJECT_NAME/_ci/publish-amis.sh
