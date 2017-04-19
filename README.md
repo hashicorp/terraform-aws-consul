@@ -22,7 +22,8 @@ Each Blueprint has the following folder structure:
 To deploy Consul servers using this Blueprint:
 
 1. Create a Consul AMI using a Packer template that references the [install-consul module](/modules/install-consul).
-   Here is an [example Packer template](/examples/consul-ami#quick-start). 
+   Here is an [example Packer template](/examples/consul-ami#quick-start). Or just use our [official public AMI](
+   /_docs/amis.md).
 1. Deploy that AMI across an Auto Scaling Group using the Terraform [consul-cluster module](/modules/consul-cluster) 
    and execute the [run-consul script](/modules/run-consul) with the `--server` flag during boot on each 
    Instance in the Auto Scaling Group to form the Consul cluster. Here is [an example Terraform 
