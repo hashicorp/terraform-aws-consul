@@ -1,8 +1,4 @@
 machine:
-  pre:
-    # Configure the CircleCI machine user
-    - git config --global user.name "gruntwork-ci"
-    - git config --global user.email "ci@gruntwork.io"
   environment:
     PATH: $PATH:$HOME/terraform:$HOME/packer:$HOME/glide/linux-amd64
 
