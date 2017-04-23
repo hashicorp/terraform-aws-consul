@@ -7,21 +7,24 @@
 
 set -e
 
-readonly PACKER_TEMPLATE_PATH="$CIRCLE_PROJECT_NAME/examples/consul-ami/consul.json"
+readonly PACKER_TEMPLATE_PATH="/home/ubuntu/$CIRCLE_PROJECT_REPONAME/examples/consul-ami/consul.json"
 readonly PACKER_TEMPLATE_DEFAULT_REGION="us-east-1"
-readonly API_PROPERTIES_FILE="/tmp/api.properties"
-readonly AMI_LIST_MARKDOWN_PATH="$CIRCLE_PROJECT_NAME/_docs/amis.md"
+readonly AMI_PROPERTIES_FILE="/tmp/ami.properties"
+readonly AMI_LIST_MARKDOWN_PATH="/home/ubuntu/$CIRCLE_PROJECT_REPONAME/_docs/amis.md"
 readonly GIT_COMMIT_MESSAGE="Add latest AMI IDs."
 readonly GIT_USER_NAME="gruntwork-ci"
 readonly GIT_USER_EMAIL="ci@gruntwork.io"
 
+readonly PACKER_BUILD_NAME="$1"
+
 # Build the example AMI
 build-packer-artifact \
   --packer-template-path "$PACKER_TEMPLATE_PATH" \
-  --output-properties-file "$API_PROPERTIES_FILE"
+  --build-name "$PACKER_BUILD_NAME" \
+  --output-properties-file "$AMI_PROPERTIES_FILE"
 
 # Copy the AMI to all regions and make it public in each
-source "$API_PROPERTIES_FILE"
+source "$AMI_PROPERTIES_FILE"
 publish-ami \
   --all-regions \
   --source-ami-id "$ARTIFACT_ID" \

@@ -5,10 +5,10 @@
     "consul_version": "0.8.0"
   },
   "builders": [{
+    "name": "ubuntu-16-ami",
     "ami_name": "consul-ubuntu-{{isotime | clean_ami_name}}",
     "ami_description": "An Ubuntu 16.04 AMI that has Consul installed.",
     "instance_type": "t2.micro",
-    "name": "ubuntu-16-ami",
     "region": "{{user `aws_region`}}",
     "type": "amazon-ebs",
     "source_ami_filter": {
@@ -24,10 +24,10 @@
     },
     "ssh_username": "ubuntu"
   },{
+    "name": "amazon-linux-ami",
     "ami_name": "consul-amazon-linux-{{isotime | clean_ami_name}}",
     "ami_description": "An Amazon Linux AMI that has Consul installed.",
     "instance_type": "t2.micro",
-    "name": "amazon-linux-ami",
     "region": "{{user `aws_region`}}",
     "type": "amazon-ebs",
     "source_ami_filter": {
