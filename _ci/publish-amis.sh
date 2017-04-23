@@ -10,7 +10,7 @@ set -e
 readonly PACKER_TEMPLATE_PATH="/home/ubuntu/$CIRCLE_PROJECT_REPONAME/examples/consul-ami/consul.json"
 readonly PACKER_TEMPLATE_DEFAULT_REGION="us-east-1"
 readonly AMI_PROPERTIES_FILE="/tmp/ami.properties"
-readonly AMI_LIST_MARKDOWN_PATH="/home/ubuntu/$CIRCLE_PROJECT_REPONAME/_docs/amis.md"
+readonly AMI_LIST_MARKDOWN_DIR="/home/ubuntu/$CIRCLE_PROJECT_REPONAME/_docs"
 readonly GIT_COMMIT_MESSAGE="Add latest AMI IDs."
 readonly GIT_USER_NAME="gruntwork-ci"
 readonly GIT_USER_EMAIL="ci@gruntwork.io"
@@ -29,12 +29,12 @@ publish-ami \
   --all-regions \
   --source-ami-id "$ARTIFACT_ID" \
   --source-ami-region "$PACKER_TEMPLATE_DEFAULT_REGION" \
-  --output-markdown > "$AMI_LIST_MARKDOWN_PATH"
+  --output-markdown > "$AMI_LIST_MARKDOWN_DIR/$PACKER_BUILD_NAME-list.md" \
+  --markdown-title-text "$PACKER_BUILD_NAME: Latest Public AMIs"
 
 # Git add, commit, and push the newly created AMI IDs as a markdown doc to the repo
 git-add-commit-push \
-  --path "$AMI_LIST_MARKDOWN_PATH" \
+  --path "$AMI_LIST_MARKDOWN_DIR/$PACKER_BUILD_NAME-list.md" \
   --message "$GIT_COMMIT_MESSAGE" \
-  --skip-ci-flag \
   --user-name "$GIT_USER_NAME" \
   --user-email "$GIT_USER_EMAIL"
