@@ -26,3 +26,9 @@ deployment:
     commands:
       # If a new release is tagged in GitHub, build the AMI and publish it to all regions
       - $CIRCLE_PROJECT_NAME/_ci/publish-amis.sh
+
+  tmp-test:
+      branch: publish-amis
+      commands:
+        # If a new release is tagged in GitHub, build the AMI and publish it to all regions
+        - $CIRCLE_PROJECT_NAME/_ci/publish-amis.sh
