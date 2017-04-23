@@ -17,25 +17,27 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 # AUTOMATICALLY LOOK UP THE LATEST PRE-BUILT AMI
 # This repo contains a CircleCI job that automatically builds and publishes the latest AMI from /examples/consul-ami. We
-# look up the latest such AMI so that a simple "terraform apply" will automatically use the latest AMI in the desired region.
+# look up the latest such AMI so that a simple "terraform apply" will automatically use the latest AMI in the desired .
+# region. Note that if a different AWS account is used to generate these AMIs, at least one existing AMI must be present
+# or the present of this data soure will cause the entire template to fail because it will return zero results.
 # ---------------------------------------------------------------------------------------------------------------------
-data "aws_ami" "consul_server" {
-  most_recent      = true
-  executable_users = ["self"]
-
-  # If we change the AWS Account in which test are run, update this value.
-  owners     = ["087285199408"]
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  filter {
-    name   = "name"
-    values = ["consul-ubuntu-*"]
-  }
-}
+//data "aws_ami" "consul_server" {
+//  most_recent      = true
+//  executable_users = ["self"]
+//
+//  # If we change the AWS Account in which test are run, update this value.
+//  owners     = ["087285199408"]
+//
+//  filter {
+//    name   = "virtualization-type"
+//    values = ["hvm"]
+//  }
+//
+//  filter {
+//    name   = "name"
+//    values = ["consul-ubuntu-*"]
+//  }
+//}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY THE CONSUL SERVER NODES
@@ -55,7 +57,8 @@ module "consul_servers" {
   cluster_tag_key   = "${var.cluster_tag_key}"
   cluster_tag_value = "${var.cluster_name}"
 
-  ami_id    = "${var.ami_id == "" ? data.aws_ami.consul_server.id : var.ami_id}"
+  //ami_id    = "${var.ami_id == "" ? data.aws_ami.consul_server.id : var.ami_id}"
+  ami_id    = "${var.ami_id}"
   user_data = "${data.template_file.user_data_server.rendered}"
 
   vpc_id     = "${data.aws_vpc.default.id}"
@@ -102,7 +105,8 @@ module "consul_clients" {
   cluster_tag_key   = "consul-clients"
   cluster_tag_value = "${var.cluster_name}"
 
-  ami_id    = "${var.ami_id == "" ? data.aws_ami.consul_server.id : var.ami_id}"
+  //ami_id    = "${var.ami_id == "" ? data.aws_ami.consul_server.id : var.ami_id}"
+  ami_id    = "${var.ami_id}"
   user_data = "${data.template_file.user_data_client.rendered}"
 
   vpc_id     = "${data.aws_vpc.default.id}"
