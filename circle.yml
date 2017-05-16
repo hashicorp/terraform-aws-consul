@@ -27,10 +27,3 @@ deployment:
       # If a new release is tagged in GitHub, build the AMI and publish it to all regions.
       - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "ubuntu-16-ami"
       - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "amazon-linux-ami"
-
-  tmp-test:
-    branch: publish-amis
-    commands:
-      # If a new release is tagged in GitHub, build the AMI and publish it to all regions.
-      - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "ubuntu-16-ami"
-      - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "amazon-linux-ami"

@@ -16,28 +16,34 @@ terraform {
 
 # ---------------------------------------------------------------------------------------------------------------------
 # AUTOMATICALLY LOOK UP THE LATEST PRE-BUILT AMI
-# This repo contains a CircleCI job that automatically builds and publishes the latest AMI from /examples/consul-ami. We
-# look up the latest such AMI so that a simple "terraform apply" will automatically use the latest AMI in the desired .
-# region. Note that if a different AWS account is used to generate these AMIs, at least one existing AMI must be present
-# or the present of this data soure will cause the entire template to fail because it will return zero results.
+# This repo contains a CircleCI job that automatically builds and publishes the latest AMI by building the Packer
+# template at /examples/consul-ami upon every new release. The Terraform data source below automatically looks up the
+# latest AMI so that a simple "terraform apply" will just work without the user needing to manually build an AMI and
+# fill in the right value.
+#
+# WARNING: This Terraform data source must return at least one AMI result or the entire template will fail. For example,
+# if a new AWS account is selected to build the AMI, first comment out this section, then set the the "ami_id" property
+# of module.consul_clients to "${var.ami_id}". Then run the /_ci/publish-amis.sh script at least once in the new account
+# to buil the AMIs. Once done, this data source will return a non-empty value, you can undo all the changes and the
+# Terraform code here will work as desired.
 # ---------------------------------------------------------------------------------------------------------------------
-//data "aws_ami" "consul_server" {
-//  most_recent      = true
-//  executable_users = ["self"]
-//
-//  # If we change the AWS Account in which test are run, update this value.
-//  owners     = ["087285199408"]
-//
-//  filter {
-//    name   = "virtualization-type"
-//    values = ["hvm"]
-//  }
-//
-//  filter {
-//    name   = "name"
-//    values = ["consul-ubuntu-*"]
-//  }
-//}
+data "aws_ami" "consul_server" {
+  most_recent      = true
+  executable_users = ["self"]
+
+  # If we change the AWS Account in which test are run, update this value.
+  owners     = ["087285199408"]
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "name"
+    values = ["consul-ubuntu-*"]
+  }
+}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY THE CONSUL SERVER NODES
@@ -105,8 +111,10 @@ module "consul_clients" {
   cluster_tag_key   = "consul-clients"
   cluster_tag_value = "${var.cluster_name}"
 
-  //ami_id    = "${var.ami_id == "" ? data.aws_ami.consul_server.id : var.ami_id}"
-  ami_id    = "${var.ami_id}"
+  // If data.aws_ami.consul_server.id returns no value, uncomment the variable below and comment out the other value
+  // for ami_id. Otherwise, this template will fail to run.
+  //ami_id    = "${var.ami_id}"
+  ami_id    = "${var.ami_id == "" ? data.aws_ami.consul_server.id : var.ami_id}"
   user_data = "${data.template_file.user_data_client.rendered}"
 
   vpc_id     = "${data.aws_vpc.default.id}"
