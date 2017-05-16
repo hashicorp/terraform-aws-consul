@@ -26,7 +26,6 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 data "aws_ami" "consul_server" {
   most_recent      = true
-  executable_users = ["self"]
 
   # If we change the AWS Account in which test are run, update this value.
   owners     = ["562637147889"]
@@ -34,6 +33,11 @@ data "aws_ami" "consul_server" {
   filter {
     name   = "virtualization-type"
     values = ["hvm"]
+  }
+
+  filter {
+    name   = "is-public"
+    values = ["true"]
   }
 
   filter {
