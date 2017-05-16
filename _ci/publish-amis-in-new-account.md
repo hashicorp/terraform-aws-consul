@@ -14,3 +14,6 @@ automated tests, which will fail when they cannot find the desired AMI.
 Our solution is that, for the `publish-amis` git branch only, on every commit, we will build and publish AMIs but we will
 not run tests. For all other branches, AMIs will only be built upon a new git tag (GitHub release), and tests will be
 run on every commit as usual. These settings are configured in the [circle.yml](/circle.yml) file.
+
+In addition to the above, don't forget to update the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment 
+variables in CircleCI to reflect the new AWS account.
