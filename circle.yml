@@ -18,12 +18,20 @@ dependencies:
 
 test:
   override:
-    - run-go-tests --path test
+    # To create AMIs for the first time in a new AWS account, run the CircleCI tests in the init-ami branch. This will
+    # bypass tests but still run the AMI.
+    - if [[ $CIRCLE_BRANCH != "publish-amis" ]]; then run-go-tests --path test; fi
 
 deployment:
   release:
     tag: /v.*/
     commands:
       # If a new release is tagged in GitHub, build the AMI and publish it to all regions.
+      - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "ubuntu-16-ami"
+      - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "amazon-linux-ami"
+
+    branch: publish-amis
+    commands:
+      # If we are in a branch called init-ami, assume that we are building the AMIs for the first time.
       - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "ubuntu-16-ami"
       - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "amazon-linux-ami"
