@@ -6,9 +6,9 @@ dependencies:
   override:
     # Install the gruntwork-module-circleci-helpers and use it to configure the build environment and run tests.
     - curl -Ls https://raw.githubusercontent.com/gruntwork-io/gruntwork-installer/master/bootstrap-gruntwork-installer.sh | bash /dev/stdin --version v0.0.16
-    - gruntwork-install --module-name "gruntwork-module-circleci-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.3.12"
-    - gruntwork-install --module-name "build-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.3.12"
-    - gruntwork-install --module-name "aws-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.3.12"
+    - gruntwork-install --module-name "gruntwork-module-circleci-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.3.15"
+    - gruntwork-install --module-name "build-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.3.15"
+    - gruntwork-install --module-name "aws-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.3.15"
     - configure-environment-for-gruntwork-module --go-src-path test
 
   cache_directories:
@@ -26,12 +26,12 @@ deployment:
   release:
     tag: /v.*/
     commands:
-      # If a new release is tagged in GitHub, build the AMI and publish it to all regions.
+      # If a new release is tagged in GitHub, build the AMIs and publish them to all regions.
       - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "ubuntu-16-ami"
       - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "amazon-linux-ami"
 
     branch: publish-amis
     commands:
-      # If we are in a branch called init-ami, assume that we are building the AMIs for the first time.
+      # If we are in a branch called publish-amis, build the AMIs on each commit.
       - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "ubuntu-16-ami"
       - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "amazon-linux-ami"

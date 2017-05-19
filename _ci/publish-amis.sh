@@ -37,4 +37,5 @@ git-add-commit-push \
   --path "$AMI_LIST_MARKDOWN_DIR/$PACKER_BUILD_NAME-list.md" \
   --message "$GIT_COMMIT_MESSAGE" \
   --user-name "$GIT_USER_NAME" \
-  --user-email "$GIT_USER_EMAIL"
+  --user-email "$GIT_USER_EMAIL" \
+  --git-push-behavior "current"
