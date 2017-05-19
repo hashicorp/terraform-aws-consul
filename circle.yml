@@ -27,11 +27,11 @@ deployment:
     tag: /v.*/
     commands:
       # If a new release is tagged in GitHub, build the AMIs and publish them to all regions.
-      - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "ubuntu-16-ami"
+      - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "ubuntu16-ami"
       - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "amazon-linux-ami"
 
     branch: publish-amis
     commands:
       # If we are in a branch called publish-amis, build the AMIs on each commit.
-      - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "ubuntu-16-ami"
+      - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "ubuntu16-ami"
       - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "amazon-linux-ami"
