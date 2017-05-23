@@ -64,8 +64,8 @@ module "consul_servers" {
   cluster_tag_key   = "${var.cluster_tag_key}"
   cluster_tag_value = "${var.cluster_name}"
 
-  //ami_id    = "${var.ami_id == "" ? data.aws_ami.consul_server.id : var.ami_id}"
-  ami_id    = "${var.ami_id}"
+  # Note that the following Terraform expression will fail if data.aws_ami.consul_server.id returns no AMIs.
+  ami_id    = "${var.ami_id == "" ? data.aws_ami.consul_server.image_id : var.ami_id}"
   user_data = "${data.template_file.user_data_server.rendered}"
 
   vpc_id     = "${data.aws_vpc.default.id}"
@@ -112,8 +112,8 @@ module "consul_clients" {
   cluster_tag_key   = "consul-clients"
   cluster_tag_value = "${var.cluster_name}"
 
-  // Note that the following Terraform expression will fail if data.aws_ami.consul_server.id returns no AMIs.
-  ami_id    = "${var.ami_id == "" ? data.aws_ami.consul_server.id : var.ami_id}"
+  # Note that the following Terraform expression will fail if data.aws_ami.consul_server.id returns no AMIs.
+  ami_id    = "${var.ami_id == "" ? data.aws_ami.consul_server.image_id : var.ami_id}"
   user_data = "${data.template_file.user_data_client.rendered}"
 
   vpc_id     = "${data.aws_vpc.default.id}"
