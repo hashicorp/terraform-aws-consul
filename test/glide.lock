@@ -1,5 +1,5 @@
-hash: c35337a3e1ffc0327030c022fbbf949ee6a16a09085ab43eacde6ba03a3edce4
-updated: 2017-04-16T17:17:04.210514261+01:00
+hash: f38e62718041e47af9190ec143aecb9a2f2f2aa9cc93ce731ba99d2f9f299b6d
+updated: 2017-05-23T11:12:30.963822781-07:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 00fb2125993965df739fa3398b03bef3eb2e198f
@@ -40,9 +40,9 @@ imports:
   - service/sns
   - service/sts
 - name: github.com/go-ini/ini
-  version: e7fea39b01aea8d5671f6858f0532f56e8bff3a5
+  version: 6e4869b434bd001f6983749881c7ead3545887d8
 - name: github.com/gruntwork-io/terratest
-  version: 1109a8bdaebfde366033b4881b81719b79b3b4f3
+  version: ed788d28c4e7f797af1113f34ae386a5409594de
   repo: git@github.com:gruntwork-io/terratest
   vcs: git
   subpackages:
@@ -61,13 +61,13 @@ imports:
 - name: github.com/hashicorp/go-cleanhttp
   version: 3573b8b52aa7b37b9358d966a898feb387f62437
 - name: github.com/hashicorp/serf
-  version: a0cbae4dc316092b277efda5f6e26f65d202edf7
+  version: 4ead4a687cd1ab811863b3db05ed56a8032cff71
   subpackages:
   - coordinate
 - name: github.com/jmespath/go-jmespath
   version: bd40a432e4c76585ef6b72d3fd96fb9b6dc7b68d
 - name: golang.org/x/crypto
-  version: cbc3d0884eac986df6e78a039b8792e869bff863
+  version: 05d11b2ca14108dfc7f74f4f66b28c7fe92e1fd0
   subpackages:
   - curve25519
   - ed25519
