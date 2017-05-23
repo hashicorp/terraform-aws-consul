@@ -10,6 +10,7 @@ provider "aws" {
   region = "${var.aws_region}"
 }
 
+# TODO: Explicitly disallow Terraform 0.9.5 once Terraform 0.9.6 is released due to https://github.com/hashicorp/terraform/issues/14399
 terraform {
   required_version = ">= 0.9.3"
 }
@@ -24,7 +25,7 @@ terraform {
 # WARNING: This Terraform data source must return at least one AMI result or the entire template will fail. See
 # /_ci/publish-amis-in-new-account.md for more information.
 # ---------------------------------------------------------------------------------------------------------------------
-data "aws_ami" "consul_server" {
+data "aws_ami" "consul" {
   most_recent      = true
 
   # If we change the AWS Account in which test are run, update this value.
@@ -65,7 +66,10 @@ module "consul_servers" {
   cluster_tag_value = "${var.cluster_name}"
 
   # Note that the following Terraform expression will fail if data.aws_ami.consul_server.id returns no AMIs.
-  ami_id    = "${var.ami_id == "" ? data.aws_ami.consul_server.image_id : var.ami_id}"
+  # Due to https://github.com/hashicorp/terraform/issues/14399, we need to explicitly convert the intermediate expression
+  # to a string. When Terraform 0.9.6 is released, the format() directives can be removed. This is a regression in
+  # Terraform 0.9.5 only.
+  ami_id    = "${var.ami_id == "" ? format("%s", data.aws_ami.consul.image_id) : var.ami_id}"
   user_data = "${data.template_file.user_data_server.rendered}"
 
   vpc_id     = "${data.aws_vpc.default.id}"
@@ -113,7 +117,10 @@ module "consul_clients" {
   cluster_tag_value = "${var.cluster_name}"
 
   # Note that the following Terraform expression will fail if data.aws_ami.consul_server.id returns no AMIs.
-  ami_id    = "${var.ami_id == "" ? data.aws_ami.consul_server.image_id : var.ami_id}"
+  # Due to https://github.com/hashicorp/terraform/issues/14399, we need to explicitly convert the intermediate expression
+  # to a string. When Terraform 0.9.6 is released, the format() directives can be removed. This is a regression in
+  # Terraform 0.9.5 only.
+  ami_id    = "${var.ami_id == "" ? format("%s", data.aws_ami.consul.image_id) : var.ami_id}"
   user_data = "${data.template_file.user_data_client.rendered}"
 
   vpc_id     = "${data.aws_vpc.default.id}"
