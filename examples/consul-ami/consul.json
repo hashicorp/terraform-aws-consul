@@ -5,7 +5,7 @@
     "consul_version": "0.8.0"
   },
   "builders": [{
-    "name": "ubuntu-16-ami",
+    "name": "ubuntu16-ami",
     "ami_name": "consul-ubuntu-{{isotime | clean_ami_name}}",
     "ami_description": "An Ubuntu 16.04 AMI that has Consul installed.",
     "instance_type": "t2.micro",

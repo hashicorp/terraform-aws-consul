@@ -21,22 +21,23 @@ terraform {
 # latest AMI so that a simple "terraform apply" will just work without the user needing to manually build an AMI and
 # fill in the right value.
 #
-# WARNING: This Terraform data source must return at least one AMI result or the entire template will fail. For example,
-# if a new AWS account is selected to build the AMI, first comment out this section, then set the the "ami_id" property
-# of module.consul_clients to "${var.ami_id}". Then run the /_ci/publish-amis.sh script at least once in the new account
-# to buil the AMIs. Once done, this data source will return a non-empty value, you can undo all the changes and the
-# Terraform code here will work as desired.
+# WARNING: This Terraform data source must return at least one AMI result or the entire template will fail. See
+# /_ci/publish-amis-in-new-account.md for more information.
 # ---------------------------------------------------------------------------------------------------------------------
 data "aws_ami" "consul_server" {
   most_recent      = true
-  executable_users = ["self"]
 
   # If we change the AWS Account in which test are run, update this value.
-  owners     = ["087285199408"]
+  owners     = ["562637147889"]
 
   filter {
     name   = "virtualization-type"
     values = ["hvm"]
+  }
+
+  filter {
+    name   = "is-public"
+    values = ["true"]
   }
 
   filter {
@@ -111,9 +112,7 @@ module "consul_clients" {
   cluster_tag_key   = "consul-clients"
   cluster_tag_value = "${var.cluster_name}"
 
-  // If data.aws_ami.consul_server.id returns no value, uncomment the variable below and comment out the other value
-  // for ami_id. Otherwise, this template will fail to run.
-  //ami_id    = "${var.ami_id}"
+  // Note that the following Terraform expression will fail if data.aws_ami.consul_server.id returns no AMIs.
   ami_id    = "${var.ami_id == "" ? data.aws_ami.consul_server.id : var.ami_id}"
   user_data = "${data.template_file.user_data_client.rendered}"
 
