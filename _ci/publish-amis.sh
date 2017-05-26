@@ -15,6 +15,10 @@ readonly GIT_COMMIT_MESSAGE="Add latest AMI IDs."
 readonly GIT_USER_NAME="gruntwork-ci"
 readonly GIT_USER_EMAIL="ci@gruntwork.io"
 
+# In CircleCI, every build populates the branch name in CIRCLE_BRANCH...except builds triggered by a new tag, for which
+# the CIRCLE_BRANCH env var is empty. We assume tags are only issued against the master branch.
+readonly BRANCH_NAME="${CIRCLE_BRANCH:?master}"
+
 readonly PACKER_BUILD_NAME="$1"
 
 # Build the example AMI
@@ -38,4 +42,5 @@ git-add-commit-push \
   --message "$GIT_COMMIT_MESSAGE" \
   --user-name "$GIT_USER_NAME" \
   --user-email "$GIT_USER_EMAIL" \
-  --git-push-behavior "current"
+  --git-push-behavior "current" \
+  --branch-name "$BRANCH_NAME"
