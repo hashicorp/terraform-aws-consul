@@ -17,7 +17,7 @@ readonly GIT_USER_EMAIL="ci@gruntwork.io"
 
 # In CircleCI, every build populates the branch name in CIRCLE_BRANCH...except builds triggered by a new tag, for which
 # the CIRCLE_BRANCH env var is empty. We assume tags are only issued against the master branch.
-readonly BRANCH_NAME="${CIRCLE_BRANCH:?master}"
+readonly BRANCH_NAME="${CIRCLE_BRANCH:-master}"
 
 readonly PACKER_BUILD_NAME="$1"
 
