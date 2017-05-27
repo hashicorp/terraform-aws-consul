@@ -17,3 +17,8 @@ run on every commit as usual. These settings are configured in the [circle.yml](
 
 In addition to the above, don't forget to update the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment 
 variables in CircleCI to reflect the new AWS account.
+
+Finally, note that, on a brand new account, many AWS regions are limited to just 5 EC2 Instances in an Auto Scaling Group,
+but the automated tests in this repo create up to 10 EC2 Instances. Therefore, automated tests will fail if they run in
+a region with too small a limit. To avoid this issue, request an increase in the number of t2-family EC2 Instances 
+allowed in every AWS region from AWS support.
