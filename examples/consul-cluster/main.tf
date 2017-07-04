@@ -10,9 +10,10 @@ provider "aws" {
   region = "${var.aws_region}"
 }
 
-# TODO: Explicitly disallow Terraform 0.9.5 once Terraform 0.9.6 is released due to https://github.com/hashicorp/terraform/issues/14399
+# Terraform 0.9.5 suffered from https://github.com/hashicorp/terraform/issues/14399, which causes this template the
+# conditionals in this template to fail.
 terraform {
-  required_version = ">= 0.9.3"
+  required_version = ">= 0.9.3, != 0.9.5"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -65,11 +66,7 @@ module "consul_servers" {
   cluster_tag_key   = "${var.cluster_tag_key}"
   cluster_tag_value = "${var.cluster_name}"
 
-  # Note that the following Terraform expression will fail if data.aws_ami.consul_server.id returns no AMIs.
-  # Due to https://github.com/hashicorp/terraform/issues/14399, we need to explicitly convert the intermediate expression
-  # to a string. When Terraform 0.9.6 is released, the format() directives can be removed. This is a regression in
-  # Terraform 0.9.5 only.
-  ami_id    = "${var.ami_id == "" ? format("%s", data.aws_ami.consul.image_id) : var.ami_id}"
+  ami_id    = "${var.ami_id == "" ? data.aws_ami.consul.image_id : var.ami_id}"
   user_data = "${data.template_file.user_data_server.rendered}"
 
   vpc_id     = "${data.aws_vpc.default.id}"
@@ -116,11 +113,7 @@ module "consul_clients" {
   cluster_tag_key   = "consul-clients"
   cluster_tag_value = "${var.cluster_name}"
 
-  # Note that the following Terraform expression will fail if data.aws_ami.consul_server.id returns no AMIs.
-  # Due to https://github.com/hashicorp/terraform/issues/14399, we need to explicitly convert the intermediate expression
-  # to a string. When Terraform 0.9.6 is released, the format() directives can be removed. This is a regression in
-  # Terraform 0.9.5 only.
-  ami_id    = "${var.ami_id == "" ? format("%s", data.aws_ami.consul.image_id) : var.ami_id}"
+  ami_id    = "${var.ami_id == "" ? data.aws_ami.consul.image_id : var.ami_id}"
   user_data = "${data.template_file.user_data_client.rendered}"
 
   vpc_id     = "${data.aws_vpc.default.id}"
