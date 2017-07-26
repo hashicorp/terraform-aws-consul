@@ -25,11 +25,11 @@ To deploy Consul servers using this Blueprint:
    Here is an [example Packer template](/examples/consul-ami#quick-start). 
    
    If you are just experimenting with this Blueprint, you may find it more convenient to use one of our official public AMIs:
-  - [Latest Ubuntu 16 AMIs](/_docs/ubuntu16-ami-list.md).
-  - [Latest Amazon Linux AMIs](/_docs/amazon-linux-ami-list.md).
+   - [Latest Ubuntu 16 AMIs](/_docs/ubuntu16-ami-list.md).
+   - [Latest Amazon Linux AMIs](/_docs/amazon-linux-ami-list.md).
   
-  **WARNING! Do NOT use these AMIs in your production setup. In production, you should build your own AMIs in your own 
-  AWS account.**
+    **WARNING! Do NOT use these AMIs in your production setup. In production, you should build your own AMIs in your own 
+    AWS account.**
    
 1. Deploy that AMI across an Auto Scaling Group using the Terraform [consul-cluster module](/modules/consul-cluster) 
    and execute the [run-consul script](/modules/run-consul) with the `--server` flag during boot on each 
