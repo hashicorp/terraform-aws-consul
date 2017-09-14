@@ -14,7 +14,7 @@ There is a good chance it will work on other flavors of Debian, CentOS, and RHEL
 ## Quick start
 
 This script assumes you installed it, plus all of its dependencies (including Consul itself), using the [install-consul 
-module](/modules/install-consul). The default install path is `/opt/consul/bin`, so to start Consul in server mode, 
+module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul). The default install path is `/opt/consul/bin`, so to start Consul in server mode, 
 you run:
 
 ```
@@ -44,7 +44,7 @@ Data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-dat
 when the EC2 Instance is first booting. After runing `run-consul` on that initial boot, the `supervisord` configuration 
 will automatically restart Consul if it crashes or the EC2 instance reboots.
 
-See the [consul-cluster example](/examples/consul-cluster) for fully-working sample code.
+See the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-cluster) for fully-working sample code.
 
 
 
@@ -164,7 +164,7 @@ Role](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) that has th
 * `ec2:DescribeTags`
 * `autoscaling:DescribeAutoScalingGroups`
 
-These permissions are automatically added by the [consul-cluster module](/modules/consul-cluster).
+These permissions are automatically added by the [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster).
 
 
 

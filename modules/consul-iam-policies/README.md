@@ -3,7 +3,7 @@
 This folder contains a [Terraform](https://www.terraform.io/) module that defines the IAM Policies used by a 
 [Consul](https://www.consul.io/) cluster. 
 
-Normally, you'd get these policies by default if you're using the [consul-cluster module](/examples/consul-cluster), 
+Normally, you'd get these policies by default if you're using the [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-cluster), 
 but if you're running Consul on top of a different cluster (e.g. you're co-locating Consul with Nomad), then you can 
 use this module to add the necessary IAM policies to that that cluster. For example, imagine you were using the 
 [nomad-cluster module](https://github.com/hashicorp/terraform-aws-nomad/tree/master/modules/nomad-cluster) to run a 
@@ -44,4 +44,4 @@ Note the following parameters:
   
 You can find the other parameters in [vars.tf](vars.tf).
 
-Check out the [consul-cluster module](/modules/consul-cluster) for working sample code.
+Check out the [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) for working sample code.

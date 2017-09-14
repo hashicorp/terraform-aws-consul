@@ -33,7 +33,7 @@ We need to write and package the scripts in this Module in a way that satisfies 
   manual approval (e.g. a PR for each new version). 
 
 - **Testable in dev mode**. We must be able to do local, iterative development on the example code in the 
-  [examples](/examples) folder. That means there is a way to "package" these scripts so that, in dev mode, they are
+  [examples](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples) folder. That means there is a way to "package" these scripts so that, in dev mode, they are
   downloaded from the local file system, rather than some package repo such as apt or yum.
 
 - **Mature**: We want to use a solution that is mature, battle-tested, and has an active community around it. 
