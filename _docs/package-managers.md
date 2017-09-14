@@ -8,7 +8,7 @@ which option we picked and why.
 
 ## The requirements
 
-We need to write and package the scripts in this Blueprint in a way that satisfies the following requirements:
+We need to write and package the scripts in this Module in a way that satisfies the following requirements:
 
 - **Packages**. There needs to be a way to fetch these scripts from a canonical location (e.g. GitHub repo, package 
   manager repository) at a specific version number (e.g. `v0.0.3` of `install-consul`), much like a package manager. 
@@ -24,7 +24,7 @@ We need to write and package the scripts in this Blueprint in a way that satisfi
 
 - **Simple package manager installation**: We don't want a package manager that takes a dozen steps to install. 
 
-- **Simple client usage**. The scripts in this Blueprint are fairly simple, so it shouldn't take a dozen steps to 
+- **Simple client usage**. The scripts in this Module are fairly simple, so it shouldn't take a dozen steps to 
   install one. Ideally, we can use a one-liner such as `apt install -y install-consul`, except it should work on all 
   major Linux distributions.
 
@@ -151,7 +151,7 @@ the file has to know what version it is, what to use to download, where to downl
 - **Install process**: Simple. Packer can do it automatically for [Chef 
   Solo](https://www.packer.io/docs/provisioners/chef-solo.html) and you can do it manually for Ansible:
   `sudo apt install -y ansible`.
-- **Client usage**: Complicated. You first have to download the Chef Recipe or Ansible Playbook from the Blueprint
+- **Client usage**: Complicated. You first have to download the Chef Recipe or Ansible Playbook from the Module
   repo (e.g. using a `shell-local` provisioner with `curl`) and then you can use the downloaded recipe or playbook 
   with the built-in Packer commands (e.g. [chef-solo 
   Provisioner](https://www.packer.io/docs/provisioners/chef-solo.html) and [ansible-local 

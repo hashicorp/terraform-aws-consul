@@ -173,7 +173,7 @@ These permissions are automatically added by the [consul-cluster module](/module
 
 Consul can encrypt all of its network traffic (see the [encryption docs for 
 details](https://www.consul.io/docs/agent/encryption.html)), but by default, encryption is not enabled in this 
-Blueprint. To enable encryption, you need to do the following:
+Module. To enable encryption, you need to do the following:
 
 1. [Gossip encryption: provide an encryption key](#gossip-encryption-provide-an-encryption-key)
 1. [RPC encryption: provide TLS certificates](#rpc-encryption-provide-tls-certificates)

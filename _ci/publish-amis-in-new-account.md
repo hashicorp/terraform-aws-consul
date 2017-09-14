@@ -1,10 +1,10 @@
 # How to Publish AMIs in a New Account
 
-To make using this Blueprint as easy as possible, we want to automatically build and publish AMIs based on the 
+To make using this Module as easy as possible, we want to automatically build and publish AMIs based on the 
 [/examples/consul-ami/consul.json](/examples/consul-ami/consul.json) Packer template upon every release of this repo. 
 This way, users can simply git clone this repo and `terraform apply` the [/examples/consul-cluster](/examples/consul-cluster)
 without first having to build their own AMI. Note that the auto-built AMIs are meant mostly for first-time users to 
-easily try out a Blueprint. In a production setting, many users will want to validate the contents of their AMI by
+easily try out a Module. In a production setting, many users will want to validate the contents of their AMI by
 manually building it in their own account.
 
 Unfortunately, auto-building AMIs creates a chicken-and-egg problem. How can we run code that automatically finds the

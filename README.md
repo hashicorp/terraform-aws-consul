@@ -1,6 +1,6 @@
-# Consul AWS Blueprint
+# Consul AWS Module
 
-This repo contains a Blueprint for how to deploy a [Consul](https://www.consul.io/) cluster on 
+This repo contains a Module for how to deploy a [Consul](https://www.consul.io/) cluster on 
 [AWS](https://aws.amazon.com/) using [Terraform](https://www.terraform.io/). Consul is a distributed, highly-available 
 tool that you can use for service discovery and key/value storage. A Consul cluster typically includes a small number
 of server nodes, which are responsible for being part of the [consensus 
@@ -11,20 +11,20 @@ run alongside your apps:
 
 
 
-## How to use this Blueprint
+## How to use this Module
 
-Each Blueprint has the following folder structure:
+Each Module has the following folder structure:
 
-* [modules](/modules): This folder contains the reusable code for this Blueprint, broken down into one or more modules.
+* [modules](/modules): This folder contains the reusable code for this Module, broken down into one or more modules.
 * [examples](/examples): This folder contains examples of how to use the modules.
 * [test](/test): Automated tests for the modules and examples.
 
-To deploy Consul servers using this Blueprint:
+To deploy Consul servers using this Module:
 
 1. Create a Consul AMI using a Packer template that references the [install-consul module](/modules/install-consul).
    Here is an [example Packer template](/examples/consul-ami#quick-start). 
    
-   If you are just experimenting with this Blueprint, you may find it more convenient to use one of our official public AMIs:
+   If you are just experimenting with this Module, you may find it more convenient to use one of our official public AMIs:
    - [Latest Ubuntu 16 AMIs](/_docs/ubuntu16-ami-list.md).
    - [Latest Amazon Linux AMIs](/_docs/amazon-linux-ami-list.md).
   
@@ -36,7 +36,7 @@ To deploy Consul servers using this Blueprint:
    Instance in the Auto Scaling Group to form the Consul cluster. Here is [an example Terraform 
    configuration](/examples/consul-cluster#quick-start) to provision a Consul cluster.
 
-To deploy Consul clients using this Blueprint:
+To deploy Consul clients using this Module:
  
 1. Use the [install-consul module](/modules/install-consul) to install Consul alongside your application code.
 1. Before booting your app, execute the [run-consul script](/modules/run-consul) with `--client` flag.
@@ -49,34 +49,34 @@ To deploy Consul clients using this Blueprint:
  
 
 
-## What's a Blueprint?
+## What's a Module?
 
-A Blueprint is a canonical, reusable, best-practices definition for how to run a single piece of infrastructure, such 
-as a database or server cluster. Each Blueprint is created using [Terraform](https://www.terraform.io/), and
+A Module is a canonical, reusable, best-practices definition for how to run a single piece of infrastructure, such 
+as a database or server cluster. Each Module is created using [Terraform](https://www.terraform.io/), and
 includes automated tests, examples, and documentation. It is maintained both by the open source community and 
 companies that provide commercial support. 
 
 Instead of figuring out the details of how to run a piece of infrastructure from scratch, you can reuse 
 existing code that has been proven in production. And instead of maintaining all that infrastructure code yourself, 
-you can leverage the work of the Blueprint community to pick up infrastructure improvements through
+you can leverage the work of the Module community to pick up infrastructure improvements through
 a version number bump.
  
  
  
-## Who maintains this Blueprint?
+## Who maintains this Module?
 
-This Blueprint is maintained by [Gruntwork](http://www.gruntwork.io/). If you're looking for help or commercial 
-support, send an email to [blueprints@gruntwork.io](mailto:blueprints@gruntwork.io?Subject=Consul%20Blueprint). 
+This Module is maintained by [Gruntwork](http://www.gruntwork.io/). If you're looking for help or commercial 
+support, send an email to [modules@gruntwork.io](mailto:modules@gruntwork.io?Subject=Consul%20Module). 
 Gruntwork can help with:
 
-* Setup, customization, and support for this Blueprint.
-* Blueprints for other types of infrastructure, such as VPCs, Docker clusters, databases, and continuous integration.
-* Blueprints that meet compliance requirements, such as HIPAA.
+* Setup, customization, and support for this Module.
+* Modules for other types of infrastructure, such as VPCs, Docker clusters, databases, and continuous integration.
+* Modules that meet compliance requirements, such as HIPAA.
 * Consulting & Training on AWS, Terraform, and DevOps.
 
 
 
-## Code included in this Blueprint:
+## Code included in this Module:
 
 * [install-consul](/modules/install-consul): This module installs Consul using a
   [Packer](https://www.packer.io/) template to create a Consul 
@@ -102,15 +102,15 @@ Gruntwork can help with:
 
 
 
-## How do I contribute to this Blueprint?
+## How do I contribute to this Module?
 
 Contributions are very welcome! Check out the [Contribution Guidelines](/CONTRIBUTING.md) for instructions.
 
 
 
-## How is this Blueprint versioned?
+## How is this Module versioned?
 
-This Blueprint follows the principles of [Semantic Versioning](http://semver.org/). You can find each new release, 
+This Module follows the principles of [Semantic Versioning](http://semver.org/). You can find each new release, 
 along with the changelog, in the [Releases Page](../../releases). 
 
 During initial development, the major version will be 0 (e.g., `0.x.y`), which indicates the code does not yet have a 

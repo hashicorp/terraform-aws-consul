@@ -3,7 +3,7 @@
 This folder contains a [Terraform](https://www.terraform.io/) module to deploy a 
 [Consul](https://www.consul.io/) cluster in [AWS](https://aws.amazon.com/) on top of an Auto Scaling Group. This module 
 is designed to deploy an [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) 
-that has Consul installed via the [install-consul](/modules/install-consul) module in this Blueprint.
+that has Consul installed via the [install-consul](/modules/install-consul) module in this Module.
 
 
 
@@ -16,7 +16,7 @@ code by adding a `module` configuration and setting its `source` parameter to UR
 module "consul_cluster" {
   # TODO: update this to the final URL
   # Use version v0.0.1 of the consul-cluster module
-  source = "github.com/gruntwork-io/consul-aws-blueprint//modules/consul-cluster?ref=v0.0.1"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.0.1"
 
   # Specify the ID of the Consul AMI. You should build this using the scripts in the install-consul module.
   ami_id = "ami-abcd1234"
@@ -134,7 +134,7 @@ For example, imagine you deployed a Consul cluster in `us-east-1` as follows:
 
 ```hcl
 module "consul_cluster" {
-  source = "github.com/gruntwork-io/consul-aws-blueprint//modules/consul-cluster?ref=v0.0.1"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.0.1"
 
   # Add this tag to each node in the cluster
   cluster_tag_key   = "consul-cluster"

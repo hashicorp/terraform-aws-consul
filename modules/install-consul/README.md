@@ -16,14 +16,14 @@ There is a good chance it will work on other flavors of Debian, CentOS, and RHEL
 
 ## Quick start
 
-<!-- TODO: update the clone URL to the final URL when this Blueprint is released -->
+<!-- TODO: update the clone URL to the final URL when this Module is released -->
 
 To install Consul, use `git` to clone this repository at a specific tag (see the [releases page](../../../../releases) 
 for all available tags) and run the `install-consul` script:
 
 ```
-git clone --branch <VERSION> https://github.com/gruntwork-io/consul-aws-blueprint.git
-consul-aws-blueprint/modules/install-consul/install-consul --version 0.8.0
+git clone --branch <VERSION> https://github.com/hashicorp/terraform-aws-consul.git
+terraform-aws-consul/modules/install-consul/install-consul --version 0.8.0
 ```
 
 The `install-consul` script will install Consul, its dependencies, and the [run-consul script](/modules/run-consul).
