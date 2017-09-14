@@ -22,8 +22,8 @@ To install Dnsmasq, use `git` to clone this repository at a specific tag (see th
 for all available tags) and run the `install-dnsmasq` script:
 
 ```
-git clone --branch <VERSION> https://github.com/gruntwork-io/consul-aws-blueprint.git
-consul-aws-blueprint/modules/install-dnsmasq/install-dnsmasq
+git clone --branch <VERSION> https://github.com/hashicorp/terraform-aws-consul.git
+terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq
 ```
 
 Note: by default, the `install-dnsmasq` script assumes that a Consul agent is already running locally and connected to 
@@ -36,7 +36,7 @@ dig foo.service.consul
 
 We recommend running the `install-dnsmasq` script as part of a [Packer](https://www.packer.io/) template to create an
 [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) (see the 
-[consul-ami example](/examples/consul-ami) for sample code). 
+[consul-ami example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-ami) for sample code). 
 
 
 

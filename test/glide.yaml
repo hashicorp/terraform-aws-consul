@@ -1,4 +1,4 @@
-package: github.com/gruntwork-io/consul-aws-blueprint/test
+package: github.com/hashicorp/terraform-aws-consul/test
 owners:
 - name: Gruntwork
   homepage: http://www.gruntwork.io

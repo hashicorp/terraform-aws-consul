@@ -3,7 +3,7 @@
 This folder contains a [Terraform](https://www.terraform.io/) module to deploy a 
 [Consul](https://www.consul.io/) cluster in [AWS](https://aws.amazon.com/) on top of an Auto Scaling Group. This module 
 is designed to deploy an [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) 
-that has Consul installed via the [install-consul](/modules/install-consul) module in this Blueprint.
+that has Consul installed via the [install-consul](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) module in this Module.
 
 
 
@@ -16,7 +16,7 @@ code by adding a `module` configuration and setting its `source` parameter to UR
 module "consul_cluster" {
   # TODO: update this to the final URL
   # Use version v0.0.1 of the consul-cluster module
-  source = "github.com/gruntwork-io/consul-aws-blueprint//modules/consul-cluster?ref=v0.0.1"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.0.1"
 
   # Specify the ID of the Consul AMI. You should build this using the scripts in the install-consul module.
   ami_id = "ami-abcd1234"
@@ -45,17 +45,17 @@ Note the following parameters:
 
 * `ami_id`: Use this parameter to specify the ID of a Consul [Amazon Machine Image 
   (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) to deploy on each server in the cluster. You
-  should install Consul in this AMI using the scripts in the [install-consul](/modules/install-consul) module.
+  should install Consul in this AMI using the scripts in the [install-consul](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) module.
   
 * `user_data`: Use this parameter to specify a [User 
   Data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-data-shell-scripts) script that each
-  server will run during boot. This is where you can use the [run-consul script](/modules/run-consul) to configure and 
-  run Consul. The `run-consul` script is one of the scripts installed by the [install-consul](/modules/install-consul) 
+  server will run during boot. This is where you can use the [run-consul script](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/run-consul) to configure and 
+  run Consul. The `run-consul` script is one of the scripts installed by the [install-consul](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) 
   module. 
 
 You can find the other parameters in [vars.tf](vars.tf).
 
-Check out the [consul-cluster example](/examples/consul-cluster) for fully-working sample code. 
+Check out the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-cluster) for fully-working sample code. 
 
 
 
@@ -66,12 +66,12 @@ Check out the [consul-cluster example](/examples/consul-cluster) for fully-worki
 
 If you want to connect to the cluster from your own computer, the easiest way is to use the [HTTP 
 API](https://www.consul.io/docs/agent/http.html). Note that this only works if the Consul cluster is running in public 
-subnets and/or your default VPC (as in the [consul-cluster example](/examples/consul-cluster)), which is OK for testing
+subnets and/or your default VPC (as in the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-cluster)), which is OK for testing
 and experimentation, but NOT recommended for production usage.
 
 To use the HTTP API, you first need to get the public IP address of one of the Consul Servers. You can find Consul 
-servers by using AWS tags. If you're running the [consul-cluster example](/examples/consul-cluster), the 
-[consul-examples-helper.sh script](/examples/consul-examples-helper/consul-examples-helper.sh) will do the tag lookup 
+servers by using AWS tags. If you're running the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-cluster), the 
+[consul-examples-helper.sh script](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-examples-helper/consul-examples-helper.sh) will do the tag lookup 
 for you automatically (note, you must have the [AWS CLI](https://aws.amazon.com/cli/), 
 [jq](https://stedolan.github.io/jq/), and the [Consul agent](https://www.consul.io/) installed locally):
 
@@ -120,7 +120,7 @@ bar
 
 Finally, you can try opening up the Consul UI in your browser at the URL `http://11.22.33.44:8500/ui/`.
 
-![Consul UI](/_docs/consul-ui-screenshot.png)
+![Consul UI](https://github.com/hashicorp/terraform-aws-consul/tree/master/_docs/consul-ui-screenshot.png)
 
 
 ### Using the Consul agent on another EC2 Instance
@@ -134,7 +134,7 @@ For example, imagine you deployed a Consul cluster in `us-east-1` as follows:
 
 ```hcl
 module "consul_cluster" {
-  source = "github.com/gruntwork-io/consul-aws-blueprint//modules/consul-cluster?ref=v0.0.1"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.0.1"
 
   # Add this tag to each node in the cluster
   cluster_tag_key   = "consul-cluster"
@@ -164,7 +164,7 @@ Two important notes about this command:
 
 This module creates the following architecture:
 
-![Consul architecture](/_docs/architecture.png)
+![Consul architecture](https://github.com/hashicorp/terraform-aws-consul/tree/master/_docs/architecture.png)
 
 This architecture consists of the following resources:
 
@@ -179,7 +179,7 @@ This architecture consists of the following resources:
 This module runs Consul on top of an [Auto Scaling Group (ASG)](https://aws.amazon.com/autoscaling/). Typically, you
 should run the ASG with 3 or 5 EC2 Instances spread across multiple [Availability 
 Zones](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html). Each of the EC2
-Instances should be running an AMI that has Consul installed via the [install-consul](/modules/install-consul)
+Instances should be running an AMI that has Consul installed via the [install-consul](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul)
 module. You pass in the ID of the AMI to run using the `ami_id` input parameter.
 
 
@@ -207,7 +207,7 @@ Check out the [Security section](#security) for more details.
 Each EC2 Instance in the ASG has an [IAM Role](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) attached. 
 We give this IAM role a small set of IAM permissions that each EC2 Instance can use to automatically discover the other 
 Instances in its ASG and form a cluster with them. See the [run-consul required permissions 
-docs](/modules/run-consul#required-permissions) for details.
+docs](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/run-consul#required-permissions) for details.
 
 The IAM Role ARN is exported as an output variable if you need to add additional permissions. 
 
@@ -276,14 +276,14 @@ Here are some of the main security considerations to keep in mind when using thi
 ### Encryption in transit
 
 Consul can encrypt all of its network traffic. For instructions on enabling network encryption, have a look at the
-[How do you handle encryption documentation](/modules/run-consul#how-do-you-handle-encryption).
+[How do you handle encryption documentation](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/run-consul#how-do-you-handle-encryption).
 
 
 ### Encryption at rest
 
 The EC2 Instances in the cluster store all their data on the root EBS Volume. To enable encryption for the data at
 rest, you must enable encryption in your Consul AMI. If you're creating the AMI using Packer (e.g. as shown in
-the [consul-ami example](/examples/consul-ami)), you need to set the [encrypt_boot 
+the [consul-ami example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-ami)), you need to set the [encrypt_boot 
 parameter](https://www.packer.io/docs/builders/amazon-ebs.html#encrypt_boot) to `true`.  
 
 

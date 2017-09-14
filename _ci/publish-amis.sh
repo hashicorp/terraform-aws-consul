@@ -27,7 +27,7 @@ if [[ -z "$PACKER_BUILD_NAME" ]]; then
 fi
 
 # Build the example AMI. WARNING! In a production setting, you should build your own AMI to ensure it has exactly the
-# configuration you want. We build this example AMI solely to make initial use of this Blueprint as easy as possible.
+# configuration you want. We build this example AMI solely to make initial use of this Module as easy as possible.
 build-packer-artifact \
   --packer-template-path "$PACKER_TEMPLATE_PATH" \
   --build-name "$PACKER_BUILD_NAME" \
@@ -42,7 +42,7 @@ publish-ami \
   --output-markdown > "$AMI_LIST_MARKDOWN_DIR/$PACKER_BUILD_NAME-list.md" \
   --markdown-title-text "$PACKER_BUILD_NAME: Latest Public AMIs" \
   --markdown-description-text "**WARNING! Do NOT use these AMIs in a production setting.** They are meant only to make
-    initial experiments with this blueprint more convenient."
+    initial experiments with this module more convenient."
 
 # Git add, commit, and push the newly created AMI IDs as a markdown doc to the repo
 git-add-commit-push \

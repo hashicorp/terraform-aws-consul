@@ -59,7 +59,7 @@ data "aws_ami" "consul" {
 module "consul_servers" {
   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
   # to a specific version of the modules, such as the following example:
-  # source = "git::git@github.com:gruntwork-io/consul-aws-blueprint.git//modules/consul-cluster?ref=v0.0.1"
+  # source = "git::git@github.com:hashicorp/terraform-aws-consul.git//modules/consul-cluster?ref=v0.0.1"
   source = "../../modules/consul-cluster"
 
   cluster_name  = "${var.cluster_name}-server"
@@ -107,7 +107,7 @@ data "template_file" "user_data_server" {
 module "consul_clients" {
   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
   # to a specific version of the modules, such as the following example:
-  # source = "git::git@github.com:gruntwork-io/consul-aws-blueprint.git//modules/consul-cluster?ref=v0.0.1"
+  # source = "git::git@github.com:hashicorp/terraform-aws-consul.git//modules/consul-cluster?ref=v0.0.1"
   source = "../../modules/consul-cluster"
 
   cluster_name  = "${var.cluster_name}-client"

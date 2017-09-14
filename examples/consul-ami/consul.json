@@ -45,13 +45,13 @@
   }],
   "provisioners": [{
     "type": "file",
-    "source": "{{template_dir}}/../../../consul-aws-blueprint",
+    "source": "{{template_dir}}/../../../terraform-aws-consul",
     "destination": "/tmp"
   },{
     "type": "shell",
     "inline": [
-      "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}",
-      "/tmp/consul-aws-blueprint/modules/install-dnsmasq/install-dnsmasq"
+      "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}}",
+      "/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"
     ],
     "pause_before": "30s"
   }]

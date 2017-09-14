@@ -1,7 +1,7 @@
 # Consul AMI
 
-This folder shows an example of how to use the [install-consul](/modules/install-consul) and 
-[install-dnsmasq](/modules/install-dnsmasq) modules with [Packer](https://www.packer.io/) to create [Amazon Machine 
+This folder shows an example of how to use the [install-consul](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) and 
+[install-dnsmasq](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-dnsmasq) modules with [Packer](https://www.packer.io/) to create [Amazon Machine 
 Images (AMIs)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) that have Consul and Dnsmasq installed on 
 top of:
  
@@ -12,10 +12,10 @@ These AMIs will have [Consul](https://www.consul.io/) installed and configured t
 boot-up. They also have [Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) installed and configured to use 
 Consul for DNS lookups of the `.consul` domain (e.g. `foo.service.consul`) (see [registering 
 services](https://www.consul.io/intro/getting-started/services.html) for instructions on how to register your services
-in Consul). To see how to deploy this AMI, check out the [consul-cluster example](/examples/consul-cluster). 
+in Consul). To see how to deploy this AMI, check out the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-cluster). 
 
 For more info on Consul installation and configuration, check out the 
-[install-consul](/modules/install-consul) and [install-dnsmasq](/modules/install-dnsmasq) documentation.
+[install-consul](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) and [install-dnsmasq](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-dnsmasq) documentation.
 
 
 
@@ -33,7 +33,7 @@ To build the Consul AMI:
 1. Run `packer build consul.json`.
 
 When the build finishes, it will output the IDs of the new AMIs. To see how to deploy one of these AMIs, check out the 
-[consul-cluster example](/examples/consul-cluster).
+[consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-cluster).
 
 
 
@@ -48,13 +48,13 @@ provisioner. Instead of:
 {
   "provisioners": [{
     "type": "file",
-    "source": "{{template_dir}}/../../../consul-aws-blueprint",
+    "source": "{{template_dir}}/../../../terraform-aws-consul",
     "destination": "/tmp"
   },{
     "type": "shell",
     "inline": [
-      "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}",
-      "/tmp/consul-aws-blueprint/modules/install-dnsmasq/install-dnsmasq"
+      "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}}",
+      "/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"
     ],
     "pause_before": "30s"
   }]
@@ -68,17 +68,17 @@ Your code should look more like this:
   "provisioners": [{
     "type": "shell",
     "inline": [
-      "git clone --branch <BLUEPRINT_VERSION> https://github.com/gruntwork-io/consul-aws-blueprint.git /tmp/consul-aws-blueprint",
-      "/tmp/consul-aws-blueprint/modules/install-consul/install-consul --version {{user `consul_version`}}",
-      "/tmp/consul-aws-blueprint/modules/install-dnsmasq/install-dnsmasq"
+      "git clone --branch <BLUEPRINT_VERSION> https://github.com/hashicorp/terraform-aws-consul.git /tmp/terraform-aws-consul",
+      "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}}",
+      "/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"
     ],
     "pause_before": "30s"
   }]
 }
 ```
 
-You should replace `<BLUEPRINT_VERSION>` in the code above with the version of this blueprint that you want to use (see
+You should replace `<BLUEPRINT_VERSION>` in the code above with the version of this module that you want to use (see
 the [Releases Page](../../releases) for all available versions). That's because for production usage, you should always
-use a fixed, known version of this Blueprint, downloaded from the official Git repo. On the other hand, when you're 
-just experimenting with the Blueprint, it's OK to use a local checkout of the Blueprint, uploaded from your own 
+use a fixed, known version of this Module, downloaded from the official Git repo. On the other hand, when you're 
+just experimenting with the Module, it's OK to use a local checkout of the Module, uploaded from your own 
 computer.
