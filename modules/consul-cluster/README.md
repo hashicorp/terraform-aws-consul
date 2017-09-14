@@ -164,7 +164,7 @@ Two important notes about this command:
 
 This module creates the following architecture:
 
-![Consul architecture](https://github.com/hashicorp/terraform-aws-consul/tree/master/_docs/architecture.png)
+![Consul architecture](/_docs/architecture.png)
 
 This architecture consists of the following resources:
 

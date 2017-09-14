@@ -7,7 +7,7 @@ of server nodes, which are responsible for being part of the [consensus
 quorum](https://www.consul.io/docs/internals/consensus.html), and a larger number of client nodes, which you typically 
 run alongside your apps:
 
-![Consul architecture](https://github.com/hashicorp/terraform-aws-consul/tree/master/_docs/architecture.png)
+![Consul architecture](_docs/architecture.png)
 
 
 
