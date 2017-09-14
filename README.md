@@ -7,7 +7,7 @@ of server nodes, which are responsible for being part of the [consensus
 quorum](https://www.consul.io/docs/internals/consensus.html), and a larger number of client nodes, which you typically 
 run alongside your apps:
 
-![Consul architecture](https://github.com/hashicorp/terraform-aws-consul/tree/master/_docs/architecture.png)
+![Consul architecture](_docs/architecture.png)
 
 
 
@@ -34,7 +34,7 @@ To deploy Consul servers using this Module:
 1. Deploy that AMI across an Auto Scaling Group using the Terraform [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) 
    and execute the [run-consul script](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/run-consul) with the `--server` flag during boot on each 
    Instance in the Auto Scaling Group to form the Consul cluster. Here is [an example Terraform 
-   configuration](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-cluster#quick-start) to provision a Consul cluster.
+   configuration](https://github.com/hashicorp/terraform-aws-consul/tree/master/MAIN.md#quick-start) to provision a Consul cluster.
 
 To deploy Consul clients using this Module:
  

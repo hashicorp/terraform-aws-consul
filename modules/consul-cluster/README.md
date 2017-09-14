@@ -55,7 +55,7 @@ Note the following parameters:
 
 You can find the other parameters in [vars.tf](vars.tf).
 
-Check out the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-cluster) for fully-working sample code. 
+Check out the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/MAIN.md) for fully-working sample code. 
 
 
 
@@ -66,11 +66,11 @@ Check out the [consul-cluster example](https://github.com/hashicorp/terraform-aw
 
 If you want to connect to the cluster from your own computer, the easiest way is to use the [HTTP 
 API](https://www.consul.io/docs/agent/http.html). Note that this only works if the Consul cluster is running in public 
-subnets and/or your default VPC (as in the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-cluster)), which is OK for testing
+subnets and/or your default VPC (as in the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/MAIN.md)), which is OK for testing
 and experimentation, but NOT recommended for production usage.
 
 To use the HTTP API, you first need to get the public IP address of one of the Consul Servers. You can find Consul 
-servers by using AWS tags. If you're running the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-cluster), the 
+servers by using AWS tags. If you're running the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/MAIN.md), the 
 [consul-examples-helper.sh script](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-examples-helper/consul-examples-helper.sh) will do the tag lookup 
 for you automatically (note, you must have the [AWS CLI](https://aws.amazon.com/cli/), 
 [jq](https://stedolan.github.io/jq/), and the [Consul agent](https://www.consul.io/) installed locally):
@@ -164,7 +164,7 @@ Two important notes about this command:
 
 This module creates the following architecture:
 
-![Consul architecture](https://github.com/hashicorp/terraform-aws-consul/tree/master/_docs/architecture.png)
+![Consul architecture](/_docs/architecture.png)
 
 This architecture consists of the following resources:
 
