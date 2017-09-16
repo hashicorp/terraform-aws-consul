@@ -1,4 +1,6 @@
-# How to Publish AMIs in a New Account
+# How to Publish AMIs in a New AWS Account
+
+This readme discusses how to migrate the `publish-amis.sh` script to a new AWS account.
 
 To make using this Module as easy as possible, we want to automatically build and publish AMIs based on the 
 [/examples/consul-ami/consul.json](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-ami/consul.json) Packer template upon every release of this repo. 
