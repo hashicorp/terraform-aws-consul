@@ -5,17 +5,17 @@
 
 | AWS Region | AMI ID |
 | ---------- | ------ |
-| ap-south-1 | ami-e5cab48a |
-| eu-west-2 | ami-25c1d741 |
-| eu-west-1 | ami-519c7d28 |
-| ap-northeast-2 | ami-6e865800 |
-| ap-northeast-1 | ami-e7584780 |
-| sa-east-1 | ami-7c0f7a10 |
-| ca-central-1 | ami-327bc456 |
-| ap-southeast-1 | ami-f9fe749a |
-| ap-southeast-2 | ami-c5d9cba6 |
-| eu-central-1 | ami-ed933382 |
-| us-east-1 | ami-9eb68c88 |
-| us-east-2 | ami-e91a3b8c |
-| us-west-1 | ami-1f18377f |
-| us-west-2 | ami-197f6c60 |
+| ap-south-1 | ami-7f266010 |
+| eu-west-2 | ami-43362527 |
+| eu-west-1 | ami-7013d109 |
+| ap-northeast-2 | ami-f22af19c |
+| ap-northeast-1 | ami-847ab7e2 |
+| sa-east-1 | ami-28067b44 |
+| ca-central-1 | ami-14bf0670 |
+| ap-southeast-1 | ami-b40e7ad7 |
+| ap-southeast-2 | ami-96799ef4 |
+| eu-central-1 | ami-6ea11701 |
+| us-east-1 | ami-6820c012 |
+| us-east-2 | ami-20c2e045 |
+| us-west-1 | ami-400a3c20 |
+| us-west-2 | ami-81a351f9 |
