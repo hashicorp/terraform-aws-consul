@@ -7,7 +7,7 @@ of server nodes, which are responsible for being part of the [consensus
 quorum](https://www.consul.io/docs/internals/consensus.html), and a larger number of client nodes, which you typically 
 run alongside your apps:
 
-![Consul architecture](_docs/architecture.png)
+![Consul architecture](https://github.com/hashicorp/terraform-aws-consul/blob/master/_docs/architecture.png?raw=true)
 
 
 
@@ -108,7 +108,7 @@ Gruntwork can help with:
 
 ## How do I contribute to this Module?
 
-Contributions are very welcome! Check out the [Contribution Guidelines](/CONTRIBUTING.md) for instructions.
+Contributions are very welcome! Check out the [Contribution Guidelines](https://github.com/hashicorp/terraform-aws-consul/tree/master/CONTRIBUTING.md) for instructions.
 
 
 
@@ -125,6 +125,6 @@ MINOR, and PATCH versions on each release to indicate any incompatibilities.
 
 ## License
 
-This code is released under the Apache 2.0 License. Please see [LICENSE](/LICENSE) and [NOTICE](/NOTICE) for more 
+This code is released under the Apache 2.0 License. Please see [LICENSE](https://github.com/hashicorp/terraform-aws-consul/tree/master/LICENSE) and [NOTICE](https://github.com/hashicorp/terraform-aws-consul/tree/master/NOTICE) for more 
 details.
 
