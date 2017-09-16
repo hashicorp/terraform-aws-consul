@@ -89,7 +89,7 @@ module "consul_servers" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 data "template_file" "user_data_server" {
-  template = "${file("${path.module}/user-data-server.sh")}"
+  template = "${file("${path.module}/examples/root-example/user-data-server.sh")}"
 
   vars {
     cluster_tag_key   = "${var.cluster_tag_key}"
@@ -136,7 +136,7 @@ module "consul_clients" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 data "template_file" "user_data_client" {
-  template = "${file("${path.module}/user-data-client.sh")}"
+  template = "${file("${path.module}/examples/root-example/user-data-client.sh")}"
 
   vars {
     cluster_tag_key   = "${var.cluster_tag_key}"
