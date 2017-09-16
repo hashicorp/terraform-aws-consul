@@ -80,12 +80,12 @@ function assert_not_empty {
 
 function lookup_path_in_instance_metadata {
   local readonly path="$1"
-  curl --silent --location "$EC2_INSTANCE_METADATA_URL/$path/"
+  curl --silent --show-error --location "$EC2_INSTANCE_METADATA_URL/$path/"
 }
 
 function lookup_path_in_instance_dynamic_data {
   local readonly path="$1"
-  curl --silent --location "$EC2_INSTANCE_DYNAMIC_DATA_URL/$path/"
+  curl --silent --show-error --location "$EC2_INSTANCE_DYNAMIC_DATA_URL/$path/"
 }
 
 function get_instance_ip_address {
@@ -171,11 +171,7 @@ function generate_consul_config {
     log_warn "Either the cluster tag key ($cluster_tag_key) or value ($cluster_tag_value) is empty. Will not automatically try to form a cluster based on EC2 tags."
   else
     retry_join_json=$(cat <<EOF
-  "retry_join_ec2": {
-    "tag_key": "$cluster_tag_key",
-    "tag_value": "$cluster_tag_value",
-    "region": "$instance_region"
-  },
+"retry_join": ["provider=aws region=$instance_region tag_key=$cluster_tag_key tag_value=$cluster_tag_value"],
 EOF
 )
   fi
@@ -232,6 +228,12 @@ EOF
 
 function start_consul {
   log_info "Reloading Supervisor config and starting Consul"
+
+  # Without this line, we receive the following error:
+  # error: <class 'socket.error'>, [Errno 2] No such file or directory: file: /usr/lib64/python2.7/socket.py line: 228
+  # The resolution was posted at https://github.com/Supervisor/supervisor/issues/121#issuecomment-25202472
+  #service supervisor start
+
   supervisorctl reread
   supervisorctl update
 }

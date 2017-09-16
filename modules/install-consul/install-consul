@@ -96,6 +96,9 @@ function install_supervisord_amazon_linux {
   create_supervisor_config
   sudo chkconfig --add supervisor
   sudo chkconfig supervisor on
+
+  # Amazon Linux does not automatically start supervisord after installing it. This command does that.
+  sudo service supervisor start
 }
 
 function create_supervisor_config {
