@@ -6,7 +6,7 @@ Groups (ASGs): one with a small number of Consul server nodes, which are respons
 quorum](https://www.consul.io/docs/internals/consensus.html), and one with a larger number of client nodes, which 
 would typically run alongside your apps:
 
-![Consul architecture](_docs/architecture.png)
+![Consul architecture](https://github.com/hashicorp/terraform-aws-consul/blob/master/_docs/architecture.png?raw=true)
 
 You will need to create an [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) 
 that has Consul installed, which you can do using the [consul-ami example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-ami)). Note that to keep 

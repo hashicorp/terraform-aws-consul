@@ -120,7 +120,7 @@ bar
 
 Finally, you can try opening up the Consul UI in your browser at the URL `http://11.22.33.44:8500/ui/`.
 
-![Consul UI](https://github.com/hashicorp/terraform-aws-consul/tree/master/_docs/consul-ui-screenshot.png)
+![Consul UI](https://github.com/hashicorp/terraform-aws-consul/blob/master/_docs/consul-ui-screenshot.png?raw=true)
 
 
 ### Using the Consul agent on another EC2 Instance
@@ -164,7 +164,7 @@ Two important notes about this command:
 
 This module creates the following architecture:
 
-![Consul architecture](/_docs/architecture.png)
+![Consul architecture](https://github.com/hashicorp/terraform-aws-consul/blob/master/_docs/architecture.png?raw=true)
 
 This architecture consists of the following resources:
 
