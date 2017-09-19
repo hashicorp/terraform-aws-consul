@@ -88,7 +88,7 @@ Your Consul servers are running at the following IP addresses:
 You can use one of these IP addresses with the `members` command to see a list of cluster nodes:
 
 ```
-> consul members -rpc-addr=11.22.33.44:8400
+> consul members -http-addr=11.22.33.44:8500
 
 Node                 Address             Status  Type    Build  Protocol  DC
 i-0051c3ea00e9691a0  172.31.35.148:8301  alive   client  0.8.0  2         us-east-1

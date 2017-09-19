@@ -113,7 +113,7 @@ function wait_for_all_consul_servers_to_register {
     log_info "Running 'consul members' command against server at IP address $server_ip"
     # Intentionally use local and readonly here so that this script doesn't exit if the consul members or grep commands
     # exit with an error.
-    local readonly members=$(consul members -rpc-addr="$server_ip:8400")
+    local readonly members=$(consul members -http-addr="$server_ip:8500")
     local readonly server_members=$(echo "$members" | grep "server")
     local readonly num_servers=$(echo "$server_members" | wc -l | tr -d ' ')
 
@@ -157,7 +157,7 @@ function print_instructions {
   local instructions=()
   instructions+=("\nYour Consul servers are running at the following IP addresses:\n\n${server_ips[@]/#/    }\n")
   instructions+=("Some commands for you to try:\n")
-  instructions+=("    consul members -rpc-addr=$server_ip:8400")
+  instructions+=("    consul members -http-addr=$server_ip:8500")
   instructions+=("    consul kv put -http-addr=$server_ip:8500 foo bar")
   instructions+=("    consul kv get -http-addr=$server_ip:8500 foo")
   instructions+=("\nTo see the Consul UI, open the following URL in your web browser:\n")
