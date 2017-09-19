@@ -68,7 +68,7 @@ Your code should look more like this:
   "provisioners": [{
     "type": "shell",
     "inline": [
-      "git clone --branch <BLUEPRINT_VERSION> https://github.com/hashicorp/terraform-aws-consul.git /tmp/terraform-aws-consul",
+      "git clone --branch <MODULE_VERSION> https://github.com/hashicorp/terraform-aws-consul.git /tmp/terraform-aws-consul",
       "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}}",
       "/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"
     ],
@@ -77,7 +77,7 @@ Your code should look more like this:
 }
 ```
 
-You should replace `<BLUEPRINT_VERSION>` in the code above with the version of this module that you want to use (see
+You should replace `<MODULE_VERSION>` in the code above with the version of this module that you want to use (see
 the [Releases Page](../../releases) for all available versions). That's because for production usage, you should always
 use a fixed, known version of this Module, downloaded from the official Git repo. On the other hand, when you're 
 just experimenting with the Module, it's OK to use a local checkout of the Module, uploaded from your own 
