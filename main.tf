@@ -152,7 +152,7 @@ data "template_file" "user_data_client" {
 
 data "aws_vpc" "default" {
   default = "${var.vpc_id == "" ? true : false}"
-  id = "${var.vpc_id == "" ? "" : var.vpc_id}"
+  id = "${var.vpc_id}"
 }
 
 data "aws_subnet_ids" "default" {
