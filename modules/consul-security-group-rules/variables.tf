@@ -17,6 +17,12 @@ variable "allowed_inbound_cidr_blocks" {
 # These parameters have reasonable defaults.
 # ---------------------------------------------------------------------------------------------------------------------
 
+variable "allowed_inbound_security_group_ids" {
+  description = "A list of security group IDs that will be allowed to connect to Consul"
+  type        = "list"
+  default     = []
+}
+
 variable "server_rpc_port" {
   description = "The port used by servers to handle incoming requests from other agents."
   default     = 8300
