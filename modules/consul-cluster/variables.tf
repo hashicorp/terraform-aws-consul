@@ -71,6 +71,18 @@ variable "allowed_ssh_cidr_blocks" {
   default     = []
 }
 
+variable "allowed_ssh_security_group_ids" {
+  description = "A list of security group IDs from which the EC2 Instances will allow SSH connections"
+  type        = "list"
+  default     = []
+}
+
+variable "allowed_inbound_security_group_ids" {
+  description = "A list of security group IDs that will be allowed to connect to Consul"
+  type        = "list"
+  default     = []
+}
+
 variable "termination_policies" {
   description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
   default     = "Default"
