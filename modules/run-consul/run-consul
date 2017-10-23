@@ -161,6 +161,7 @@ function generate_consul_config {
   local instance_id=""
   local instance_ip_address=""
   local instance_region=""
+  local ui="false"
 
   instance_id=$(get_instance_id)
   instance_ip_address=$(get_instance_ip_address)
@@ -185,6 +186,7 @@ EOF
     cluster_size=$(get_cluster_size "$instance_tags" "$instance_region")
 
     bootstrap_expect="\"bootstrap_expect\": $cluster_size,"
+    ui="true"
   fi
 
   log_info "Creating default Consul config file in $config_path"
@@ -198,7 +200,7 @@ EOF
   "node_name": "$instance_id",
   $retry_join_json
   "server": $server,
-  "ui": true
+  "ui": $ui
 }
 EOF
   chown "$user:$user" "$config_path"
