@@ -47,6 +47,6 @@ variable "ssh_key_name" {
 }
 
 variable "vpc_id" {
-    description = "The ID of the VPC in which the nodes will be deployed.  Uses default VPC if not supplied."
-    default = ""
+  description = "The ID of the VPC in which the nodes will be deployed.  Uses default VPC if not supplied."
+  default     = ""
 }
