@@ -15,8 +15,8 @@ code by adding a `module` configuration and setting its `source` parameter to UR
 ```hcl
 module "consul_cluster" {
   # TODO: update this to the final URL
-  # Use version v0.0.1 of the consul-cluster module
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.0.1"
+  # Use version v0.0.5 of the consul-cluster module
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.0.5"
 
   # Specify the ID of the Consul AMI. You should build this using the scripts in the install-consul module.
   ami_id = "ami-abcd1234"
@@ -134,7 +134,7 @@ For example, imagine you deployed a Consul cluster in `us-east-1` as follows:
 
 ```hcl
 module "consul_cluster" {
-  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.0.1"
+  source = "github.com/hashicorp/terraform-aws-consul//modules/consul-cluster?ref=v0.0.5"
 
   # Add this tag to each node in the cluster
   cluster_tag_key   = "consul-cluster"
