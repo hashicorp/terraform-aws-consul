@@ -42,6 +42,6 @@ Note the following parameters:
 * `security_group_id`: Use this parameter to specify the ID of the security group to which the rules in this module
   should be added.
   
-You can find the other parameters in [vars.tf](vars.tf).
+You can find the other parameters in [variables.tf](variables.tf).
 
 Check out the [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) for working sample code.

@@ -31,7 +31,7 @@ module "consul_cluster" {
               /opt/consul/bin/run-consul --server --cluster-tag-key consul-cluster
               EOF
   
-  # ... See vars.tf for the other parameters you must define for the consul-cluster module
+  # ... See variables.tf for the other parameters you must define for the consul-cluster module
 }
 ```
 
@@ -53,7 +53,7 @@ Note the following parameters:
   run Consul. The `run-consul` script is one of the scripts installed by the [install-consul](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) 
   module. 
 
-You can find the other parameters in [vars.tf](vars.tf).
+You can find the other parameters in [variables.tf](variables.tf).
 
 Check out the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/MAIN.md) for fully-working sample code. 
 
@@ -304,7 +304,7 @@ This module attaches a security group to each EC2 Instance that allows inbound r
   [CIDR blocks](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing) that will be allowed access. You can use the `allowed_inbound_ssh_security_group_ids` parameter to control the list of source Security Groups that will be allowed access.
   
 Note that all the ports mentioned above are configurable via the `xxx_port` variables (e.g. `server_rpc_port`). See
-[vars.tf](vars.tf) for the full list.  
+[variables.tf](variables.tf) for the full list.  
   
   
 
