@@ -42,6 +42,6 @@ Note the following parameters:
 * `iam_role_id`: Use this parameter to specify the ID of the IAM Role to which the rules in this module
   should be added.
   
-You can find the other parameters in [vars.tf](vars.tf).
+You can find the other parameters in [variables.tf](variables.tf).
 
 Check out the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/MAIN.md) for working sample code.
