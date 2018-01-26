@@ -99,14 +99,14 @@ function install_supervisord_amazon_linux {
 
   if [[ ! -f "/usr/local/bin/supervisord" ]]; then
     if [[ -f "/usr/bin/supervisord" ]]; then
-      sudo ln -s /usr/bin/supervisorctl /usr/local/bin/supervisorctl
+      sudo ln -s /usr/bin/supervisord /usr/local/bin/supervisord
     else
       echo "Unable to find supervisord... exiting"
       exit -5
     fi
   elif [[ ! -f "/usr/bin/supervisord" ]]; then
     if [[ -f "/usr/local/bin/supervisord" ]]; then
-      sudo ln -s /usr/local/bin/supervisorctl /usr/bin/supervisorctl
+      sudo ln -s /usr/local/bin/supervisord /usr/bin/supervisord
     fi
   fi
 
