@@ -78,8 +78,8 @@ function install_supervisord_debian {
 }
 
 function two_way_symlink() {
-  src=$1
-  dest=$2
+  local src="$1"
+  local dest="$2"
 
   if [[ ! -f "$dest" ]] && [[ ! -f "$src" ]]; then
     echo "Missing source AND destination... exiting..."
