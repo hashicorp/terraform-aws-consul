@@ -17,6 +17,10 @@ in Consul). To see how to deploy this AMI, check out the [consul-cluster example
 For more info on Consul installation and configuration, check out the 
 [install-consul](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) and [install-dnsmasq](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-dnsmasq) documentation.
 
+## Dependencies
+1.  AWSCLI must be installed on the base AMI in order for run-consul to run
+1.  PIP must be installed on the base AMI in order to install supervisord
+1.  Git CAN be installed on the base AMI if you want to use clone commands
 
 
 ## Quick start
