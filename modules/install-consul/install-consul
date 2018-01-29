@@ -82,7 +82,7 @@ function two_way_symlink() {
   local dest="$2"
 
   if [[ ! -f "$dest" ]] && [[ ! -f "$src" ]]; then
-    echo "Missing source AND destination... exiting..."
+    echo "Missing source '$src' AND destination '$dest' exiting..."
     exit -5
   fi
 
