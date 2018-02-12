@@ -93,6 +93,11 @@ variable "associate_public_ip_address" {
   default     = false
 }
 
+variable "spot_price" {
+  description = "The price to use for reserving spot instances."
+  default     = ""
+}
+
 variable "tenancy" {
   description = "The tenancy of the instance. Must be one of: default or dedicated."
   default     = "default"
