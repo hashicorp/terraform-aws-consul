@@ -184,3 +184,9 @@ variable "ssh_port" {
   description = "The port used for SSH connections"
   default     = 22
 }
+
+variable "tags" {
+  description = "List fo extra tag blocks added to the autoscaling group configuration"
+  type        = "list"
+  default     = []
+}
