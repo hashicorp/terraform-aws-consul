@@ -94,13 +94,13 @@ variable "associate_public_ip_address" {
 }
 
 variable "spot_price" {
-  description = "The price to use for reserving spot instances."
+  description = "The maximum hourly price to pay for EC2 Spot Instances."
   default     = ""
 }
 
 variable "tenancy" {
-  description = "The tenancy of the instance. Must be one of: default or dedicated."
-  default     = "default"
+  description = "The tenancy of the instance. Must be one of: null, default or dedicated. For EC2 Spot Instances only null or dedicated can be used."
+  default     = ""
 }
 
 variable "root_volume_ebs_optimized" {
