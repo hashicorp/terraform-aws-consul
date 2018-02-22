@@ -99,7 +99,7 @@ variable "spot_price" {
 }
 
 variable "tenancy" {
-  description = "The tenancy of the instance. Must be one of: null, default or dedicated. For EC2 Spot Instances only null or dedicated can be used."
+  description = "The tenancy of the instance. Must be one of: empty string, default or dedicated. For EC2 Spot Instances only empty string or dedicated can be used."
   default     = ""
 }
 
