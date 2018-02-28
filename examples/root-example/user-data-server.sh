@@ -4,7 +4,6 @@
 # built from the Packer template in examples/consul-ami/consul.json.
 
 set -e
-sleep 30
 
 # Send the log output from this script to user-data.log, syslog, and the console
 # From: https://alestic.com/2010/12/ec2-user-data-output/

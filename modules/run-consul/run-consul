@@ -14,6 +14,9 @@ readonly EC2_INSTANCE_DYNAMIC_DATA_URL="http://169.254.169.254/latest/dynamic"
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_NAME="$(basename "$0")"
 
+readonly MAX_RETRIES=30
+readonly SLEEP_BETWEEN_RETRIES_SEC=10
+
 function print_usage {
   echo
   echo "Usage: run-consul [OPTIONS]"
@@ -103,9 +106,25 @@ function get_instance_region {
 function get_instance_tags {
   local readonly instance_id="$1"
   local readonly instance_region="$2"
+  local tags=""
+  local count_tags=""
 
   log_info "Looking up tags for Instance $instance_id in $instance_region"
-  aws ec2 describe-tags --region "$instance_region" --filters "Name=resource-type,Values=instance" "Name=resource-id,Values=${instance_id}"
+  for (( i=1; i<="$MAX_RETRIES"; i++ )); do
+    tags=$(aws ec2 describe-tags \
+      --region "$instance_region" \
+      --filters "Name=resource-type,Values=instance" "Name=resource-id,Values=${instance_id}")
+    count_tags=$(echo $tags | jq -r ".Tags? | length")
+    if [[ "$count_tags" -gt 0 ]]; then
+      log_info "This Instance $instance_id in $instance_region has Tags."
+      echo "$tags"
+      return
+    else
+      log_warn "This Instance $instance_id in $instance_region does not have any Tags."
+      log_warn "Will sleep for $SLEEP_BETWEEN_RETRIES_SEC seconds and try again."
+      sleep "$SLEEP_BETWEEN_RETRIES_SEC"
+    fi
+  done
 }
 
 function get_asg_size {
