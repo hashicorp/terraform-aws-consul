@@ -125,6 +125,9 @@ function get_instance_tags {
       sleep "$SLEEP_BETWEEN_RETRIES_SEC"
     fi
   done
+
+  log_error "Could not find Instance Tags for $instance_id in $instance_region after $MAX_RETRIES retries."
+  exit 1
 }
 
 function get_asg_size {
