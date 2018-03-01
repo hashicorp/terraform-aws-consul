@@ -50,3 +50,8 @@ variable "vpc_id" {
   description = "The ID of the VPC in which the nodes will be deployed.  Uses default VPC if not supplied."
   default     = ""
 }
+
+variable "spot_price" {
+  description = "The maximum hourly price to pay for EC2 Spot Instances."
+  default     = ""
+}

@@ -152,16 +152,17 @@ function get_consul_cluster_ips {
 
 function print_instructions {
   local readonly server_ips=($@)
-  local readonly server_ip="${server_ips[0]}"
 
   local instructions=()
   instructions+=("\nYour Consul servers are running at the following IP addresses:\n\n${server_ips[@]/#/    }\n")
   instructions+=("Some commands for you to try:\n")
-  instructions+=("    consul members -http-addr=$server_ip:8500")
-  instructions+=("    consul kv put -http-addr=$server_ip:8500 foo bar")
-  instructions+=("    consul kv get -http-addr=$server_ip:8500 foo")
+  instructions+=("    consul members -http-addr=${server_ips[0]}:8500")
+  instructions+=("    consul kv put -http-addr=${server_ips[0]}:8500 foo bar")
+  instructions+=("    consul kv get -http-addr=${server_ips[0]}:8500 foo")
+  instructions+=("    consul kv get -http-addr=${server_ips[1]}:8500 foo")
+  instructions+=("    consul kv get -http-addr=${server_ips[2]}:8500 foo")
   instructions+=("\nTo see the Consul UI, open the following URL in your web browser:\n")
-  instructions+=("    http://$server_ip:8500/ui/\n")
+  instructions+=("    http://${server_ips[0]}:8500/ui/\n")
 
   local instructions_str
   instructions_str=$(join "\n" "${instructions[@]}")
