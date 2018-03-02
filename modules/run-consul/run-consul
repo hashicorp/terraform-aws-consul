@@ -29,6 +29,7 @@ function print_usage {
   echo -e "  --client\t\tIf set, run in client mode. Optional. Exactly one of --server or --client must be set."
   echo -e "  --cluster-tag-key\tAutomatically form a cluster with Instances that have this tag key and the tag value in --cluster-tag-value. Optional."
   echo -e "  --cluster-tag-value\tAutomatically form a cluster with Instances that have the tag key in --cluster-tag-key and this tag value. Optional."
+  echo -e "  --datacenter\tThe name of the datacenter Consul is running in. Optional. If not specified, will default to AWS region name."
   echo -e "  --config-dir\t\tThe path to the Consul config folder. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --data-dir\t\tThe path to the Consul data folder. Optional. Default is the absolute path of '../data', relative to this script."
   echo -e "  --log-dir\t\tThe path to the Consul log folder. Optional. Default is the absolute path of '../log', relative to this script."
@@ -178,6 +179,7 @@ function generate_consul_config {
   local readonly user="$3"
   local readonly cluster_tag_key="$4"
   local readonly cluster_tag_value="$5"
+  local readonly datacenter="$6"
   local readonly config_path="$config_dir/$CONSUL_CONFIG_FILE"
 
   local instance_id=""
@@ -218,7 +220,7 @@ EOF
   "bind_addr": "$instance_ip_address",
   $bootstrap_expect
   "client_addr": "0.0.0.0",
-  "datacenter": "$instance_region",
+  "datacenter": "$datacenter",
   "node_name": "$instance_id",
   $retry_join_json
   "server": $server,
@@ -273,6 +275,7 @@ function run {
   local user=""
   local cluster_tag_key=""
   local cluster_tag_value=""
+  local datacenter=""
   local skip_consul_config="false"
   local all_args=()
 
@@ -319,6 +322,11 @@ function run {
       --cluster-tag-value)
         assert_not_empty "$key" "$2"
         cluster_tag_value="$2"
+        shift
+        ;;
+      --datacenter)
+        assert_not_empty "$key" "$2"
+        datacenter="$2"
         shift
         ;;
       --skip-consul-config)
@@ -368,10 +376,14 @@ function run {
     user=$(get_owner_of_path "$config_dir")
   fi
 
+  if [[ -z "$datacenter" ]]; then
+    datacenter=$(get_instance_region)
+  fi
+
   if [[ "$skip_consul_config" == "true" ]]; then
     log_info "The --skip-consul-config flag is set, so will not generate a default Consul config file."
   else
-    generate_consul_config "$server" "$config_dir" "$user" "$cluster_tag_key" "$cluster_tag_value"
+    generate_consul_config "$server" "$config_dir" "$user" "$cluster_tag_key" "$cluster_tag_value" "$datacenter"
   fi
 
   generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$data_dir" "$log_dir" "$bin_dir" "$user"
