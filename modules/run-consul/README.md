@@ -59,6 +59,7 @@ The `run-consul` script accepts the following arguments:
   in `--cluster-tag-value`.
 * `cluster-tag-value` (optional): Automatically form a cluster with Instances that have the tag key in 
   `--cluster-tag-key` and this tag value.
+* `datacenter` (optional): The name of the datacenter the cluster reports. Default is the AWS region name.
 * `config-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../config`, 
   relative to the `run-consul` script itself.
 * `data-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../data`, 
@@ -107,6 +108,7 @@ available.
 
 * [datacenter](https://www.consul.io/docs/agent/options.html#datacenter): Set to the current AWS region (e.g. 
   `us-east-1`), as fetched from [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
+  If the `--datacenter` flag is provided, then that value is used instead.
 
 * [node_name](https://www.consul.io/docs/agent/options.html#node_name): Set to the instance id, as fetched from 
   [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
