@@ -65,6 +65,12 @@ The `run-consul` script accepts the following arguments:
 * `data-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../data`, 
   relative to the `run-consul` script itself.
 * `user` (optional): The user to run Consul as. Default is to use the owner of `config-dir`.
+* `enable-gossip-encryption` (optional): Enable encryption of gossip traffic between nodes. If set, you must also specify `gossip-encryption-key`.
+* `gossip-encryption-key` (optional): The key to use for encrypting gossip traffic. Must be specified with `enable-gossip-encryption`.
+* `enable-rpc-encryption` (optional): Enable encryption of RPC traffic between nodes. Must also specify `ca-file-path`, `cert-file-path` and `key-file-path`.
+* `ca-file-path` (optional): Path to the CA file used to verify outgoing connections. Must be specified with `enable-rpc-encryption`, `cert-file-path` and `key-file-path`.
+* `cert-file-path` (optional): Path to the certificate file used to verify incoming connections. Must be specified with `enable-rpc-encryption`, `ca-file-path`, and `key-file-path`.
+* `key-file-path` (optional): Path to the certificate key used to verify incoming connections. Must be specified with `enable-rpc-encryption`, `ca-file-path` and `cert-file-path`.
 * `skip-consul-config` (optional): If this flag is set, don't generate a Consul configuration file. This is useful if 
   you have a custom configuration file and don't want to use any of of the default settings from `run-consul`. 
 
@@ -193,6 +199,8 @@ configuration file (e.g. `encryption.json`) in the Consul config dir (default lo
 }
 ```
 
+Alternatively, you can run `run-consul` with `--enable-gossip-encryption` and `--gossip-encryption-key` to have this script
+automatically generate the gossip encryption settings in `/opt/consul/config/gossip-encryption.json`.
 
 ### RPC encryption: provide TLS certificates
 
@@ -223,5 +231,6 @@ incoming and outgoing connections, respectively:
 }
 ```
 
-
-
+Alternatively, you can run `run-consul` with `--enable-rpc-encryption`, `--ca-file-path`, `--cert-file-path`,
+and `--key-file-path` to have this script automatically generate the RPC encryption settings in
+`/opt/consul/config/rpc-encryption.json`. Please note that this **does not** set `"verify_server_hostname": true`.
