@@ -40,7 +40,7 @@ function print_usage {
   echo -e "  --enable-gossip-encryption\t\tEnable encryption of gossip traffic between nodes. Optional. Must also specify --gossip-encryption-key."
   echo -e "  --gossip-encryption-key\t\tThe key to use for encrypting gossip traffic. Optional. Must be specified with --enable-gossip-encryption."
   echo -e "  --enable-rpc-encryption\t\tEnable encryption of RPC traffic between nodes. Optional. Must also specify --ca-file-path, --cert-file-path and --key-file-path."
-  echo -e "  --ca-file-path\t\tPath to the CA file used to verify outgoing connections. Optional. Must be specified with --enable-rpc-encryption."
+  echo -e "  --ca-path\t\tPath to the directory of CA files used to verify outgoing connections. Optional. Must be specified with --enable-rpc-encryption."
   echo -e "  --cert-file-path\t\tPath to the certificate file used to verify incoming connections. Optional. Must be specified with --enable-rpc-encryption and --key-file-path."
   echo -e "  --key-file-path\t\tPath to the certificate key used to verify incoming connections. Optional. Must be specified with --enable-rpc-encryption and --cert-file-path."
   echo -e "  --skip-consul-config\tIf this flag is set, don't generate a Consul configuration file. Optional. Default is false."
@@ -184,7 +184,7 @@ function assert_is_installed {
 function generate_rpc_encryption_config {
   local readonly config_dir="$1"
   local readonly user="$2"
-  local readonly ca_file_path="$3"
+  local readonly ca_path="$3"
   local readonly cert_file_path="$4"
   local readonly key_file_path="$5"
   local readonly config_path="$config_dir/$CONSUL_RPC_ENCRYPTION_CONFIG_FILE"
@@ -194,7 +194,7 @@ function generate_rpc_encryption_config {
 {
   "verify_outgoing": true,
   "verify_incoming": true,
-  "ca_file": "$ca_file_path",
+  "ca_path": "$ca_path",
   "cert_file": "$cert_file_path",
   "key_file": "$key_file_path"
 }
@@ -384,9 +384,9 @@ function run {
       --enable-rpc-encryption)
         enable_rpc_encryption="true"
         ;;
-      --ca-file-path)
+      --ca-path)
         assert_not_empty "$key" "$2"
-        ca_file_path="$2"
+        ca_path="$2"
         shift
         ;;
       --cert-file-path)
@@ -462,10 +462,10 @@ function run {
   fi
 
   if [[ "$enable_rpc_encryption" == "true" ]]; then
-    assert_not_empty "--ca-file-path" "$ca_file_path"
+    assert_not_empty "--ca-path" "$ca_path"
     assert_not_empty "--cert-file-path" "$cert_file_path"
     assert_not_empty "--key-file-path" "$key_file_path"
-    generate_rpc_encryption_config "$config_dir" "$user" "$ca_file_path" "$cert_file_path" "$key_file_path"
+    generate_rpc_encryption_config "$config_dir" "$user" "$ca_path" "$cert_file_path" "$key_file_path"
   fi
 
   generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$data_dir" "$log_dir" "$bin_dir" "$user"

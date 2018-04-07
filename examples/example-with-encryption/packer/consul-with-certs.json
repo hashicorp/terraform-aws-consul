@@ -71,12 +71,14 @@
   },{
     "type": "shell",
     "inline": [
-      "sudo mkdir -p /opt/consul/tls",
-      "sudo mv /tmp/ca.crt.pem /opt/consul/tls/",
+      "sudo mkdir -p /opt/consul/tls/ca",
+      "sudo mv /tmp/ca.crt.pem /opt/consul/tls/ca/",
       "sudo mv /tmp/consul.crt.pem /opt/consul/tls/",
       "sudo mv /tmp/consul.key.pem /opt/consul/tls/",
-      "sudo chown consul:consul /opt/consul/tls/*",
-      "sudo chmod 600 /opt/consul/tls/*"
+      "sudo chown -R consul:consul /opt/consul/tls/*",
+      "sudo chmod 600 /opt/consul/tls/ca/ca.crt.pem",
+      "sudo chmod 600 /opt/consul/tls/consul.crt.pem",
+      "sudo chmod 600 /opt/consul/tls/consul.key.pem"
     ]
   }]
 }

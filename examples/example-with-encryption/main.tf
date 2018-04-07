@@ -69,7 +69,7 @@ data "template_file" "user_data_server" {
     cluster_tag_key   = "${var.cluster_tag_key}"
     cluster_tag_value = "${var.cluster_name}"
     gossip_encryption_configuration = "${var.enable_gossip_encryption && var.gossip_encryption_key != "" ? "--enable-gossip-encryption --gossip-encryption-key ${var.gossip_encryption_key}" : ""}"
-    rpc_encryption_configuration = "${var.enable_rpc_encryption && var.ca_file_path != "" && var.cert_file_path != "" && var.key_file_path != "" ? "--enable-rpc-encryption --ca-file-path ${var.ca_file_path} --cert-file-path ${var.cert_file_path} --key-file-path ${var.key_file_path}" : ""}"
+    rpc_encryption_configuration = "${var.enable_rpc_encryption && var.ca_path != "" && var.cert_file_path != "" && var.key_file_path != "" ? "--enable-rpc-encryption --ca-path ${var.ca_path} --cert-file-path ${var.cert_file_path} --key-file-path ${var.key_file_path}" : ""}"
   }
 }
 
@@ -120,7 +120,7 @@ data "template_file" "user_data_client" {
     cluster_tag_key   = "${var.cluster_tag_key}"
     cluster_tag_value = "${var.cluster_name}"
     gossip_encryption_configuration = "${var.enable_gossip_encryption && var.gossip_encryption_key != "" ? "--enable-gossip-encryption --gossip-encryption-key ${var.gossip_encryption_key}" : ""}"
-    rpc_encryption_configuration = "${var.enable_rpc_encryption && var.ca_file_path != "" && var.cert_file_path != "" && var.key_file_path != "" ? "--enable-rpc-encryption --ca-file-path ${var.ca_file_path} --cert-file-path ${var.cert_file_path} --key-file-path ${var.key_file_path}" : ""}"
+    rpc_encryption_configuration = "${var.enable_rpc_encryption && var.ca_path != "" && var.cert_file_path != "" && var.key_file_path != "" ? "--enable-rpc-encryption --ca-path ${var.ca_path} --cert-file-path ${var.cert_file_path} --key-file-path ${var.key_file_path}" : ""}"
   }
 }
 

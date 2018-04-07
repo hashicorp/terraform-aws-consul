@@ -71,9 +71,9 @@ variable "gossip_encryption_key" {
   default = ""
 }
 
-variable "ca_file_path" {
-  description = "Path to the CA file used to verify outgoing connections."
-  default = "/opt/consul/tls/ca.crt.pem"
+variable "ca_path" {
+  description = "Path to the directory of CA files used to verify outgoing connections."
+  default = "/opt/consul/tls/ca"
 }
 
 variable "cert_file_path" {
