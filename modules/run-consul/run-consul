@@ -181,49 +181,19 @@ function assert_is_installed {
   fi
 }
 
-function generate_rpc_encryption_config {
-  local readonly config_dir="$1"
-  local readonly user="$2"
-  local readonly ca_path="$3"
-  local readonly cert_file_path="$4"
-  local readonly key_file_path="$5"
-  local readonly config_path="$config_dir/$CONSUL_RPC_ENCRYPTION_CONFIG_FILE"
-
-  log_info "Creating RPC encryption configuration"
-  cat > "$config_path" <<EOF
-{
-  "verify_outgoing": true,
-  "verify_incoming": true,
-  "ca_path": "$ca_path",
-  "cert_file": "$cert_file_path",
-  "key_file": "$key_file_path"
-}
-EOF
-  chown "$user:$user" "$config_path"
-}
-
-function generate_gossip_encryption_config {
-  local readonly config_dir="$1"
-  local readonly user="$2"
-  local readonly gossip_encryption_key="$3"
-  local readonly config_path="$config_dir/$CONSUL_GOSSIP_ENCRYPTION_CONFIG_FILE"
-
-  log_info "Creating gossip encryption configuration"
-  cat > "$config_path" <<EOF
-{
-  "encrypt": "$gossip_encryption_key"
-}
-EOF
-  chown "$user:$user" "$config_path"
-}
-
 function generate_consul_config {
-  local readonly server="$1"
-  local readonly config_dir="$2"
-  local readonly user="$3"
-  local readonly cluster_tag_key="$4"
-  local readonly cluster_tag_value="$5"
-  local readonly datacenter="$6"
+  local readonly server="${1}"
+  local readonly config_dir="${2}"
+  local readonly user="${3}"
+  local readonly cluster_tag_key="${4}"
+  local readonly cluster_tag_value="${5}"
+  local readonly datacenter="${6}"
+  local readonly enable_gossip_encryption="${7}"
+  local readonly gossip_encryption_key="${8}"
+  local readonly enable_rpc_encryption="${9}"
+  local readonly ca_path="${10}"
+  local readonly cert_file_path="${11}"
+  local readonly key_file_path="${12}"
   local readonly config_path="$config_dir/$CONSUL_CONFIG_FILE"
 
   local instance_id=""
@@ -257,8 +227,34 @@ EOF
     ui="true"
   fi
 
-  log_info "Creating default Consul config file in $config_path"
-  cat > "$config_path" <<EOF
+  local gossip_encryption_json=""
+  if [[ "$enable_gossip_encryption" == "true" && ! -z "$gossip_encryption_key" ]]; then
+    log_info "Creating gossip encryption configuration"
+    gossip_encryption_json=$(cat <<EOF
+{
+  "encrypt": "$gossip_encryption_key"
+}
+EOF
+)
+  fi
+
+  local rpc_encryption_json=""
+  if [[ "$enable_rpc_encryption" == "true" && ! -z "$ca_path" && ! -z "$cert_file_path" && ! -z "$key_file_path" ]]; then
+    log_info "Creating RPC encryption configuration"
+    rpc_encryption_json=$(cat <<EOF
+{
+  "verify_outgoing": true,
+  "verify_incoming": true,
+  "ca_path": "$ca_path",
+  "cert_file": "$cert_file_path",
+  "key_file": "$key_file_path"
+}
+EOF
+)
+  fi
+
+  log_info "Creating default Consul configuration"
+  local default_config_json=$(cat <<EOF
 {
   "advertise_addr": "$instance_ip_address",
   "bind_addr": "$instance_ip_address",
@@ -271,6 +267,9 @@ EOF
   "ui": $ui
 }
 EOF
+)
+  log_info "Installing Consul config file in $config_path"
+  echo "$default_config_json" "$gossip_encryption_json" "$rpc_encryption_json" | jq --slurp add > "$config_path"
   chown "$user:$user" "$config_path"
 }
 
@@ -320,6 +319,12 @@ function run {
   local cluster_tag_key=""
   local cluster_tag_value=""
   local datacenter=""
+  local enable_gossip_encryption="false"
+  local gossip_encryption_key=""
+  local enable_rpc_encryption="false"
+  local ca_path=""
+  local cert_file_path=""
+  local key_file_path=""
   local skip_consul_config="false"
   local all_args=()
 
@@ -453,19 +458,7 @@ function run {
   if [[ "$skip_consul_config" == "true" ]]; then
     log_info "The --skip-consul-config flag is set, so will not generate a default Consul config file."
   else
-    generate_consul_config "$server" "$config_dir" "$user" "$cluster_tag_key" "$cluster_tag_value" "$datacenter"
-  fi
-
-  if [[ "$enable_gossip_encryption" == "true" ]]; then
-    assert_not_empty "--gossip-encryption-key" "$gossip_encryption_key"
-    generate_gossip_encryption_config "$config_dir" "$user" "$gossip_encryption_key"
-  fi
-
-  if [[ "$enable_rpc_encryption" == "true" ]]; then
-    assert_not_empty "--ca-path" "$ca_path"
-    assert_not_empty "--cert-file-path" "$cert_file_path"
-    assert_not_empty "--key-file-path" "$key_file_path"
-    generate_rpc_encryption_config "$config_dir" "$user" "$ca_path" "$cert_file_path" "$key_file_path"
+    generate_consul_config "$server" "$config_dir" "$user" "$cluster_tag_key" "$cluster_tag_value" "$datacenter" "$enable_gossip_encryption" "$gossip_encryption_key" "$enable_rpc_encryption" "$ca_path" "$cert_file_path" "$key_file_path"
   fi
 
   generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$data_dir" "$log_dir" "$bin_dir" "$user"
