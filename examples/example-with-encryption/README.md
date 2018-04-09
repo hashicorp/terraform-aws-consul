@@ -1,6 +1,6 @@
 # Consul cluster with encryption example
 
-This folder contains an example of a Packer manifest that creates an AMI with the required certs for TLS validation, as well as installing an updated version of the `run-consul` script that accepts parameters for enabling RPC and/or gossip encryption.
+This folder contains a set of Terraform manifest for deploying a Consul cluster in AWS, including a Packer manifest that creates an AMI a set of insecured certs for TLS validation, as well as installing an updated version of the `run-consul` script that accepts parameters for enabling RPC and gossip encryption.
 
 The resulting AMI id can then be passed as a parameter to `variables.tf`. The `enable_gossip_encryption` and `enable_rpc_encryption` variables are set to `true` by default in this example, but they don't have to be in your implementation. In this example they're passed as parameters to the `user_data` template to generate the flags passed to `run-consul` but you can use a different strategy.
 
@@ -8,7 +8,7 @@ The end result of this example should be a cluster of 3 Consul servers and 3 Con
 
 Running this example with encryption turned off and then attempt to upgrade it to use encryption is a good exercise to validate that a production cluster can be upgraded with minimal impact.
 
-To understand more about how Consul handles encryption or how you can upgrade to use encryption without downtime, check out the [Consul encryption documentation](https://www.consul.io/docs/agent/encryption.html).
+To understand more about how Consul handles encryption or how you can upgrade to use encryption without downtime, check out the [Consul encryption documentation](https://www.consul.io/docs/agent/encryption.html). **IMPORTANT:** The certs included in this repo are **NOT** meant to be used in production. You should generate your own certs if you're running this for anything other than experimenting or testing.
 
 ## Quick start
 

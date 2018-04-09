@@ -190,8 +190,12 @@ Module. To enable encryption, you need to do the following:
 ### Gossip encryption: provide an encryption key
 
 To enable Gossip encryption, you need to provide a 16-byte, Base64-encoded encryption key, which you can generate using
-the [consul keygen command](https://www.consul.io/docs/commands/keygen.html). You can put the key in a Consul 
-configuration file (e.g. `encryption.json`) in the Consul config dir (default location: `/opt/consul/config`):
+the [consul keygen command](https://www.consul.io/docs/commands/keygen.html) offline. You can pass the
+`--enable-gossip-encryption` and `--gossip-encryption-key` parameters to `run-consul` to have this script automatically
+generate the gossip encryption settings in `default.json` in the Consul config dir.
+
+Alternatively, you can put the key in a Consul configuration file (e.g. `encryption.json`) in the Consul
+config dir (default location: `/opt/consul/config`):
 
 ```json
 {
@@ -199,15 +203,18 @@ configuration file (e.g. `encryption.json`) in the Consul config dir (default lo
 }
 ```
 
-Alternatively, you can run `run-consul` with `--enable-gossip-encryption` and `--gossip-encryption-key` to have this script
-automatically generate the gossip encryption settings in `/opt/consul/config/gossip-encryption.json`.
-
 ### RPC encryption: provide TLS certificates
 
-To enable RPC encryption, you need to provide the paths to the CA and signing keys ([here is a tutorial on generating 
-these keys](http://russellsimpkins.blogspot.com/2015/10/consul-adding-tls-using-self-signed.html)). You can specify 
-these paths in a Consul configuration file (e.g. `encryption.json`) in the Consul config dir (default location: 
-`/opt/consul/config`):
+To enable RPC encryption, you need to provide the paths to the CA and signing keys. Since you're already using Terraform,
+it's probably easiest to use the [TLS Provider](https://www.terraform.io/docs/providers/tls/index.html) to generate your
+own certificates. You can find a good working example in the [private-tls-cert module](https://github.com/hashicorp/terraform-aws-vault/tree/master/modules/private-tls-cert)
+within the [terraform-aws-vault repo](https://github.com/hashicorp/terraform-aws-vault). You can pass the `--enable-rpc-encryption`,
+`--ca-file-path`, `--cert-file-path`, and `--key-file-path` parameters to `run-consul` to have this script automatically
+generate the RPC encryption settings in `default.json` in the Consul config dir. Please note that this **does not** set
+`"verify_server_hostname": true`.
+
+Alternatively, you can specify these paths in a Consul configuration file (e.g. `encryption.json`) in the Consul config
+dir (default location: `/opt/consul/config`):
 
 ```json
 {
@@ -230,7 +237,3 @@ incoming and outgoing connections, respectively:
   "verify_outgoing": true
 }
 ```
-
-Alternatively, you can run `run-consul` with `--enable-rpc-encryption`, `--ca-file-path`, `--cert-file-path`,
-and `--key-file-path` to have this script automatically generate the RPC encryption settings in
-`/opt/consul/config/rpc-encryption.json`. Please note that this **does not** set `"verify_server_hostname": true`.
