@@ -231,7 +231,7 @@ function install_tls_certificates {
   sudo cp "$key_file_path" "$consul_tls_certs_path"
 
   sudo chown -R "$user:$user" "$consul_tls_certs_path"
-  sudo chmod -R u=rX,g=,o= "$consul_tls_certs_path/*"
+  sudo chmod -R u=rX,g=,o= "$consul_tls_certs_path"
 }
 
 function install {
