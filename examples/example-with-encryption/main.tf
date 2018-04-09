@@ -3,7 +3,7 @@
 # These templates show an example of how to use the consul-cluster module to deploy Consul in AWS. We deploy two Auto
 # Scaling Groups (ASGs): one with a small number of Consul server nodes and one with a larger number of Consul client
 # nodes. Note that these templates assume that the AMI you provide via the ami_id input variable is built from
-# the examples/consul-ami/consul.json Packer template.
+# the examples/example-with-encryption/packer/consul-with-certs.json Packer template.
 # ---------------------------------------------------------------------------------------------------------------------
 
 provider "aws" {
@@ -68,8 +68,12 @@ data "template_file" "user_data_server" {
   vars {
     cluster_tag_key   = "${var.cluster_tag_key}"
     cluster_tag_value = "${var.cluster_name}"
-    gossip_encryption_configuration = "${var.enable_gossip_encryption && var.gossip_encryption_key != "" ? "--enable-gossip-encryption --gossip-encryption-key ${var.gossip_encryption_key}" : ""}"
-    rpc_encryption_configuration = "${var.enable_rpc_encryption && var.ca_path != "" && var.cert_file_path != "" && var.key_file_path != "" ? "--enable-rpc-encryption --ca-path ${var.ca_path} --cert-file-path ${var.cert_file_path} --key-file-path ${var.key_file_path}" : ""}"
+    enable_gossip_encryption = "${var.enable_gossip_encryption}"
+    gossip_encryption_key = "${var.gossip_encryption_key}"
+    enable_rpc_encryption = "${var.enable_rpc_encryption}"
+    ca_path = "${var.ca_path}"
+    cert_file_path = "${var.cert_file_path}"
+    key_file_path = "${var.key_file_path}"
   }
 }
 
@@ -119,8 +123,12 @@ data "template_file" "user_data_client" {
   vars {
     cluster_tag_key   = "${var.cluster_tag_key}"
     cluster_tag_value = "${var.cluster_name}"
-    gossip_encryption_configuration = "${var.enable_gossip_encryption && var.gossip_encryption_key != "" ? "--enable-gossip-encryption --gossip-encryption-key ${var.gossip_encryption_key}" : ""}"
-    rpc_encryption_configuration = "${var.enable_rpc_encryption && var.ca_path != "" && var.cert_file_path != "" && var.key_file_path != "" ? "--enable-rpc-encryption --ca-path ${var.ca_path} --cert-file-path ${var.cert_file_path} --key-file-path ${var.key_file_path}" : ""}"
+    enable_gossip_encryption = "${var.enable_gossip_encryption}"
+    gossip_encryption_key = "${var.gossip_encryption_key}"
+    enable_rpc_encryption = "${var.enable_rpc_encryption}"
+    ca_path = "${var.ca_path}"
+    cert_file_path = "${var.cert_file_path}"
+    key_file_path = "${var.key_file_path}"
   }
 }
 
