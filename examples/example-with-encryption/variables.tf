@@ -12,7 +12,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 variable "ami_id" {
-  description = "The ID of the AMI to run in the cluster. This should be an AMI built from the Packer template under examples/consul-ami/consul.json. To keep this example simple, we run the same AMI on both server and client nodes, but in real-world usage, your client nodes would also run your apps. If the default value is used, Terraform will look up the latest AMI build automatically."
+  description = "The ID of the AMI to run in the cluster. This should be an AMI built from the Packer template under examples/example-with-encryption/packer/consul-with-certs.json. To keep this example simple, we run the same AMI on both server and client nodes, but in real-world usage, your client nodes would also run your apps. If the default value is used, Terraform will look up the latest AMI build automatically."
   default     = ""
 }
 
@@ -58,16 +58,16 @@ variable "spot_price" {
 
 variable "enable_gossip_encryption" {
   description = "Encrypt gossip traffic between nodes. Must also specify encryption key."
-  default = true
+  default = "true"
 }
 
 variable "enable_rpc_encryption" {
   description = "Encrypt RPC traffic between nodes. Must also specify TLS certificates and keys."
-  default = true
+  default = "true"
 }
 
 variable "gossip_encryption_key" {
-  description = "16 byte cryptographic key to encrypt gossip traffic between nodes. Must set 'enable_gossip_encryption' to true for this to take effect."
+  description = "16 byte cryptographic key to encrypt gossip traffic between nodes. Must set 'enable_gossip_encryption' to true for this to take effect. WARNING: Setting the encryption key here means it will be stored in plain text. We're doing this here to keep the example simple, but in production you should inject it more securely, e.g. retrieving it from KMS."
   default = ""
 }
 
