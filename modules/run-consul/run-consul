@@ -227,28 +227,21 @@ EOF
     ui="true"
   fi
 
-  local gossip_encryption_json=""
+  local gossip_encryption_configuration=""
   if [[ "$enable_gossip_encryption" == "true" && ! -z "$gossip_encryption_key" ]]; then
     log_info "Creating gossip encryption configuration"
-    gossip_encryption_json=$(cat <<EOF
-{
-  "encrypt": "$gossip_encryption_key"
-}
-EOF
-)
+    gossip_encryption_configuration="\"encrypt\": \"$gossip_encryption_key\","
   fi
 
-  local rpc_encryption_json=""
+  local rpc_encryption_configuration=""
   if [[ "$enable_rpc_encryption" == "true" && ! -z "$ca_path" && ! -z "$cert_file_path" && ! -z "$key_file_path" ]]; then
     log_info "Creating RPC encryption configuration"
-    rpc_encryption_json=$(cat <<EOF
-{
-  "verify_outgoing": true,
-  "verify_incoming": true,
-  "ca_path": "$ca_path",
-  "cert_file": "$cert_file_path",
-  "key_file": "$key_file_path"
-}
+    rpc_encryption_configuration=$(cat <<EOF
+"verify_outgoing": true,
+"verify_incoming": true,
+"ca_path": "$ca_path",
+"cert_file": "$cert_file_path",
+"key_file": "$key_file_path",
 EOF
 )
   fi
@@ -264,12 +257,14 @@ EOF
   "node_name": "$instance_id",
   $retry_join_json
   "server": $server,
+  $gossip_encryption_configuration
+  $rpc_encryption_configuration
   "ui": $ui
 }
 EOF
 )
   log_info "Installing Consul config file in $config_path"
-  echo "$default_config_json" "$gossip_encryption_json" "$rpc_encryption_json" | jq --slurp add > "$config_path"
+  echo "$default_config_json" | jq '.' > "$config_path"
   chown "$user:$user" "$config_path"
 }
 

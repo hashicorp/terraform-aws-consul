@@ -16,7 +16,7 @@ To deploy a Consul cluster with encryption enabled:
 
 1. Create a new AMI using the Packer manifest and the certificates in the `packer` directory.
 1. Modify `main.tf` to add your provider credentials, VPC/subnet ids if you need to, etc.
-1. Modify `variables.tf` to customize the cluster. **NOTE:** the `gossip_encryption_key` variable must be a 16-byte key that can be generated offline with `consul keygen`. It's **NOT** a good idea to keep this key **in plain text** in source control.
+1. Modify `variables.tf` to customize the cluster. **NOTE:** the `gossip_encryption_key` variable must be a 16-byte key that can be generated offline with `consul keygen`. It's **NOT** a good idea to keep this key **in plain text** in source control. It should be encrypted beforehand (with something like KMS) and decrypted by Consul during boot.
 1. Run `terraform init`.
 1. Run `terraform apply`.
 1. `ssh` into one of the boxes and make sure all nodes correctly discover each other (by running `consul members` for example).
