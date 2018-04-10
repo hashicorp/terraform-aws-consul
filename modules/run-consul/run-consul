@@ -458,6 +458,14 @@ function run {
   if [[ "$skip_consul_config" == "true" ]]; then
     log_info "The --skip-consul-config flag is set, so will not generate a default Consul config file."
   else
+    if [[ "$enable_gossip_encryption" == "true" ]]; then
+      assert_not_empty "--gossip-encryption-key" "$gossip_encryption_key"
+    fi
+    if [[ "$enable_rpc_encryption" == "true" ]]; then
+      assert_not_empty "--ca-path" "$ca_path"
+      assert_not_empty "--cert-file-path" "$cert_file_path"
+      assert_not_empty "--key_file_path" "$key_file_path"
+    fi
     generate_consul_config "$server" "$config_dir" "$user" "$cluster_tag_key" "$cluster_tag_value" "$datacenter" "$enable_gossip_encryption" "$gossip_encryption_key" "$enable_rpc_encryption" "$ca_path" "$cert_file_path" "$key_file_path"
   fi
 

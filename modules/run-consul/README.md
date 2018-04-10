@@ -211,7 +211,8 @@ own certificates. You can find a good working example in the [private-tls-cert m
 within the [terraform-aws-vault repo](https://github.com/hashicorp/terraform-aws-vault). You can pass the `--enable-rpc-encryption`,
 `--ca-file-path`, `--cert-file-path`, and `--key-file-path` parameters to `run-consul` to have this script automatically
 generate the RPC encryption settings in `default.json` in the Consul config dir. Please note that this **does not** set
-`"verify_server_hostname": true`.
+`"verify_server_hostname": true`. Check the documentation of the [verify_server_hostname field](https://www.consul.io/docs/agent/options.html#verify_server_hostname)
+to understand the implications of this.
 
 Alternatively, you can specify these paths in a Consul configuration file (e.g. `encryption.json`) in the Consul config
 dir (default location: `/opt/consul/config`):

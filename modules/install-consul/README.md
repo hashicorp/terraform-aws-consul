@@ -48,7 +48,7 @@ The `install-consul` script accepts the following arguments:
 * `user USER`: The install dirs will be owned by user USER. Optional.
 * `ca-file-path PATH`: Path to a PEM-encoded certificate authority used to encrypt and verify authenticity of client and server connections. Optional.
 * `cert-file-path PATH`: Path to a PEM-encoded certificate, which will be provided to clients or servers to verify the agent's authenticity. Optional.
-* `key-file-path PATH`: Path to a PEM-encoded private key, used with the certificate to verify the agent's authenticity.
+* `key-file-path PATH`: Path to a PEM-encoded private key, used with the certificate to verify the agent's authenticity. Optional.
 
 Example:
 

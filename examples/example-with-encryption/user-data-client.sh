@@ -11,7 +11,9 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 # These variables are passed in via Terraform template interplation
 if [[ "${enable_gossip_encryption}" == "true" && ! -z "${gossip_encryption_key}" ]]; then
-  # We're setting the encryption key in plain text here to simplify the example, but in production you should inject it more securely, e.g. retrieving it from KMS.
+  # Note that setting the encryption key in plain text here means that it will be readable from the Terraform state file
+  # and/or the EC2 API/console. We're doing this for simplicity, but in a real production environment you should pass an
+  # encrypted key to Terraform and decrypt it before passing it to run-consul with something like KMS.
   gossip_encryption_configuration="--enable-gossip-encryption --gossip-encryption-key ${gossip_encryption_key}"
 fi
 

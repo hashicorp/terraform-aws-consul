@@ -223,15 +223,15 @@ function install_tls_certificates {
   local readonly cert_file_path="$4"
   local readonly key_file_path="$5"
 
-  local readonly consul_tls_certs_path="$path/tls/"
-  local readonly ca_certs_path="$consul_tls_certs_path/ca/"
+  local readonly consul_tls_certs_path="$path/tls"
+  local readonly ca_certs_path="$consul_tls_certs_path/ca"
 
-  sudo cp "$ca_file_path" "$ca_certs_path"
-  sudo cp "$cert_file_path" "$consul_tls_certs_path"
-  sudo cp "$key_file_path" "$consul_tls_certs_path"
+  sudo cp "$ca_file_path" "$ca_certs_path/"
+  sudo cp "$cert_file_path" "$consul_tls_certs_path/"
+  sudo cp "$key_file_path" "$consul_tls_certs_path/"
 
-  sudo chown -R "$user:$user" "$consul_tls_certs_path"
-  sudo chmod -R u=rX,g=,o= "$consul_tls_certs_path"
+  sudo chown -R "$user:$user" "$consul_tls_certs_path/"
+  sudo find "$consul_tls_certs_path/" -type f -exec chmod u=r,g=,o= {} \;
 }
 
 function install {
