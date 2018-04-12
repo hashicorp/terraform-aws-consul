@@ -46,6 +46,9 @@ The `install-consul` script accepts the following arguments:
 * `version VERSION`: Install Consul version VERSION. Required. 
 * `path DIR`: Install Consul into folder DIR. Optional.
 * `user USER`: The install dirs will be owned by user USER. Optional.
+* `ca-file-path PATH`: Path to a PEM-encoded certificate authority used to encrypt and verify authenticity of client and server connections. Optional.
+* `cert-file-path PATH`: Path to a PEM-encoded certificate, which will be provided to clients or servers to verify the agent's authenticity. Optional.
+* `key-file-path PATH`: Path to a PEM-encoded private key, used with the certificate to verify the agent's authenticity. Optional.
 
 Example:
 
@@ -61,6 +64,7 @@ The `install-consul` script does the following:
 
 1. [Create a user and folders for Consul](#create-a-user-and-folders-for-consul)
 1. [Install Consul binaries and scripts](#install-consul-binaries-and-scripts)
+1. [Install provided TLS certificates](#install-tls-certificates)
 1. [Install supervisord](#install-supervisord)
 1. [Follow-up tasks](#follow-up-tasks)
 
@@ -74,6 +78,8 @@ Create an OS user named `consul`. Create the following folders, all owned by use
 * `/opt/consul/data`: directory where the Consul agent can store state.
 * `/opt/consul/config`: directory where the Consul agent looks up configuration.
 * `/opt/consul/log`: directory where Consul will store log output.
+* `/opt/consul/tls`: directory where an optional server certificate and private key are copied if provided.
+* `/opt/consul/tls/ca`: directory where an optional CA certificate is copied if provided.
 
 
 ### Install Consul binaries and scripts
@@ -85,6 +91,12 @@ Install the following:
   symlink to the `consul` binary in `/usr/local/bin`.
 * `run-consul`: Copy the [run-consul script](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/run-consul) into `/opt/consul/bin`. 
 
+### Install TLS certificates
+
+Copy the certificates/key provided by the `--ca-file-path`, `cert-file-path` and `key-file-path` to the Consul
+configuration directory. If provided, the CA file is copied to `/opt/consul/tls/ca` and the server certificate/key
+are copied to `/opt/consul/tls` (assuming the default config path of `/opt/consul`). The script also sets the
+required permissions and file ownership.
 
 ### Install supervisord
 

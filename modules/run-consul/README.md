@@ -65,6 +65,12 @@ The `run-consul` script accepts the following arguments:
 * `data-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../data`, 
   relative to the `run-consul` script itself.
 * `user` (optional): The user to run Consul as. Default is to use the owner of `config-dir`.
+* `enable-gossip-encryption` (optional): Enable encryption of gossip traffic between nodes. If set, you must also specify `gossip-encryption-key`.
+* `gossip-encryption-key` (optional): The key to use for encrypting gossip traffic. Must be specified with `enable-gossip-encryption`.
+* `enable-rpc-encryption` (optional): Enable encryption of RPC traffic between nodes. Must also specify `ca-file-path`, `cert-file-path` and `key-file-path`.
+* `ca-file-path` (optional): Path to the CA file used to verify outgoing connections. Must be specified with `enable-rpc-encryption`, `cert-file-path` and `key-file-path`.
+* `cert-file-path` (optional): Path to the certificate file used to verify incoming connections. Must be specified with `enable-rpc-encryption`, `ca-file-path`, and `key-file-path`.
+* `key-file-path` (optional): Path to the certificate key used to verify incoming connections. Must be specified with `enable-rpc-encryption`, `ca-file-path` and `cert-file-path`.
 * `skip-consul-config` (optional): If this flag is set, don't generate a Consul configuration file. This is useful if 
   you have a custom configuration file and don't want to use any of of the default settings from `run-consul`. 
 
@@ -184,8 +190,12 @@ Module. To enable encryption, you need to do the following:
 ### Gossip encryption: provide an encryption key
 
 To enable Gossip encryption, you need to provide a 16-byte, Base64-encoded encryption key, which you can generate using
-the [consul keygen command](https://www.consul.io/docs/commands/keygen.html). You can put the key in a Consul 
-configuration file (e.g. `encryption.json`) in the Consul config dir (default location: `/opt/consul/config`):
+the [consul keygen command](https://www.consul.io/docs/commands/keygen.html) offline. You can pass the
+`--enable-gossip-encryption` and `--gossip-encryption-key` parameters to `run-consul` to have this script automatically
+generate the gossip encryption settings in `default.json` in the Consul config dir.
+
+Alternatively, you can put the key in a Consul configuration file (e.g. `encryption.json`) in the Consul
+config dir (default location: `/opt/consul/config`):
 
 ```json
 {
@@ -193,13 +203,19 @@ configuration file (e.g. `encryption.json`) in the Consul config dir (default lo
 }
 ```
 
-
 ### RPC encryption: provide TLS certificates
 
-To enable RPC encryption, you need to provide the paths to the CA and signing keys ([here is a tutorial on generating 
-these keys](http://russellsimpkins.blogspot.com/2015/10/consul-adding-tls-using-self-signed.html)). You can specify 
-these paths in a Consul configuration file (e.g. `encryption.json`) in the Consul config dir (default location: 
-`/opt/consul/config`):
+To enable RPC encryption, you need to provide the paths to the CA and signing keys. Since you're already using Terraform,
+it's probably easiest to use the [TLS Provider](https://www.terraform.io/docs/providers/tls/index.html) to generate your
+own certificates. You can find a good working example in the [private-tls-cert module](https://github.com/hashicorp/terraform-aws-vault/tree/master/modules/private-tls-cert)
+within the [terraform-aws-vault repo](https://github.com/hashicorp/terraform-aws-vault). You can pass the `--enable-rpc-encryption`,
+`--ca-file-path`, `--cert-file-path`, and `--key-file-path` parameters to `run-consul` to have this script automatically
+generate the RPC encryption settings in `default.json` in the Consul config dir. Please note that this **does not** set
+`"verify_server_hostname": true`. Check the documentation of the [verify_server_hostname field](https://www.consul.io/docs/agent/options.html#verify_server_hostname)
+to understand the implications of this.
+
+Alternatively, you can specify these paths in a Consul configuration file (e.g. `encryption.json`) in the Consul config
+dir (default location: `/opt/consul/config`):
 
 ```json
 {
@@ -222,6 +238,3 @@ incoming and outgoing connections, respectively:
   "verify_outgoing": true
 }
 ```
-
-
-

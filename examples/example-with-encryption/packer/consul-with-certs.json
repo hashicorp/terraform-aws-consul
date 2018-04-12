@@ -1,0 +1,72 @@
+{
+  "min_packer_version": "0.12.0",
+  "variables": {
+    "consul_version": "1.0.5",
+    "ca_public_key_path": "{{template_dir}}/ca.crt.pem",
+    "tls_public_key_path": "{{template_dir}}/consul.crt.pem",
+    "tls_private_key_path": "{{template_dir}}/consul.key.pem"
+  },
+  "builders": [{
+    "ami_name": "consul-with-encryption-ubuntu-{{isotime | clean_ami_name}}",
+    "ami_description": "An Ubuntu 16.04 AMI that has Consul installed and TLS certificates.",
+    "instance_type": "t2.micro",
+    "name": "ubuntu16-ami",
+    "region": "us-east-1",
+    "type": "amazon-ebs",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "architecture": "x86_64",
+        "name": "*ubuntu-xenial-16.04-amd64-server-*",
+        "block-device-mapping.volume-type": "gp2",
+        "root-device-type": "ebs"
+      },
+      "owners": ["099720109477"],
+      "most_recent": true
+    },
+    "ssh_username": "ubuntu"
+  },{
+    "ami_name": "consul-with-encryption-amazon-linux-{{isotime | clean_ami_name}}",
+    "ami_description": "An Amazon Linux AMI that has Consul installed and TLS certificates.",
+    "instance_type": "t2.micro",
+    "name": "amazon-linux-ami",
+    "region": "us-east-1",
+    "type": "amazon-ebs",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "architecture": "x86_64",
+        "name": "*amzn-ami-hvm-*",
+        "block-device-mapping.volume-type": "gp2",
+        "root-device-type": "ebs"
+      },
+      "owners": ["amazon"],
+      "most_recent": true
+    },
+    "ssh_username": "ec2-user"
+  }],
+  "provisioners": [{
+    "type": "file",
+    "source": "{{user `ca_public_key_path`}}",
+    "destination": "/tmp/ca.crt.pem"
+  },{
+    "type": "file",
+    "source": "{{user `tls_public_key_path`}}",
+    "destination": "/tmp/consul.crt.pem"
+  },{
+    "type": "file",
+    "source": "{{user `tls_private_key_path`}}",
+    "destination": "/tmp/consul.key.pem"
+  },{
+    "type": "file",
+    "source": "{{template_dir}}/../../../../terraform-aws-consul",
+    "destination": "/tmp"
+  },{
+    "type": "shell",
+    "inline": [
+      "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}} --ca-file-path /tmp/ca.crt.pem --cert-file-path /tmp/consul.crt.pem --key-file-path /tmp/consul.key.pem",
+      "/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"
+    ],
+    "pause_before": "30s"
+  }]
+}
