@@ -102,6 +102,8 @@ Gruntwork can help with:
 * [consul-security-group-rules](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-security-group-rules): Defines the security group rules used by a 
   Consul cluster to control the traffic that is allowed to go in and out of the cluster.
 
+* [consul-client-security-group-rules](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-client-security-group-rules): Defines the security group rules
+  used by a Consul agent to control the traffic that is allowed to go in and out.
 
 
 
