@@ -72,6 +72,7 @@ Your code should look more like this:
   "provisioners": [{
     "type": "shell",
     "inline": [
+      "sudo yum install -y git || true",
       "git clone --branch <MODULE_VERSION> https://github.com/hashicorp/terraform-aws-consul.git /tmp/terraform-aws-consul",
       "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}}",
       "/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"
