@@ -72,7 +72,6 @@ Your code should look more like this:
   "provisioners": [{
     "type": "shell",
     "inline": [
-      "sudo yum install -y git || true",
       "git clone --branch <MODULE_VERSION> https://github.com/hashicorp/terraform-aws-consul.git /tmp/terraform-aws-consul",
       "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}}",
       "/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"
@@ -81,6 +80,8 @@ Your code should look more like this:
   }]
 }
 ```
+
+**NOTE:** Amazon Linux users will need to install Git first.
 
 You should replace `<MODULE_VERSION>` in the code above with the version of this module that you want to use (see
 the [Releases Page](../../releases) for all available versions). That's because for production usage, you should always
