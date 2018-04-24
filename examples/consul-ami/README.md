@@ -81,6 +81,8 @@ Your code should look more like this:
 }
 ```
 
+**NOTE:** Amazon Linux users will need to install Git first.
+
 You should replace `<MODULE_VERSION>` in the code above with the version of this module that you want to use (see
 the [Releases Page](../../releases) for all available versions). That's because for production usage, you should always
 use a fixed, known version of this Module, downloaded from the official Git repo. On the other hand, when you're 
