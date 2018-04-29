@@ -30,6 +30,8 @@ const CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME = "asg_name_clients"
 
 const CONSUL_AMI_EXAMPLE_PATH = "../examples/consul-ami/consul.json"
 
+const SAVED_AWS_REGION = "AwsRegion"
+
 // Test the consul-cluster example by:
 //
 // 1. Copying the code in this repo to a temp folder so tests on the Terraform code can run in parallel without the
@@ -39,31 +41,55 @@ const CONSUL_AMI_EXAMPLE_PATH = "../examples/consul-ami/consul.json"
 // 4. Checking that the Consul cluster comes up within a reasonable time period and can respond to requests
 func runConsulClusterTest(t *testing.T, packerBuildName string) {
 	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, REPO_ROOT, CONSUL_CLUSTER_EXAMPLE_REL_PATH)
-	awsRegion := aws.GetRandomRegion(t, nil, nil)
-	uniqueId := random.UniqueId()
 
-	amiId := buildAmi(t, CONSUL_AMI_EXAMPLE_PATH, packerBuildName, awsRegion)
+	test_structure.RunTestStage(t, "setup_ami", func() {
+		awsRegion := aws.GetRandomRegion(t, nil, nil)
+		amiId := buildAmi(t, CONSUL_AMI_EXAMPLE_PATH, packerBuildName, awsRegion)
 
-	terraformOptions := &terraform.Options{
-		TerraformDir: exampleFolder,
-		Vars: map[string]interface{}{
-			CONSUL_CLUSTER_EXAMPLE_VAR_AWS_REGION:   awsRegion,
-			CONSUL_CLUSTER_EXAMPLE_VAR_CLUSTER_NAME: uniqueId,
-			CONSUL_CLUSTER_EXAMPLE_VAR_NUM_SERVERS:  CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS,
-			CONSUL_CLUSTER_EXAMPLE_VAR_NUM_CLIENTS:  CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS,
-			CONSUL_CLUSTER_EXAMPLE_VAR_AMI_ID:       amiId,
-		},
-	}
+		test_structure.SaveAmiId(t, exampleFolder, amiId)
+		test_structure.SaveString(t, exampleFolder, SAVED_AWS_REGION, awsRegion)
+	})
 
-	defer terraform.Destroy(t, terraformOptions)
+	defer test_structure.RunTestStage(t, "teardown", func() {
+		terraformOptions := test_structure.LoadTerraformOptions(t, exampleFolder)
+		terraform.Destroy(t, terraformOptions)
 
-	terraform.Apply(t, terraformOptions)
+		amiId := test_structure.LoadAmiId(t, exampleFolder)
+		awsRegion := test_structure.LoadString(t, exampleFolder, SAVED_AWS_REGION)
+		aws.DeleteAmi(t, awsRegion, amiId)
+	})
 
-	// Check the Consul servers
-	checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME, terraformOptions, awsRegion)
+	test_structure.RunTestStage(t, "deploy", func() {
+		uniqueId := random.UniqueId()
+		awsRegion := test_structure.LoadString(t, exampleFolder, SAVED_AWS_REGION)
+		amiId := test_structure.LoadAmiId(t, exampleFolder)
 
-	// Check the Consul clients
-	checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terraformOptions, awsRegion)
+		terraformOptions := &terraform.Options{
+			TerraformDir: exampleFolder,
+			Vars: map[string]interface{}{
+				CONSUL_CLUSTER_EXAMPLE_VAR_AWS_REGION:   awsRegion,
+				CONSUL_CLUSTER_EXAMPLE_VAR_CLUSTER_NAME: uniqueId,
+				CONSUL_CLUSTER_EXAMPLE_VAR_NUM_SERVERS:  CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS,
+				CONSUL_CLUSTER_EXAMPLE_VAR_NUM_CLIENTS:  CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS,
+				CONSUL_CLUSTER_EXAMPLE_VAR_AMI_ID:       amiId,
+			},
+		}
+
+		terraform.Apply(t, terraformOptions)
+
+		test_structure.SaveTerraformOptions(t, exampleFolder, terraformOptions)
+	})
+
+	test_structure.RunTestStage(t,"validate", func() {
+		awsRegion := test_structure.LoadString(t, exampleFolder, SAVED_AWS_REGION)
+		terraformOptions := test_structure.LoadTerraformOptions(t, exampleFolder)
+
+		// Check the Consul servers
+		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME, terraformOptions, awsRegion)
+
+		// Check the Consul clients
+		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terraformOptions, awsRegion)
+	})
 }
 
 // Check that the Consul cluster comes up within a reasonable time period and can respond to requests
