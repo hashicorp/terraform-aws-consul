@@ -1,17 +1,17 @@
 package test
 
 import (
-	"github.com/gruntwork-io/terratest"
 	"testing"
-	"os"
-	terralog "github.com/gruntwork-io/terratest/log"
-	"log"
-	"github.com/gruntwork-io/terratest/util"
 	"time"
 	"fmt"
 	"github.com/hashicorp/consul/api"
-	"path/filepath"
 	"errors"
+	"github.com/gruntwork-io/terratest/modules/test-structure"
+	"github.com/gruntwork-io/terratest/modules/terraform"
+	"github.com/gruntwork-io/terratest/modules/aws"
+	"github.com/gruntwork-io/terratest/modules/random"
+	"github.com/gruntwork-io/terratest/modules/retry"
+	"github.com/gruntwork-io/terratest/modules/logger"
 )
 
 const REPO_ROOT = "../"
@@ -37,43 +37,40 @@ const CONSUL_AMI_EXAMPLE_PATH = "../examples/consul-ami/consul.json"
 // 2. Building the AMI in the consul-ami example with the given build name
 // 3. Deploying that AMI using the consul-cluster Terraform code
 // 4. Checking that the Consul cluster comes up within a reasonable time period and can respond to requests
-func runConsulClusterTest(t *testing.T, testName string, packerBuildName string) {
-	rootTempPath := copyRepoToTempFolder(t, REPO_ROOT)
-	defer os.RemoveAll(rootTempPath)
+func runConsulClusterTest(t *testing.T, packerBuildName string) {
+	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, REPO_ROOT, CONSUL_CLUSTER_EXAMPLE_REL_PATH)
+	awsRegion := aws.GetRandomRegion(t, nil, nil)
+	uniqueId := random.UniqueId()
 
-	resourceCollection := createBaseRandomResourceCollection(t)
-	terratestOptions := createBaseTerratestOptions(t, testName, filepath.Join(rootTempPath, CONSUL_CLUSTER_EXAMPLE_REL_PATH), resourceCollection)
-	defer terratest.Destroy(terratestOptions, resourceCollection)
+	amiId := buildAmi(t, CONSUL_AMI_EXAMPLE_PATH, packerBuildName, awsRegion)
 
-	logger := terralog.NewLogger(testName)
-	amiId := buildAmi(t, CONSUL_AMI_EXAMPLE_PATH, packerBuildName, resourceCollection, logger)
-
-	terratestOptions.Vars = map[string]interface{} {
-		CONSUL_CLUSTER_EXAMPLE_VAR_AWS_REGION: resourceCollection.AwsRegion,
-		CONSUL_CLUSTER_EXAMPLE_VAR_CLUSTER_NAME: testName + resourceCollection.UniqueId,
-		CONSUL_CLUSTER_EXAMPLE_VAR_NUM_SERVERS: CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS,
-		CONSUL_CLUSTER_EXAMPLE_VAR_NUM_CLIENTS: CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS,
-		CONSUL_CLUSTER_EXAMPLE_VAR_AMI_ID: amiId,
+	terraformOptions := &terraform.Options{
+		TerraformDir: exampleFolder,
+		Vars: map[string]interface{}{
+			CONSUL_CLUSTER_EXAMPLE_VAR_AWS_REGION:   awsRegion,
+			CONSUL_CLUSTER_EXAMPLE_VAR_CLUSTER_NAME: uniqueId,
+			CONSUL_CLUSTER_EXAMPLE_VAR_NUM_SERVERS:  CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS,
+			CONSUL_CLUSTER_EXAMPLE_VAR_NUM_CLIENTS:  CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS,
+			CONSUL_CLUSTER_EXAMPLE_VAR_AMI_ID:       amiId,
+		},
 	}
 
-	deploy(t, terratestOptions)
+	defer terraform.Destroy(t, terraformOptions)
+
+	terraform.Apply(t, terraformOptions)
 
 	// Check the Consul servers
-	checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME, terratestOptions, resourceCollection, logger)
+	checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME, terraformOptions, awsRegion)
 
 	// Check the Consul clients
-	checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terratestOptions, resourceCollection, logger)
+	checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terraformOptions, awsRegion)
 }
 
 // Check that the Consul cluster comes up within a reasonable time period and can respond to requests
-func checkConsulClusterIsWorking(t *testing.T, asgNameOutputVar string, terratestOptions *terratest.TerratestOptions, resourceCollection *terratest.RandomResourceCollection, logger *log.Logger) {
-	asgName, err := terratest.Output(terratestOptions, asgNameOutputVar)
-	if err != nil {
-		t.Fatalf("Could not read output %s due to error: %v", asgNameOutputVar, err)
-	}
-
-	nodeIpAddress := getIpAddressOfAsgInstance(t, asgName, resourceCollection.AwsRegion)
-	testConsulCluster(t, nodeIpAddress, logger)
+func checkConsulClusterIsWorking(t *testing.T, asgNameOutputVar string, terratestOptions *terraform.Options, awsRegion string) {
+	asgName := terraform.OutputRequired(t, terratestOptions, asgNameOutputVar)
+	nodeIpAddress := getIpAddressOfAsgInstance(t, asgName, awsRegion)
+	testConsulCluster(t, nodeIpAddress)
 }
 
 // Use a Consul client to connect to the given node and use it to verify that:
@@ -81,13 +78,13 @@ func checkConsulClusterIsWorking(t *testing.T, asgNameOutputVar string, terrates
 // 1. The Consul cluster has deployed
 // 2. The cluster has the expected number of members
 // 3. The cluster has elected a leader
-func testConsulCluster(t *testing.T, nodeIpAddress string, logger *log.Logger) {
+func testConsulCluster(t *testing.T, nodeIpAddress string) {
 	consulClient := createConsulClient(t, nodeIpAddress)
 	maxRetries := 60
 	sleepBetweenRetries := 10 * time.Second
 	expectedMembers := CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS + CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS
 
-	leader, err := util.DoWithRetry("Check Consul members", maxRetries, sleepBetweenRetries, logger, func() (string, error) {
+	leader := retry.DoWithRetry(t, "Check Consul members", maxRetries, sleepBetweenRetries, func() (string, error) {
 		members, err := consulClient.Agent().Members(false)
 		if err != nil {
 			return "", err
@@ -109,11 +106,7 @@ func testConsulCluster(t *testing.T, nodeIpAddress string, logger *log.Logger) {
 		return leader, nil
 	})
 
-	if err != nil {
-		t.Fatalf("Could not verify Consul node at %s was working: %v", nodeIpAddress, err)
-	}
-
-	logger.Printf("Consul cluster is properly deployed and has elected leader %s", leader)
+	logger.Logf(t, "Consul cluster is properly deployed and has elected leader %s", leader)
 }
 
 // Create a Consul client
