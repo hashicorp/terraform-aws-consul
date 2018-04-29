@@ -15,7 +15,6 @@ import (
 )
 
 const REPO_ROOT = "../"
-const CONSUL_CLUSTER_EXAMPLE_REL_PATH = "examples/consul-cluster"
 const CONSUL_CLUSTER_EXAMPLE_VAR_AMI_ID = "ami_id"
 const CONSUL_CLUSTER_EXAMPLE_VAR_AWS_REGION = "aws_region"
 const CONSUL_CLUSTER_EXAMPLE_VAR_CLUSTER_NAME = "cluster_name"
@@ -40,7 +39,7 @@ const SAVED_AWS_REGION = "AwsRegion"
 // 3. Deploying that AMI using the consul-cluster Terraform code
 // 4. Checking that the Consul cluster comes up within a reasonable time period and can respond to requests
 func runConsulClusterTest(t *testing.T, packerBuildName string) {
-	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, REPO_ROOT, CONSUL_CLUSTER_EXAMPLE_REL_PATH)
+	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, REPO_ROOT, ".")
 
 	test_structure.RunTestStage(t, "setup_ami", func() {
 		awsRegion := aws.GetRandomRegion(t, nil, nil)
@@ -75,7 +74,7 @@ func runConsulClusterTest(t *testing.T, packerBuildName string) {
 			},
 		}
 
-		terraform.Apply(t, terraformOptions)
+		terraform.InitAndApply(t, terraformOptions)
 
 		test_structure.SaveTerraformOptions(t, exampleFolder, terraformOptions)
 	})
