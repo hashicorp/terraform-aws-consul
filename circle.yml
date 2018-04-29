@@ -1,6 +1,6 @@
 machine:
   environment:
-    PATH: $PATH:$HOME/terraform:$HOME/packer:$HOME/glide/linux-amd64
+    PATH: $PATH:$HOME/terraform:$HOME/packer
 
 dependencies:
   override:
@@ -14,7 +14,6 @@ dependencies:
   cache_directories:
     - ~/terraform
     - ~/packer
-    - ~/glide
 
 test:
   override:
