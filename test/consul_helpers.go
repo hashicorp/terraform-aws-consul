@@ -27,8 +27,6 @@ const CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS = 6
 const CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME = "asg_name_servers"
 const CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME = "asg_name_clients"
 
-const CONSUL_AMI_EXAMPLE_PATH = "../examples/consul-ami/consul.json"
-
 const SAVED_AWS_REGION = "AwsRegion"
 
 // Test the consul-cluster example by:
@@ -38,12 +36,12 @@ const SAVED_AWS_REGION = "AwsRegion"
 // 2. Building the AMI in the consul-ami example with the given build name
 // 3. Deploying that AMI using the consul-cluster Terraform code
 // 4. Checking that the Consul cluster comes up within a reasonable time period and can respond to requests
-func runConsulClusterTest(t *testing.T, packerBuildName string) {
-	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, REPO_ROOT, ".")
+func runConsulClusterTest(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string) {
+	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, REPO_ROOT, examplesFolder)
 
 	test_structure.RunTestStage(t, "setup_ami", func() {
 		awsRegion := aws.GetRandomRegion(t, nil, nil)
-		amiId := buildAmi(t, CONSUL_AMI_EXAMPLE_PATH, packerBuildName, awsRegion)
+		amiId := buildAmi(t, packerTemplatePath, packerBuildName, awsRegion)
 
 		test_structure.SaveAmiId(t, exampleFolder, amiId)
 		test_structure.SaveString(t, exampleFolder, SAVED_AWS_REGION, awsRegion)
