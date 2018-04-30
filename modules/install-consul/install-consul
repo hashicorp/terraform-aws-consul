@@ -226,9 +226,12 @@ function install_tls_certificates {
   local readonly consul_tls_certs_path="$path/tls"
   local readonly ca_certs_path="$consul_tls_certs_path/ca"
 
-  sudo cp "$ca_file_path" "$ca_certs_path/"
-  sudo cp "$cert_file_path" "$consul_tls_certs_path/"
-  sudo cp "$key_file_path" "$consul_tls_certs_path/"
+  log_info "Moving TLS certs to $consul_tls_certs_path and $ca_certs_path"
+
+  sudo mkdir -p "$ca_certs_path"
+  sudo mv "$ca_file_path" "$ca_certs_path/"
+  sudo mv "$cert_file_path" "$consul_tls_certs_path/"
+  sudo mv "$key_file_path" "$consul_tls_certs_path/"
 
   sudo chown -R "$user:$user" "$consul_tls_certs_path/"
   sudo find "$consul_tls_certs_path/" -type f -exec chmod u=r,g=,o= {} \;
