@@ -42,10 +42,10 @@ func runConsulClusterTest(t *testing.T, packerBuildName string, examplesFolder s
 
 	test_structure.RunTestStage(t, "setup_ami", func() {
 		awsRegion := aws.GetRandomRegion(t, nil, nil)
-		amiId := buildAmi(t, packerTemplatePath, packerBuildName, awsRegion)
-
-		test_structure.SaveAmiId(t, exampleFolder, amiId)
 		test_structure.SaveString(t, exampleFolder, SAVED_AWS_REGION, awsRegion)
+
+		amiId := buildAmi(t, packerTemplatePath, packerBuildName, awsRegion)
+		test_structure.SaveAmiId(t, exampleFolder, amiId)
 	})
 
 	defer test_structure.RunTestStage(t, "teardown", func() {
@@ -74,10 +74,9 @@ func runConsulClusterTest(t *testing.T, packerBuildName string, examplesFolder s
 				AWS_DEFAULT_REGION_ENV_VAR: awsRegion,
 			},
 		}
+		test_structure.SaveTerraformOptions(t, exampleFolder, terraformOptions)
 
 		terraform.InitAndApply(t, terraformOptions)
-
-		test_structure.SaveTerraformOptions(t, exampleFolder, terraformOptions)
 	})
 
 	test_structure.RunTestStage(t,"validate", func() {
