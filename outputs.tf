@@ -47,7 +47,7 @@ output "security_group_id_clients" {
 }
 
 output "aws_region" {
-  value = "${var.aws_region}"
+  value = "${data.aws_region.current.name}"
 }
 
 output "consul_servers_cluster_tag_key" {
