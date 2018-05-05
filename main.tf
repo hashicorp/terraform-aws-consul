@@ -6,10 +6,6 @@
 # the examples/consul-ami/consul.json Packer template.
 # ---------------------------------------------------------------------------------------------------------------------
 
-provider "aws" {
-  region = "${var.aws_region}"
-}
-
 # Terraform 0.9.5 suffered from https://github.com/hashicorp/terraform/issues/14399, which causes this template the
 # conditionals in this template to fail.
 terraform {
@@ -170,3 +166,5 @@ data "aws_vpc" "default" {
 data "aws_subnet_ids" "default" {
   vpc_id = "${data.aws_vpc.default.id}"
 }
+
+data "aws_region" "current" {}
