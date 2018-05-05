@@ -16,7 +16,6 @@ import (
 
 const REPO_ROOT = "../"
 const CONSUL_CLUSTER_EXAMPLE_VAR_AMI_ID = "ami_id"
-const CONSUL_CLUSTER_EXAMPLE_VAR_AWS_REGION = "aws_region"
 const CONSUL_CLUSTER_EXAMPLE_VAR_CLUSTER_NAME = "cluster_name"
 const CONSUL_CLUSTER_EXAMPLE_VAR_NUM_SERVERS = "num_servers"
 const CONSUL_CLUSTER_EXAMPLE_VAR_NUM_CLIENTS = "num_clients"
@@ -28,6 +27,8 @@ const CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME = "asg_name_servers"
 const CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME = "asg_name_clients"
 
 const SAVED_AWS_REGION = "AwsRegion"
+
+const AWS_DEFAULT_REGION_ENV_VAR = "AWS_DEFAULT_REGION"
 
 // Test the consul-cluster example by:
 //
@@ -64,11 +65,13 @@ func runConsulClusterTest(t *testing.T, packerBuildName string, examplesFolder s
 		terraformOptions := &terraform.Options{
 			TerraformDir: exampleFolder,
 			Vars: map[string]interface{}{
-				CONSUL_CLUSTER_EXAMPLE_VAR_AWS_REGION:   awsRegion,
 				CONSUL_CLUSTER_EXAMPLE_VAR_CLUSTER_NAME: uniqueId,
 				CONSUL_CLUSTER_EXAMPLE_VAR_NUM_SERVERS:  CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS,
 				CONSUL_CLUSTER_EXAMPLE_VAR_NUM_CLIENTS:  CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS,
 				CONSUL_CLUSTER_EXAMPLE_VAR_AMI_ID:       amiId,
+			},
+			EnvVars: map[string]string{
+				AWS_DEFAULT_REGION_ENV_VAR: awsRegion,
 			},
 		}
 
