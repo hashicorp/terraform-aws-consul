@@ -182,6 +182,13 @@ function assert_is_installed {
   fi
 }
 
+# Based on https://stackoverflow.com/a/17841619
+function join_by {
+  local IFS="$1"
+  shift
+  echo "$*"
+}
+
 function generate_consul_config {
   local readonly server="${1}"
   local readonly config_dir="${2}"
@@ -290,7 +297,7 @@ autostart=true
 autorestart=true
 stopsignal=INT
 user=$consul_user
-environment=${environment[@]}
+environment=$(join_by "," "${environment[@]}")
 EOF
 }
 
