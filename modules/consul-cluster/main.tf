@@ -39,8 +39,13 @@ resource "aws_autoscaling_group" "autoscaling_group" {
       value               = "${var.cluster_tag_value}"
       propagate_at_launch = true
     },
-    "${var.tags}",
+    "${var.tags}"
   ]
+}
+
+resource "aws_autoscaling_attachment" "consul-asg-tg-attachment" {
+  autoscaling_group_name = "${aws_autoscaling_group.autoscaling_group.name}"
+  alb_target_group_arn   = "${var.target_group_arn}"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
