@@ -184,7 +184,8 @@ variable "tags" {
   default     = []
 }
 
-variable "target_group_arn" {
-  description = "aws_alb_target_group ARN for use with an Application Load Balancer."
-  default     = ""
+variable "target_group_arns" {
+  description = "A list of aws_alb_target_group ARNs, for use with Application Load Balancing."
+  type        = "list"
+  default     = []
 }
