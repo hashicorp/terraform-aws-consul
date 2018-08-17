@@ -206,7 +206,7 @@ function fetch_binary {
   fi
 
   log_info "Downloading Consul from $download_url to $DOWNLOAD_PACKAGE_PATH"
-  curl -o "$DOWNLOAD_PACKAGE_PATH" "$download_url"
+  curl -o "$DOWNLOAD_PACKAGE_PATH" "$download_url" --location --silent --fail --show-error
 }
 
 function install_binary {
