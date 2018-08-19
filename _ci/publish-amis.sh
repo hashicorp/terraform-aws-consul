@@ -26,6 +26,9 @@ if [[ -z "$PACKER_BUILD_NAME" ]]; then
   exit 1
 fi
 
+echo "Checking out branch $BRANCH_NAME to make sure we do all work in a branch and not in detached HEAD state"
+git checkout "$BRANCH_NAME"
+
 # Build the example AMI. WARNING! In a production setting, you should build your own AMI to ensure it has exactly the
 # configuration you want. We build this example AMI solely to make initial use of this Module as easy as possible.
 build-packer-artifact \
