@@ -83,6 +83,12 @@ variable "allowed_inbound_security_group_ids" {
   default     = []
 }
 
+variable "additional_security_group_ids" {
+  description = "A list of additional security group IDs to add to Consul EC2 Instances"
+  type        = "list"
+  default     = []
+}
+
 variable "security_group_tags" {
   description = "Tags to be applied to the LC security group"
   type        = "map"
