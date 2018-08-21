@@ -89,6 +89,12 @@ variable "additional_security_group_ids" {
   default     = []
 }
 
+variable "security_group_tags" {
+  description = "Tags to be applied to the LC security group"
+  type        = "map"
+  default     = {}
+}
+
 variable "termination_policies" {
   description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, Default."
   default     = "Default"
