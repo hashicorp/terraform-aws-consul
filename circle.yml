@@ -27,5 +27,5 @@ deployment:
     tag: /v.*/
     commands:
       # If a new release is tagged in GitHub, build the AMIs and publish them to all regions.
-      - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "ubuntu16-ami"
-      - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "amazon-linux-ami"
+      - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "/home/ubuntu/$CIRCLE_PROJECT_REPONAME/examples/consul-ami/consul.json" "ubuntu16-ami"
+      - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "/home/ubuntu/$CIRCLE_PROJECT_REPONAME/examples/consul-ami/consul.json" "amazon-linux-ami"
