@@ -20,6 +20,11 @@ all_aws_regions=$(echo "$regions_response" | jq -r '.Regions | map(.RegionName) 
 
 echo "Building Packer template $packer_template_path (builder: $builder_name) and sharing it with all AWS accounts in the following regions: $all_aws_regions"
 
+# Copying AMIs to many regions can take longer than Packer's default wait timeouts, so we increase them here per
+# https://github.com/hashicorp/packer/issues/6536
+export AWS_MAX_ATTEMPTS=240
+export AWS_POLL_DELAY_SECONDS=15
+
 packer build \
   --only="$builder_name" \
   -var copy_ami_to_regions="$all_aws_regions" \
