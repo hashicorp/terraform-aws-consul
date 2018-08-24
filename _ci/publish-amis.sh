@@ -12,6 +12,11 @@ if [[ "$#" -ne 2 ]]; then
   exit 1
 fi
 
+if [[ -z "$PUBLISH_AMI_AWS_ACCESS_KEY_ID" || -z "$PUBLISH_AMI_AWS_SECRET_ACCESS_KEY" ]]; then
+  echo "The PUBLISH_AMI_AWS_ACCESS_KEY_ID and PUBLISH_AMI_AWS_SECRET_ACCESS_KEY environment variables must be set to the AWS credentials to use to publish the AMIs."
+  exit 1
+fi
+
 readonly packer_template_path="$1"
 readonly builder_name="$2"
 
@@ -24,6 +29,10 @@ echo "Building Packer template $packer_template_path (builder: $builder_name) an
 # https://github.com/hashicorp/packer/issues/6536
 export AWS_MAX_ATTEMPTS=240
 export AWS_POLL_DELAY_SECONDS=15
+
+# We publish the AMIs to a different AWS account, so set those credentials
+export AWS_ACCESS_KEY_ID="$PUBLISH_AMI_AWS_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="$PUBLISH_AMI_AWS_SECRET_ACCESS_KEY"
 
 packer build \
   --only="$builder_name" \
