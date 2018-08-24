@@ -3,7 +3,7 @@
 This folder contains a script for installing Consul and its dependencies. Use this script along with the
 [run-consul script](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/run-consul) to create a Consul [Amazon Machine Image 
 (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) that can be deployed in 
-[AWS](https://aws.amazon.com/) across an Auto Scaling Group using the [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster).
+[AWS](https://aws.amazon.com/) across an Auto Scaling Group using the [consul-cluster](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster).
 
 This script has been tested on the following operating systems:
 
@@ -33,8 +33,8 @@ join other nodes to form a cluster.
 We recommend running the `install-consul` script as part of a [Packer](https://www.packer.io/) template to create a
 Consul [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) (see the 
 [consul-ami example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-ami) for a fully-working sample code). You can then deploy the AMI across an Auto 
-Scaling Group using the [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) (see the [main 
-example](https://github.com/hashicorp/terraform-aws-consul/tree/master/MAIN.md) for fully-working sample code).
+Scaling Group using the [consul-cluster](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) (see the [main 
+example](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) for fully-working sample code).
 
 
 

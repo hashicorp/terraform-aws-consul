@@ -12,7 +12,7 @@ These AMIs will have [Consul](https://www.consul.io/) installed and configured t
 boot-up. They also have [Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) installed and configured to use 
 Consul for DNS lookups of the `.consul` domain (e.g. `foo.service.consul`) (see [registering 
 services](https://www.consul.io/intro/getting-started/services.html) for instructions on how to register your services
-in Consul). To see how to deploy this AMI, check out the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/MAIN.md). 
+in Consul). To see how to deploy this AMI, check out the [consul-cluster](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster). 
 
 For more info on Consul installation and configuration, check out the 
 [install-consul](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) and [install-dnsmasq](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-dnsmasq) documentation.
@@ -38,7 +38,7 @@ To build the Consul AMI:
 1. Run `packer build consul.json`.
 
 When the build finishes, it will output the IDs of the new AMIs. To see how to deploy one of these AMIs, check out the
-[consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/MAIN.md).
+[consul-cluster](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster).
 
 
 
