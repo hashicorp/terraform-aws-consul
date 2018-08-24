@@ -33,8 +33,7 @@ join other nodes to form a cluster.
 We recommend running the `install-consul` script as part of a [Packer](https://www.packer.io/) template to create a
 Consul [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) (see the 
 [consul-ami example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-ami) for a fully-working sample code). You can then deploy the AMI across an Auto 
-Scaling Group using the [consul-cluster](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) (see the [main 
-example](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) for fully-working sample code).
+Scaling Group using the [consul-cluster](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster)
 
 
 
