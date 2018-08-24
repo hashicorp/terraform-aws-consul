@@ -3,6 +3,8 @@
   "variables": {
     "aws_region": "us-east-1",
     "consul_version": "1.2.2",
+    "copy_ami_to_regions": "",
+    "share_ami_with_groups": "",
     "download_url": ""
   },
   "builders": [{
@@ -11,6 +13,8 @@
     "ami_description": "An Ubuntu 16.04 AMI that has Consul installed.",
     "instance_type": "t2.micro",
     "region": "{{user `aws_region`}}",
+    "ami_regions": "{{user `copy_ami_to_regions`}}",
+    "ami_groups": "{{user `share_ami_with_groups`}}",
     "type": "amazon-ebs",
     "source_ami_filter": {
       "filters": {
@@ -30,6 +34,8 @@
     "ami_description": "An Amazon Linux AMI that has Consul installed.",
     "instance_type": "t2.micro",
     "region": "{{user `aws_region`}}",
+    "ami_regions": "{{user `copy_ami_to_regions`}}",
+    "ami_groups": "{{user `share_ami_with_groups`}}",
     "type": "amazon-ebs",
     "source_ami_filter": {
       "filters": {
