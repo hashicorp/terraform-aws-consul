@@ -8,7 +8,7 @@ defaults: &defaults
 
 version: 2
 jobs:
-  configure:
+  build:
     <<: *defaults
     steps:
       - checkout
@@ -42,23 +42,23 @@ jobs:
       - run: gruntwork-install --module-name "aws-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.12.2"
       - run: gruntwork-install --module-name "git-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.12.2"
       - run: gruntwork-install --module-name "build-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.12.2"
-      - run: /go/src/github.com/hashicorp/terraform-aws-consul/_ci/publish-amis.sh "ubuntu16-ami"
-      - run: /go/src/github.com/hashicorp/terraform-aws-consul/_ci/publish-amis.sh "amazon-linux-ami"
+      - run: /go/src/github.com/hashicorp/terraform-aws-consul/_ci/publish-amis.sh "/go/src/github.com/hashicorp/terraform-aws-consul/examples/consul-ami/consul.json" "ubuntu16-ami"
+      - run: /go/src/github.com/hashicorp/terraform-aws-consul/_ci/publish-amis.sh "/go/src/github.com/hashicorp/terraform-aws-consul/examples/consul-ami/consul.json" "amazon-linux-ami"
 
 workflows:
   version: 2
   build-and-test:
     jobs:
-    - configure
+    - build
     - test:
         requires:
-        - configure
+        - build
         filters:
           branches:
             ignore: publish-amis
     - deploy:
         requires:
-        - configure
+        - build
         filters:
           tags:
             only: /^v.*/
