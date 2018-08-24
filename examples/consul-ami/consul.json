@@ -4,7 +4,8 @@
     "aws_region": "us-east-1",
     "consul_version": "1.0.0",
     "copy_ami_to_regions": "",
-    "share_ami_with_groups": ""
+    "share_ami_with_groups": "",
+    "download_url": ""
   },
   "builders": [{
     "name": "ubuntu16-ami",
@@ -56,7 +57,11 @@
   },{
     "type": "shell",
     "inline": [
-      "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}}",
+      "if [[ -n '{{user `download_url`}}' ]]; then",
+      " /tmp/terraform-aws-consul/modules/install-consul/install-consul --download-url {{user `download_url`}};",
+      "else",
+      " /tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}};",
+      "fi",
       "/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"
     ],
     "pause_before": "30s"
