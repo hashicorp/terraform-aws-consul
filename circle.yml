@@ -25,6 +25,8 @@ test:
 deployment:
   release:
     tag: /v.*/
+    # Packer pauses for a while with no build output. This prevents the build from being killed.
+    timeout: 1800
     commands:
       # If a new release is tagged in GitHub, build the AMIs and publish them to all regions.
       - ~/$CIRCLE_PROJECT_REPONAME/_ci/publish-amis.sh "/home/ubuntu/$CIRCLE_PROJECT_REPONAME/examples/consul-ami/consul.json" "ubuntu16-ami"
