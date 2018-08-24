@@ -28,9 +28,9 @@ To deploy Consul servers using this Module:
    Here is an [example Packer template](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-ami#quick-start). 
    
    If you are just experimenting with this Module, you may find it more convenient to use one of our official public AMIs:
-   - [Latest Ubuntu 16 AMIs](https://github.com/hashicorp/terraform-aws-consul/tree/master/_docs/ubuntu16-ami-list.md).
-   - [Latest Amazon Linux AMIs](https://github.com/hashicorp/terraform-aws-consul/tree/master/_docs/amazon-linux-ami-list.md).
-  
+   - **Latest Ubuntu 16 AMIs**: search for AMIs with names starting with `consul-ubuntu-` owned by account ID `562637147889`.
+   - **Latest Amazon Linux AMIs**: search for AMIs with names starting with `consul-amazon-linux-` owned by account ID `562637147889`.
+
     **WARNING! Do NOT use these AMIs in your production setup. In production, you should build your own AMIs in your own 
     AWS account.**
    
