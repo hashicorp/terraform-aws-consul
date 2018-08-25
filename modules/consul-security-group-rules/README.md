@@ -3,7 +3,7 @@
 This folder contains a [Terraform](https://www.terraform.io/) module that defines the security group rules used by a 
 [Consul](https://www.consul.io/) cluster to control the traffic that is allowed to go in and out of the cluster. 
 
-Normally, you'd get these rules by default if you're using the [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/MAIN.md), but if 
+Normally, you'd get these rules by default if you're using the [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster), but if 
 you're running Consul on top of a different cluster, then you can use this module to add the necessary security group 
 rules to that cluster. For example, imagine you were using the [nomad-cluster 
 module](https://github.com/hashicorp/terraform-aws-nomad/tree/master/modules/nomad-cluster) to run a cluster of 
@@ -44,4 +44,4 @@ Note the following parameters:
   
 You can find the other parameters in [variables.tf](variables.tf).
 
-Check out the [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) for working sample code.
+Check out the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/root-example) for working sample code.
