@@ -1,6 +1,6 @@
 # Consul Cluster Example
 
-This folder shows an example of Terraform code that uses the [consul-cluster](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) module to deploy 
+This folder shows an example of Terraform code that uses the [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) to deploy 
 a [Consul](https://www.consul.io/) cluster in [AWS](https://aws.amazon.com/). The cluster consists of two Auto Scaling
 Groups (ASGs): one with a small number of Consul server nodes, which are responsible for being part of the [consensus 
 quorum](https://www.consul.io/docs/internals/consensus.html), and one with a larger number of client nodes, which 
