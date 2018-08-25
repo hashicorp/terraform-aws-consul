@@ -44,4 +44,4 @@ Note the following parameters:
   
 You can find the other parameters in [variables.tf](variables.tf).
 
-Check out the [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) for working sample code.
+Check out the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) for working sample code.

@@ -26,8 +26,17 @@ if [[ -z "$PACKER_BUILD_NAME" ]]; then
   exit 1
 fi
 
+if [[ -z "$PUBLISH_AMI_AWS_ACCESS_KEY_ID" || -z "$PUBLISH_AMI_AWS_SECRET_ACCESS_KEY" ]]; then
+  echo "The PUBLISH_AMI_AWS_ACCESS_KEY_ID and PUBLISH_AMI_AWS_SECRET_ACCESS_KEY environment variables must be set to the AWS credentials to use to publish the AMIs."
+  exit 1
+fi
+
 echo "Checking out branch $BRANCH_NAME to make sure we do all work in a branch and not in detached HEAD state"
 git checkout "$BRANCH_NAME"
+
+# We publish the AMIs to a different AWS account, so set those credentials
+export AWS_ACCESS_KEY_ID="$PUBLISH_AMI_AWS_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="$PUBLISH_AMI_AWS_SECRET_ACCESS_KEY"
 
 # Build the example AMI. WARNING! In a production setting, you should build your own AMI to ensure it has exactly the
 # configuration you want. We build this example AMI solely to make initial use of this Module as easy as possible.

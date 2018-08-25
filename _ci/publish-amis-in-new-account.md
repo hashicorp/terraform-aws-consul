@@ -4,7 +4,7 @@ This readme discusses how to migrate the `publish-amis.sh` script to a new AWS a
 
 To make using this Module as easy as possible, we want to automatically build and publish AMIs based on the 
 [/examples/consul-ami/consul.json](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-ami/consul.json) Packer template upon every release of this repo. 
-This way, users can simply git clone this repo and `terraform apply` the [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster)
+This way, users can simply git clone this repo and `terraform apply` the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/root-example)
 without first having to build their own AMI. Note that the auto-built AMIs are meant mostly for first-time users to 
 easily try out a Module. In a production setting, many users will want to validate the contents of their AMI by
 manually building it in their own account.
