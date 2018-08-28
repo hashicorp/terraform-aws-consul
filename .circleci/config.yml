@@ -1,0 +1,69 @@
+workspace_root: &workspace_root
+  /go/src/github.com/hashicorp/terraform-aws-consul
+
+defaults: &defaults
+  working_directory: *workspace_root
+  docker:
+  - image: 087285199408.dkr.ecr.us-east-1.amazonaws.com/circle-ci-test-image-base:latest
+
+version: 2
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: *workspace_root
+      - restore_cache:
+          keys:
+          - dep-{{ checksum "test/Gopkg.lock" }}
+      - run: configure-environment-for-gruntwork-module --go-src-path test --use-go-dep --circle-ci-2
+      - save_cache:
+          key: dep-{{ checksum "test/Gopkg.lock" }}
+          paths:
+          - /go/src/github.com/hashicorp/terraform-aws-consul/test/vendor
+      - persist_to_workspace:
+          root: *workspace_root
+          paths: test/vendor
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - run: echo 'export PATH=$HOME/terraform:$HOME/packer:$PATH' >> $BASH_ENV
+      - attach_workspace:
+          at: *workspace_root
+      - run: run-go-tests --circle-ci-2 --path test
+
+  deploy:
+    <<: *defaults
+    steps:
+      - checkout
+      - run: echo 'export PATH=$HOME/terraform:$HOME/packer:$PATH' >> $BASH_ENV
+      - run: gruntwork-install --module-name "aws-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.12.2"
+      - run: gruntwork-install --module-name "git-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.12.2"
+      - run: gruntwork-install --module-name "build-helpers" --repo "https://github.com/gruntwork-io/module-ci" --tag "v0.12.2"
+      # We generally only want to build AMIs on new releases, but when we are setting up AMIs in a new account for the
+      # first time, we want to build the AMIs but NOT run automated tests, since those tests will fail without an existing
+      # AMI already in the AWS Account.
+      - run: /go/src/github.com/hashicorp/terraform-aws-consul/_ci/publish-amis.sh "ubuntu16-ami"
+      - run: /go/src/github.com/hashicorp/terraform-aws-consul/_ci/publish-amis.sh "amazon-linux-ami"
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+    - build
+    - test:
+        requires:
+        - build
+        filters:
+          branches:
+            ignore: publish-amis
+    - deploy:
+        requires:
+        - build
+        filters:
+          tags:
+            only: /^v.*/
+          branches:
+            only: publish-amis
