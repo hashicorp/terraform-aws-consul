@@ -3,7 +3,7 @@
   "variables": {
     "aws_region": "us-east-1",
     "consul_version": "1.2.2",
-    "download_url": ""
+    "download_url": "{{env `CONSUL_DOWNLOAD_URL`}}"
   },
   "builders": [{
     "name": "ubuntu16-ami",

@@ -205,7 +205,7 @@ function fetch_binary {
     download_url="https://releases.hashicorp.com/consul/${version}/consul_${version}_linux_amd64.zip"
   fi
 
-  log_info "Downloading Consul from $download_url to $DOWNLOAD_PACKAGE_PATH"
+  log_info "Downloading Consul to $DOWNLOAD_PACKAGE_PATH"
   curl -o "$DOWNLOAD_PACKAGE_PATH" "$download_url" --location --silent --fail --show-error
 }
 
