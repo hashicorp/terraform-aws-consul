@@ -337,7 +337,7 @@ function install {
   if command -v consul; then
     log_info "Consul install complete!";
   else
-    log_info "Consul was not installed properly.  Aborting.";
+    log_info "Could not find consul command. Aborting.";
     exit 1;
   fi
 }
