@@ -39,7 +39,7 @@ resource "aws_autoscaling_group" "autoscaling_group" {
       value               = "${var.cluster_tag_value}"
       propagate_at_launch = true
     },
-    "${var.tags}"
+    "${var.tags}",
   ]
 }
 
@@ -54,7 +54,7 @@ resource "aws_launch_configuration" "launch_configuration" {
   user_data     = "${var.user_data}"
   spot_price    = "${var.spot_price}"
 
-  iam_instance_profile        = "${aws_iam_instance_profile.instance_profile.name}"
+  iam_instance_profile        = "${element(coalescelist(list(var.iam_instance_profile_name),aws_iam_instance_profile.instance_profile.*.name),0)}"
   key_name                    = "${var.ssh_key_name}"
   security_groups             = ["${concat(list(aws_security_group.lc_security_group.id), var.additional_security_group_ids)}"]
   placement_tenancy           = "${var.tenancy}"
@@ -157,6 +157,8 @@ module "security_group_rules" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_iam_instance_profile" "instance_profile" {
+  count = "${var.enable_iam_setup}"
+
   name_prefix = "${var.cluster_name}"
   path        = "${var.instance_profile_path}"
   role        = "${aws_iam_role.instance_role.name}"
@@ -170,6 +172,8 @@ resource "aws_iam_instance_profile" "instance_profile" {
 }
 
 resource "aws_iam_role" "instance_role" {
+  count = "${var.enable_iam_setup}"
+
   name_prefix        = "${var.cluster_name}"
   assume_role_policy = "${data.aws_iam_policy_document.instance_role.json}"
 
@@ -182,6 +186,8 @@ resource "aws_iam_role" "instance_role" {
 }
 
 data "aws_iam_policy_document" "instance_role" {
+  count = "${var.enable_iam_setup}"
+
   statement {
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
@@ -200,5 +206,6 @@ data "aws_iam_policy_document" "instance_role" {
 module "iam_policies" {
   source = "../consul-iam-policies"
 
-  iam_role_id = "${aws_iam_role.instance_role.id}"
+  enabled     = "${var.enable_iam_setup}"
+  iam_role_id = "${element(coalescelist(aws_iam_role.instance_role.*.id,list("")),0)}"
 }

@@ -195,3 +195,13 @@ variable "tags" {
   type        = "list"
   default     = []
 }
+
+variable "enable_iam_setup" {
+  description = "If false, the IAM policy and role setup will be disabled.  This is to allow the IAM to be setup elsewhere if required."
+  default     = true
+}
+
+variable "iam_instance_profile_name" {
+  description = "If enable_iam_setup is false then this will be the name of the IAM instance profile to attach"
+  default     = ""
+}
