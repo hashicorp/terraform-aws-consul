@@ -197,7 +197,7 @@ variable "tags" {
 }
 
 variable "enable_iam_setup" {
-  description = "If false, the IAM policy and role setup will be disabled.  This is to allow the IAM to be setup elsewhere if required."
+  description = "If true, create the IAM Role, IAM Instance Profile, and IAM Policies. If false, these will not be created, and you can pass in your own IAM Instance Profile via var.iam_instance_profile_name."
   default     = true
 }
 

@@ -7,7 +7,7 @@ variable "iam_role_id" {
   description = "The ID of the IAM Role to which these IAM policies should be attached"
 }
 
-variable "enabled" { 
+variable "enabled" {
   description = "Give the option to disable this module if required"
-  default = true
+  default     = true
 }
