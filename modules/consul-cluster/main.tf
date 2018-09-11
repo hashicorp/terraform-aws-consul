@@ -161,7 +161,7 @@ resource "aws_iam_instance_profile" "instance_profile" {
 
   name_prefix = "${var.cluster_name}"
   path        = "${var.instance_profile_path}"
-  role        = "${aws_iam_role.instance_role.name}"
+  role        = "${element(coalescelist(aws_iam_role.instance_role.*.name,list("")),0)}"
 
   # aws_launch_configuration.launch_configuration in this module sets create_before_destroy to true, which means
   # everything it depends on, including this resource, must set it as well, or you'll get cyclic dependency errors
