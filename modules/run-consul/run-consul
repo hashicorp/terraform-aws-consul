@@ -19,6 +19,13 @@ readonly SCRIPT_NAME="$(basename "$0")"
 readonly MAX_RETRIES=30
 readonly SLEEP_BETWEEN_RETRIES_SEC=10
 
+readonly DEFAULT_AUTOPILOT_CLEANUP_DEAD_SERVERS="true"
+readonly DEFAULT_AUTOPILOT_LAST_CONTACT_THRESHOLD="200ms"
+readonly DEFAULT_AUTOPILOT_MAX_TRAILING_LOGS="250"
+readonly DEFAULT_AUTOPILOT_SERVER_STABILIZATION_TIME="10s"
+readonly DEFAULT_AUTOPILOT_REDUNDANCY_ZONE_TAG="az"
+readonly DEFAULT_AUTOPILOT_DISABLE_UPGRADE_MIGRATION="false"
+
 function print_usage {
   echo
   echo "Usage: run-consul [OPTIONS]"
@@ -48,12 +55,12 @@ function print_usage {
   echo
   echo "Options for enabling Consul Autopilot:"
   echo
-  echo -e "  --cleanup-dead-servers\tSet to true or false to control the automatic removal of dead server nodes periodically and whenever a new server is added to the cluster. Defaults to true. Optional."
-  echo -e "  --last-contact-threshold\tControls the maximum amount of time a server can go without contact from the leader before being considered unhealthy. Must be a duration value such as 10s. Defaults to 200ms. Optional."
-  echo -e "  --max-trailing-logs\t\tControls the maximum number of log entries that a server can trail the leader by before being considered unhealthy. Defaults to 250. Optional."
-  echo -e "  --server-stabilization-time\tControls the minimum amount of time a server must be stable in the 'healthy' state before being added to the cluster. Only takes effect if all servers are running Raft protocol version 3 or higher. Must be a duration value such as 30s. Defaults to 10s. Optional."
-  echo -e "  --redundancy-zone-tag\t\t(Enterprise-only) This controls the -node-meta key to use when Autopilot is separating servers into zones for redundancy. Only one server in each zone can be a voting member at one time. If left blank (the default), this feature will be disabled. Optional."
-  echo -e "  --disable-upgrade-migration\t(Enterprise-only) If this flag is set, this will disable Autopilot's upgrade migration strategy in Consul Enterprise of waiting until enough newer-versioned servers have been added to the cluster before promoting any of them to voters. Optional."
+  echo -e "  --cleanup-dead-servers\tSet to true or false to control the automatic removal of dead server nodes periodically and whenever a new server is added to the cluster. Defaults to $DEFAULT_AUTOPILOT_CLEANUP_DEAD_SERVERS. Optional."
+  echo -e "  --last-contact-threshold\tControls the maximum amount of time a server can go without contact from the leader before being considered unhealthy. Must be a duration value such as 10s. Defaults to $DEFAULT_AUTOPILOT_LAST_CONTACT_THRESHOLD. Optional."
+  echo -e "  --max-trailing-logs\t\tControls the maximum number of log entries that a server can trail the leader by before being considered unhealthy. Defaults to $DEFAULT_AUTOPILOT_MAX_TRAILING_LOGS. Optional."
+  echo -e "  --server-stabilization-time\tControls the minimum amount of time a server must be stable in the 'healthy' state before being added to the cluster. Only takes effect if all servers are running Raft protocol version 3 or higher. Must be a duration value such as 30s. Defaults to $DEFAULT_AUTOPILOT_SERVER_STABILIZATION_TIME. Optional."
+  echo -e "  --redundancy-zone-tag\t\t(Enterprise-only) This controls the -node-meta key to use when Autopilot is separating servers into zones for redundancy. Only one server in each zone can be a voting member at one time. If left blank, this feature will be disabled. Defaults to $DEFAULT_AUTOPILOT_REDUNDANCY_ZONE_TAG. Optional."
+  echo -e "  --disable-upgrade-migration\t(Enterprise-only) If this flag is set, this will disable Autopilot's upgrade migration strategy in Consul Enterprise of waiting until enough newer-versioned servers have been added to the cluster before promoting any of them to voters. Defaults to $DEFAULT_AUTOPILOT_DISABLE_UPGRADE_MIGRATION. Optional."
   echo -e "  --upgrade-version-tag\t\t(Enterprise-only) That tag to be used to override the version information used during a migration. Optional."
   echo
   echo
@@ -253,7 +260,7 @@ EOF
     ui="true"
   fi
 
-  local autopilot_confituration=$(cat <<EOF
+  local autopilot_configuration=$(cat <<EOF
 "autopilot": {
   "cleanup_dead_servers": $cleanup_dead_servers,
   "last_contact_threshold": "$last_contact_threshold",
@@ -296,10 +303,9 @@ EOF
   "node_name": "$instance_id",
   $retry_join_json
   "server": $server,
-  $autopilot_confituration
   $gossip_encryption_configuration
   $rpc_encryption_configuration
-  $autopilot_confituration
+  $autopilot_configuration
   "ui": $ui
 }
 EOF
@@ -358,12 +364,6 @@ function run {
   local cluster_tag_key=""
   local cluster_tag_value=""
   local datacenter=""
-  local cleanup_dead_servers="true"
-  local last_contact_threshold="200ms"
-  local max_trailing_logs="250"
-  local server_stabilization_time="10s"
-  local redundancy_zone_tag="az"
-  local disable_upgrade_migration="false"
   local upgrade_version_tag=""
   local enable_gossip_encryption="false"
   local gossip_encryption_key=""
@@ -374,6 +374,12 @@ function run {
   local environment=()
   local skip_consul_config="false"
   local all_args=()
+  local cleanup_dead_servers="$DEFAULT_AUTOPILOT_CLEANUP_DEAD_SERVERS"
+  local last_contact_threshold="$DEFAULT_AUTOPILOT_LAST_CONTACT_THRESHOLD"
+  local max_trailing_logs="$DEFAULT_AUTOPILOT_MAX_TRAILING_LOGS"
+  local server_stabilization_time="$DEFAULT_AUTOPILOT_SERVER_STABILIZATION_TIME"
+  local redundancy_zone_tag="$DEFAULT_AUTOPILOT_REDUNDANCY_ZONE_TAG"
+  local disable_upgrade_migration="$DEFAULT_AUTOPILOT_DISABLE_UPGRADE_MIGRATION"
 
   while [[ $# > 0 ]]; do
     local key="$1"
@@ -553,7 +559,25 @@ function run {
       assert_not_empty "--key_file_path" "$key_file_path"
     fi
 
-    generate_consul_config "$server" "$config_dir" "$user" "$cluster_tag_key" "$cluster_tag_value" "$datacenter" "$enable_gossip_encryption" "$gossip_encryption_key" "$enable_rpc_encryption" "$ca_path" "$cert_file_path" "$key_file_path" "$cleanup_dead_servers" "$last_contact_threshold" "$max_trailing_logs" "$server_stabilization_time" "$redundancy_zone_tag" "$disable_upgrade_migration" "$upgrade_version_tag"
+    generate_consul_config "$server" \
+      "$config_dir" \
+      "$user" \
+      "$cluster_tag_key" \
+      "$cluster_tag_value" \
+      "$datacenter" \
+      "$enable_gossip_encryption" \
+      "$gossip_encryption_key" \
+      "$enable_rpc_encryption" \
+      "$ca_path" \
+      "$cert_file_path" \
+      "$key_file_path" \
+      "$cleanup_dead_servers" \
+      "$last_contact_threshold" \
+      "$max_trailing_logs" \
+      "$server_stabilization_time" \
+      "$redundancy_zone_tag" \
+      "$disable_upgrade_migration" \
+      "$upgrade_version_tag"
   fi
 
   generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$data_dir" "$log_dir" "$bin_dir" "$user" "${environment[@]}"
