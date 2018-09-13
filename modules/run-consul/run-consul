@@ -19,6 +19,13 @@ readonly SCRIPT_NAME="$(basename "$0")"
 readonly MAX_RETRIES=30
 readonly SLEEP_BETWEEN_RETRIES_SEC=10
 
+readonly DEFAULT_AUTOPILOT_CLEANUP_DEAD_SERVERS="true"
+readonly DEFAULT_AUTOPILOT_LAST_CONTACT_THRESHOLD="200ms"
+readonly DEFAULT_AUTOPILOT_MAX_TRAILING_LOGS="250"
+readonly DEFAULT_AUTOPILOT_SERVER_STABILIZATION_TIME="10s"
+readonly DEFAULT_AUTOPILOT_REDUNDANCY_ZONE_TAG="az"
+readonly DEFAULT_AUTOPILOT_DISABLE_UPGRADE_MIGRATION="false"
+
 function print_usage {
   echo
   echo "Usage: run-consul [OPTIONS]"
@@ -31,7 +38,7 @@ function print_usage {
   echo -e "  --client\t\tIf set, run in client mode. Optional. Exactly one of --server or --client must be set."
   echo -e "  --cluster-tag-key\tAutomatically form a cluster with Instances that have this tag key and the tag value in --cluster-tag-value. Optional."
   echo -e "  --cluster-tag-value\tAutomatically form a cluster with Instances that have the tag key in --cluster-tag-key and this tag value. Optional."
-  echo -e "  --datacenter\tThe name of the datacenter Consul is running in. Optional. If not specified, will default to AWS region name."
+  echo -e "  --datacenter\t\tThe name of the datacenter Consul is running in. Optional. If not specified, will default to AWS region name."
   echo -e "  --config-dir\t\tThe path to the Consul config folder. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --data-dir\t\tThe path to the Consul data folder. Optional. Default is the absolute path of '../data', relative to this script."
   echo -e "  --log-dir\t\tThe path to the Consul log folder. Optional. Default is the absolute path of '../log', relative to this script."
@@ -41,10 +48,21 @@ function print_usage {
   echo -e "  --gossip-encryption-key\t\tThe key to use for encrypting gossip traffic. Optional. Must be specified with --enable-gossip-encryption."
   echo -e "  --enable-rpc-encryption\t\tEnable encryption of RPC traffic between nodes. Optional. Must also specify --ca-file-path, --cert-file-path and --key-file-path."
   echo -e "  --ca-path\t\tPath to the directory of CA files used to verify outgoing connections. Optional. Must be specified with --enable-rpc-encryption."
-  echo -e "  --cert-file-path\t\tPath to the certificate file used to verify incoming connections. Optional. Must be specified with --enable-rpc-encryption and --key-file-path."
-  echo -e "  --key-file-path\t\tPath to the certificate key used to verify incoming connections. Optional. Must be specified with --enable-rpc-encryption and --cert-file-path."
-  echo -e "  --environment\t\A single environment variable in the key/value pair form 'KEY=\"val\"' to pass to Consul as environment variable when starting it up. Repeat this option for additional variables. Optional."
+  echo -e "  --cert-file-path\tPath to the certificate file used to verify incoming connections. Optional. Must be specified with --enable-rpc-encryption and --key-file-path."
+  echo -e "  --key-file-path\tPath to the certificate key used to verify incoming connections. Optional. Must be specified with --enable-rpc-encryption and --cert-file-path."
+  echo -e "  --environment\t\tA single environment variable in the key/value pair form 'KEY=\"val\"' to pass to Consul as environment variable when starting it up. Repeat this option for additional variables. Optional."
   echo -e "  --skip-consul-config\tIf this flag is set, don't generate a Consul configuration file. Optional. Default is false."
+  echo
+  echo "Options for enabling Consul Autopilot:"
+  echo
+  echo -e "  --cleanup-dead-servers\tSet to true or false to control the automatic removal of dead server nodes periodically and whenever a new server is added to the cluster. Defaults to $DEFAULT_AUTOPILOT_CLEANUP_DEAD_SERVERS. Optional."
+  echo -e "  --last-contact-threshold\tControls the maximum amount of time a server can go without contact from the leader before being considered unhealthy. Must be a duration value such as 10s. Defaults to $DEFAULT_AUTOPILOT_LAST_CONTACT_THRESHOLD. Optional."
+  echo -e "  --max-trailing-logs\t\tControls the maximum number of log entries that a server can trail the leader by before being considered unhealthy. Defaults to $DEFAULT_AUTOPILOT_MAX_TRAILING_LOGS. Optional."
+  echo -e "  --server-stabilization-time\tControls the minimum amount of time a server must be stable in the 'healthy' state before being added to the cluster. Only takes effect if all servers are running Raft protocol version 3 or higher. Must be a duration value such as 30s. Defaults to $DEFAULT_AUTOPILOT_SERVER_STABILIZATION_TIME. Optional."
+  echo -e "  --redundancy-zone-tag\t\t(Enterprise-only) This controls the -node-meta key to use when Autopilot is separating servers into zones for redundancy. Only one server in each zone can be a voting member at one time. If left blank, this feature will be disabled. Defaults to $DEFAULT_AUTOPILOT_REDUNDANCY_ZONE_TAG. Optional."
+  echo -e "  --disable-upgrade-migration\t(Enterprise-only) If this flag is set, this will disable Autopilot's upgrade migration strategy in Consul Enterprise of waiting until enough newer-versioned servers have been added to the cluster before promoting any of them to voters. Defaults to $DEFAULT_AUTOPILOT_DISABLE_UPGRADE_MIGRATION. Optional."
+  echo -e "  --upgrade-version-tag\t\t(Enterprise-only) That tag to be used to override the version information used during a migration. Optional."
+  echo
   echo
   echo "Example:"
   echo
@@ -202,6 +220,13 @@ function generate_consul_config {
   local readonly ca_path="${10}"
   local readonly cert_file_path="${11}"
   local readonly key_file_path="${12}"
+  local readonly cleanup_dead_servers="${13}"
+  local readonly last_contact_threshold="${14}"
+  local readonly max_trailing_logs="${15}"
+  local readonly server_stabilization_time="${16}"
+  local readonly redundancy_zone_tag="${17}"
+  local readonly disable_upgrade_migration="${18}"
+  local readonly upgrade_version_tag=${19}
   local readonly config_path="$config_dir/$CONSUL_CONFIG_FILE"
 
   local instance_id=""
@@ -235,6 +260,19 @@ EOF
     ui="true"
   fi
 
+  local autopilot_configuration=$(cat <<EOF
+"autopilot": {
+  "cleanup_dead_servers": $cleanup_dead_servers,
+  "last_contact_threshold": "$last_contact_threshold",
+  "max_trailing_logs": $max_trailing_logs,
+  "server_stabilization_time": "$server_stabilization_time",
+  "redundancy_zone_tag": "$redundancy_zone_tag",
+  "disable_upgrade_migration": $disable_upgrade_migration,
+  "upgrade_version_tag": "$upgrade_version_tag"
+},
+EOF
+)
+
   local gossip_encryption_configuration=""
   if [[ "$enable_gossip_encryption" == "true" && ! -z "$gossip_encryption_key" ]]; then
     log_info "Creating gossip encryption configuration"
@@ -267,6 +305,7 @@ EOF
   "server": $server,
   $gossip_encryption_configuration
   $rpc_encryption_configuration
+  $autopilot_configuration
   "ui": $ui
 }
 EOF
@@ -325,6 +364,7 @@ function run {
   local cluster_tag_key=""
   local cluster_tag_value=""
   local datacenter=""
+  local upgrade_version_tag=""
   local enable_gossip_encryption="false"
   local gossip_encryption_key=""
   local enable_rpc_encryption="false"
@@ -334,6 +374,12 @@ function run {
   local environment=()
   local skip_consul_config="false"
   local all_args=()
+  local cleanup_dead_servers="$DEFAULT_AUTOPILOT_CLEANUP_DEAD_SERVERS"
+  local last_contact_threshold="$DEFAULT_AUTOPILOT_LAST_CONTACT_THRESHOLD"
+  local max_trailing_logs="$DEFAULT_AUTOPILOT_MAX_TRAILING_LOGS"
+  local server_stabilization_time="$DEFAULT_AUTOPILOT_SERVER_STABILIZATION_TIME"
+  local redundancy_zone_tag="$DEFAULT_AUTOPILOT_REDUNDANCY_ZONE_TAG"
+  local disable_upgrade_migration="$DEFAULT_AUTOPILOT_DISABLE_UPGRADE_MIGRATION"
 
   while [[ $# > 0 ]]; do
     local key="$1"
@@ -383,6 +429,40 @@ function run {
       --datacenter)
         assert_not_empty "$key" "$2"
         datacenter="$2"
+        shift
+        ;;
+      --cleanup-dead-servers)
+        assert_not_empty "$key" "$2"
+        cleanup_dead_servers="$2"
+        shift
+        ;;
+      --last-contact-threshold)
+        assert_not_empty "$key" "$2"
+        last_contact_threshold="$2"
+        shift
+        ;;
+      --max-trailing-logs)
+        assert_not_empty "$key" "$2"
+        max_trailing_logs="$2"
+        shift
+        ;;
+      --server-stabilization-time)
+        assert_not_empty "$key" "$2"
+        server_stabilization_time="$2"
+        shift
+        ;;
+      --redundancy-zone-tag)
+        assert_not_empty "$key" "$2"
+        redundancy_zone_tag="$2"
+        shift
+        ;;
+      --disable-upgrade-migration)
+        disable_upgrade_migration="true"
+        shift
+        ;;
+      --upgrade-version-tag)
+        assert_not_empty "$key" "$2"
+        upgrade_version_tag="$2"
         shift
         ;;
       --enable-gossip-encryption)
@@ -478,7 +558,26 @@ function run {
       assert_not_empty "--cert-file-path" "$cert_file_path"
       assert_not_empty "--key_file_path" "$key_file_path"
     fi
-    generate_consul_config "$server" "$config_dir" "$user" "$cluster_tag_key" "$cluster_tag_value" "$datacenter" "$enable_gossip_encryption" "$gossip_encryption_key" "$enable_rpc_encryption" "$ca_path" "$cert_file_path" "$key_file_path"
+
+    generate_consul_config "$server" \
+      "$config_dir" \
+      "$user" \
+      "$cluster_tag_key" \
+      "$cluster_tag_value" \
+      "$datacenter" \
+      "$enable_gossip_encryption" \
+      "$gossip_encryption_key" \
+      "$enable_rpc_encryption" \
+      "$ca_path" \
+      "$cert_file_path" \
+      "$key_file_path" \
+      "$cleanup_dead_servers" \
+      "$last_contact_threshold" \
+      "$max_trailing_logs" \
+      "$server_stabilization_time" \
+      "$redundancy_zone_tag" \
+      "$disable_upgrade_migration" \
+      "$upgrade_version_tag"
   fi
 
   generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$data_dir" "$log_dir" "$bin_dir" "$user" "${environment[@]}"
