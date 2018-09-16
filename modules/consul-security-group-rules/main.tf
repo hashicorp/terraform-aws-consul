@@ -80,7 +80,7 @@ resource "aws_security_group_rule" "allow_dns_udp_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_server_rpc_inbound_from_security_group_ids" {
-  count                    = "${length(var.allowed_inbound_security_group_ids)}"
+  count                    = "${var.allowed_inbound_security_group_count}"
   type                     = "ingress"
   from_port                = "${var.server_rpc_port}"
   to_port                  = "${var.server_rpc_port}"
@@ -91,7 +91,7 @@ resource "aws_security_group_rule" "allow_server_rpc_inbound_from_security_group
 }
 
 resource "aws_security_group_rule" "allow_cli_rpc_inbound_from_security_group_ids" {
-  count                    = "${length(var.allowed_inbound_security_group_ids)}"
+  count                    = "${var.allowed_inbound_security_group_count}"
   type                     = "ingress"
   from_port                = "${var.cli_rpc_port}"
   to_port                  = "${var.cli_rpc_port}"
@@ -102,7 +102,7 @@ resource "aws_security_group_rule" "allow_cli_rpc_inbound_from_security_group_id
 }
 
 resource "aws_security_group_rule" "allow_serf_wan_tcp_inbound_from_security_group_ids" {
-  count                    = "${length(var.allowed_inbound_security_group_ids)}"
+  count                    = "${var.allowed_inbound_security_group_count}"
   type                     = "ingress"
   from_port                = "${var.serf_wan_port}"
   to_port                  = "${var.serf_wan_port}"
@@ -113,7 +113,7 @@ resource "aws_security_group_rule" "allow_serf_wan_tcp_inbound_from_security_gro
 }
 
 resource "aws_security_group_rule" "allow_serf_wan_udp_inbound_from_security_group_ids" {
-  count                    = "${length(var.allowed_inbound_security_group_ids)}"
+  count                    = "${var.allowed_inbound_security_group_count}"
   type                     = "ingress"
   from_port                = "${var.serf_wan_port}"
   to_port                  = "${var.serf_wan_port}"
@@ -124,7 +124,7 @@ resource "aws_security_group_rule" "allow_serf_wan_udp_inbound_from_security_gro
 }
 
 resource "aws_security_group_rule" "allow_http_api_inbound_from_security_group_ids" {
-  count                    = "${length(var.allowed_inbound_security_group_ids)}"
+  count                    = "${var.allowed_inbound_security_group_count}"
   type                     = "ingress"
   from_port                = "${var.http_api_port}"
   to_port                  = "${var.http_api_port}"
@@ -135,7 +135,7 @@ resource "aws_security_group_rule" "allow_http_api_inbound_from_security_group_i
 }
 
 resource "aws_security_group_rule" "allow_dns_tcp_inbound_from_security_group_ids" {
-  count                    = "${length(var.allowed_inbound_security_group_ids)}"
+  count                    = "${var.allowed_inbound_security_group_count}"
   type                     = "ingress"
   from_port                = "${var.dns_port}"
   to_port                  = "${var.dns_port}"
@@ -146,7 +146,7 @@ resource "aws_security_group_rule" "allow_dns_tcp_inbound_from_security_group_id
 }
 
 resource "aws_security_group_rule" "allow_dns_udp_inbound_from_security_group_ids" {
-  count                    = "${length(var.allowed_inbound_security_group_ids)}"
+  count                    = "${var.allowed_inbound_security_group_count}"
   type                     = "ingress"
   from_port                = "${var.dns_port}"
   to_port                  = "${var.dns_port}"
@@ -167,5 +167,5 @@ module "client_security_group_rules" {
   allowed_inbound_cidr_blocks        = ["${var.allowed_inbound_cidr_blocks}"]
   allowed_inbound_security_group_ids = ["${var.allowed_inbound_security_group_ids}"]
 
-  serf_lan_port   = "${var.serf_lan_port}"
+  serf_lan_port = "${var.serf_lan_port}"
 }
