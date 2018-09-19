@@ -45,3 +45,25 @@ resource "aws_security_group_rule" "allow_serf_lan_udp_inbound_from_security_gro
 
   security_group_id = "${var.security_group_id}"
 }
+
+# Similar to the *_inbound_from_security_group_ids rules, allow inbout from ourself
+
+resource "aws_security_group_rule" "allow_serf_lan_tcp_inbound_from_self" {
+  type      = "ingress"
+  from_port = "${var.serf_lan_port}"
+  to_port   = "${var.serf_lan_port}"
+  protocol  = "tcp"
+  self      = true
+
+  security_group_id = "${var.security_group_id}"
+}
+
+resource "aws_security_group_rule" "allow_serf_lan_udp_inbound_from_self" {
+  type      = "ingress"
+  from_port = "${var.serf_lan_port}"
+  to_port   = "${var.serf_lan_port}"
+  protocol  = "udp"
+  self      = true
+
+  security_group_id = "${var.security_group_id}"
+}
