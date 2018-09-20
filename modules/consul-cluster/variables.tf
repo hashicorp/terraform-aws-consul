@@ -83,6 +83,11 @@ variable "allowed_inbound_security_group_ids" {
   default     = []
 }
 
+variable "allowed_inbound_security_group_count" {
+  description = "The number of entries in var.allowed_inbound_security_group_ids. Ideally, this value could be computed dynamically, but we pass this variable to a Terraform resource's 'count' property and Terraform requires that 'count' be computed with literals or data sources only."
+  default     = 0
+}
+
 variable "additional_security_group_ids" {
   description = "A list of additional security group IDs to add to Consul EC2 Instances"
   type        = "list"
