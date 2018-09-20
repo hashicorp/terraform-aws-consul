@@ -156,7 +156,7 @@ resource "aws_security_group_rule" "allow_dns_udp_inbound_from_security_group_id
   security_group_id = "${var.security_group_id}"
 }
 
-# Similar to the *_inbound_from_security_group_ids rules, allow inbout from ourself
+# Similar to the *_inbound_from_security_group_ids rules, allow inbound from ourself
 
 resource "aws_security_group_rule" "allow_server_rpc_inbound_from_self" {
   type      = "ingress"
