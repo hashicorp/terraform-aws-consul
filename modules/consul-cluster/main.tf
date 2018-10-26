@@ -27,6 +27,7 @@ resource "aws_autoscaling_group" "autoscaling_group" {
   health_check_type         = "${var.health_check_type}"
   health_check_grace_period = "${var.health_check_grace_period}"
   wait_for_capacity_timeout = "${var.wait_for_capacity_timeout}"
+  service_linked_role_arn   = "${var.service_linked_role_arn}"
 
   tags = [
     {
