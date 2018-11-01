@@ -81,3 +81,8 @@ variable "key_file_path" {
   description = "Path to the certificate key used to verify incoming connections."
   default = "/opt/consul/tls/consul.key.pem"
 }
+
+variable "consul_service_linked_role_suffix" {
+  description = "Suffix for the aws_iam_service_linked_role created for the consul cluster auto scaling group to use"
+  default = "test-consul-service-linked-role"
+}
