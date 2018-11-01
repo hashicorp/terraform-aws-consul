@@ -17,7 +17,7 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_iam_service_linked_role" "consul_asg_role" {
   aws_service_name = "autoscaling.amazonaws.com"
-  custom_suffix    = "test-consul-service-linked-role"
+  custom_suffix    = "${format("consul-slr-%s",replace(replace(timestamp(),"-",""),":",""))}"
   description      = "Service-Linked Role enables access to AWS Services and Resources used or managed by Auto Scaling"
 }
 
