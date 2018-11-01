@@ -42,6 +42,16 @@ const AWS_DEFAULT_REGION_ENV_VAR = "AWS_DEFAULT_REGION"
 // 3. Deploying that AMI using the consul-cluster Terraform code
 // 4. Checking that the Consul cluster comes up within a reasonable time period and can respond to requests
 func runConsulClusterTest(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string, sshUser string, enterpriseUrl string) {
+  runConsulClusterTestWithVars(t,
+			packerBuildName,
+			examplesFolder,
+			packerTemplatePath,
+			sshUser,
+			map[string]interface{}{},
+			enterpriseUrl)
+}
+
+func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string, sshUser string, terraformVarsMerge map[string]interface{}, enterpriseUrl string) {
 	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, REPO_ROOT, examplesFolder)
 
 	test_structure.RunTestStage(t, "setup_ami", func() {
@@ -72,15 +82,21 @@ func runConsulClusterTest(t *testing.T, packerBuildName string, examplesFolder s
 		keyPair := aws.CreateAndImportEC2KeyPair(t, awsRegion, uniqueId)
 		test_structure.SaveEc2KeyPair(t, exampleFolder, keyPair)
 
+		terraformVars := map[string]interface{}{
+			CONSUL_CLUSTER_EXAMPLE_VAR_CLUSTER_NAME: uniqueId,
+			CONSUL_CLUSTER_EXAMPLE_VAR_NUM_SERVERS:  CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS,
+			CONSUL_CLUSTER_EXAMPLE_VAR_NUM_CLIENTS:  CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS,
+			CONSUL_CLUSTER_EXAMPLE_VAR_AMI_ID:       amiId,
+			CONSUL_CLUSTER_EXAMPLE_VAR_SSH_KEY_NAME: keyPair.Name,
+		}
+
+		for k, v := range terraformVarsMerge {
+			terraformVars[k] = v
+		}
+
 		terraformOptions := &terraform.Options{
 			TerraformDir: exampleFolder,
-			Vars: map[string]interface{}{
-				CONSUL_CLUSTER_EXAMPLE_VAR_CLUSTER_NAME: uniqueId,
-				CONSUL_CLUSTER_EXAMPLE_VAR_NUM_SERVERS:  CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS,
-				CONSUL_CLUSTER_EXAMPLE_VAR_NUM_CLIENTS:  CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS,
-				CONSUL_CLUSTER_EXAMPLE_VAR_AMI_ID:       amiId,
-				CONSUL_CLUSTER_EXAMPLE_VAR_SSH_KEY_NAME: keyPair.Name,
-			},
+			Vars: terraformVars,
 			EnvVars: map[string]string{
 				AWS_DEFAULT_REGION_ENV_VAR: awsRegion,
 			},
