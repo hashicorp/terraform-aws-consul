@@ -145,6 +145,11 @@ variable "wait_for_capacity_timeout" {
   default     = "10m"
 }
 
+variable "service_linked_role_arn" {
+  description = "The ARN of the service-linked role that the ASG will use to call other AWS services"
+  default     = ""
+}
+
 variable "health_check_type" {
   description = "Controls how health checking is done. Must be one of EC2 or ELB."
   default     = "EC2"
