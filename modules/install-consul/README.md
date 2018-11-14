@@ -44,7 +44,7 @@ example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/
 The `install-consul` script accepts the following arguments:
 
 * `version VERSION`: Install Consul version VERSION. Optional if download-url is provided.
-* `dowload-url URL`: Install the Consul package hosted in this url. Optional if version is provided.
+* `download-url URL`: Install the Consul package hosted in this url. Optional if version is provided.
 * `path DIR`: Install Consul into folder DIR. Optional.
 * `user USER`: The install dirs will be owned by user USER. Optional.
 * `ca-file-path PATH`: Path to a PEM-encoded certificate authority used to encrypt and verify authenticity of client and server connections. Optional.
