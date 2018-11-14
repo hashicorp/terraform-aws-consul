@@ -70,37 +70,37 @@ function print_usage {
 }
 
 function log {
-  local readonly level="$1"
-  local readonly message="$2"
-  local readonly timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  local -r level="$1"
+  local -r message="$2"
+  local -r timestamp=$(date +"%Y-%m-%d %H:%M:%S")
   >&2 echo -e "${timestamp} [${level}] [$SCRIPT_NAME] ${message}"
 }
 
 function log_info {
-  local readonly message="$1"
+  local -r message="$1"
   log "INFO" "$message"
 }
 
 function log_warn {
-  local readonly message="$1"
+  local -r message="$1"
   log "WARN" "$message"
 }
 
 function log_error {
-  local readonly message="$1"
+  local -r message="$1"
   log "ERROR" "$message"
 }
 
 # Based on code from: http://stackoverflow.com/a/16623897/483528
 function strip_prefix {
-  local readonly str="$1"
-  local readonly prefix="$2"
+  local -r str="$1"
+  local -r prefix="$2"
   echo "${str#$prefix}"
 }
 
 function assert_not_empty {
-  local readonly arg_name="$1"
-  local readonly arg_value="$2"
+  local -r arg_name="$1"
+  local -r arg_value="$2"
 
   if [[ -z "$arg_value" ]]; then
     log_error "The value for '$arg_name' cannot be empty"
@@ -110,12 +110,12 @@ function assert_not_empty {
 }
 
 function lookup_path_in_instance_metadata {
-  local readonly path="$1"
+  local -r path="$1"
   curl --silent --show-error --location "$EC2_INSTANCE_METADATA_URL/$path/"
 }
 
 function lookup_path_in_instance_dynamic_data {
-  local readonly path="$1"
+  local -r path="$1"
   curl --silent --show-error --location "$EC2_INSTANCE_DYNAMIC_DATA_URL/$path/"
 }
 
@@ -132,8 +132,8 @@ function get_instance_region {
 }
 
 function get_instance_tags {
-  local readonly instance_id="$1"
-  local readonly instance_region="$2"
+  local -r instance_id="$1"
+  local -r instance_region="$2"
   local tags=""
   local count_tags=""
 
@@ -159,8 +159,8 @@ function get_instance_tags {
 }
 
 function get_asg_size {
-  local readonly asg_name="$1"
-  local readonly aws_region="$2"
+  local -r asg_name="$1"
+  local -r aws_region="$2"
   local asg_json=""
 
   log_info "Looking up the size of the Auto Scaling Group $asg_name in $aws_region"
@@ -169,8 +169,8 @@ function get_asg_size {
 }
 
 function get_cluster_size {
-  local readonly instance_tags="$1"
-  local readonly aws_region="$2"
+  local -r instance_tags="$1"
+  local -r aws_region="$2"
 
   local asg_name=""
   asg_name=$(get_tag_value "$instance_tags" "$AWS_ASG_TAG_KEY")
@@ -185,14 +185,14 @@ function get_cluster_size {
 # Get the value for a specific tag from the tags JSON returned by the AWS describe-tags:
 # https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-tags.html
 function get_tag_value {
-  local readonly tags="$1"
-  local readonly tag_key="$2"
+  local -r tags="$1"
+  local -r tag_key="$2"
 
   echo "$tags" | jq -r ".Tags[] | select(.Key == \"$tag_key\") | .Value"
 }
 
 function assert_is_installed {
-  local readonly name="$1"
+  local -r name="$1"
 
   if [[ ! $(command -v ${name}) ]]; then
     log_error "The binary '$name' is required by this script but is not installed or in the system's PATH."
@@ -208,26 +208,26 @@ function join_by {
 }
 
 function generate_consul_config {
-  local readonly server="${1}"
-  local readonly config_dir="${2}"
-  local readonly user="${3}"
-  local readonly cluster_tag_key="${4}"
-  local readonly cluster_tag_value="${5}"
-  local readonly datacenter="${6}"
-  local readonly enable_gossip_encryption="${7}"
-  local readonly gossip_encryption_key="${8}"
-  local readonly enable_rpc_encryption="${9}"
-  local readonly ca_path="${10}"
-  local readonly cert_file_path="${11}"
-  local readonly key_file_path="${12}"
-  local readonly cleanup_dead_servers="${13}"
-  local readonly last_contact_threshold="${14}"
-  local readonly max_trailing_logs="${15}"
-  local readonly server_stabilization_time="${16}"
-  local readonly redundancy_zone_tag="${17}"
-  local readonly disable_upgrade_migration="${18}"
-  local readonly upgrade_version_tag=${19}
-  local readonly config_path="$config_dir/$CONSUL_CONFIG_FILE"
+  local -r server="${1}"
+  local -r config_dir="${2}"
+  local -r user="${3}"
+  local -r cluster_tag_key="${4}"
+  local -r cluster_tag_value="${5}"
+  local -r datacenter="${6}"
+  local -r enable_gossip_encryption="${7}"
+  local -r gossip_encryption_key="${8}"
+  local -r enable_rpc_encryption="${9}"
+  local -r ca_path="${10}"
+  local -r cert_file_path="${11}"
+  local -r key_file_path="${12}"
+  local -r cleanup_dead_servers="${13}"
+  local -r last_contact_threshold="${14}"
+  local -r max_trailing_logs="${15}"
+  local -r server_stabilization_time="${16}"
+  local -r redundancy_zone_tag="${17}"
+  local -r disable_upgrade_migration="${18}"
+  local -r upgrade_version_tag=${19}
+  local -r config_path="$config_dir/$CONSUL_CONFIG_FILE"
 
   local instance_id=""
   local instance_ip_address=""
@@ -316,14 +316,14 @@ EOF
 }
 
 function generate_supervisor_config {
-  local readonly supervisor_config_path="$1"
-  local readonly consul_config_dir="$2"
-  local readonly consul_data_dir="$3"
-  local readonly consul_log_dir="$4"
-  local readonly consul_bin_dir="$5"
-  local readonly consul_user="$6"
+  local -r supervisor_config_path="$1"
+  local -r consul_config_dir="$2"
+  local -r consul_data_dir="$3"
+  local -r consul_log_dir="$4"
+  local -r consul_bin_dir="$5"
+  local -r consul_user="$6"
   shift 6
-  local readonly environment=("$@")
+  local -r environment=("$@")
 
   log_info "Creating Supervisor config file to run Consul in $supervisor_config_path"
   cat > "$supervisor_config_path" <<EOF
@@ -349,7 +349,7 @@ function start_consul {
 
 # Based on: http://unix.stackexchange.com/a/7732/215969
 function get_owner_of_path {
-  local readonly path="$1"
+  local -r path="$1"
   ls -ld "$path" | awk '{print $3}'
 }
 

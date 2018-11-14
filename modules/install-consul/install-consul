@@ -41,30 +41,30 @@ function print_usage {
 }
 
 function log {
-  local readonly level="$1"
-  local readonly message="$2"
-  local readonly timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  local -r level="$1"
+  local -r message="$2"
+  local -r timestamp=$(date +"%Y-%m-%d %H:%M:%S")
   >&2 echo -e "${timestamp} [${level}] [$SCRIPT_NAME] ${message}"
 }
 
 function log_info {
-  local readonly message="$1"
+  local -r message="$1"
   log "INFO" "$message"
 }
 
 function log_warn {
-  local readonly message="$1"
+  local -r message="$1"
   log "WARN" "$message"
 }
 
 function log_error {
-  local readonly message="$1"
+  local -r message="$1"
   log "ERROR" "$message"
 }
 
 function assert_not_empty {
-  local readonly arg_name="$1"
-  local readonly arg_value="$2"
+  local -r arg_name="$1"
+  local -r arg_value="$2"
 
   if [[ -z "$arg_value" ]]; then
     log_error "The value for '$arg_name' cannot be empty"
@@ -74,10 +74,10 @@ function assert_not_empty {
 }
 
 function assert_either_or {
-  local readonly arg1_name="$1"
-  local readonly arg1_value="$2"
-  local readonly arg2_name="$3"
-  local readonly arg2_value="$4"
+  local -r arg1_name="$1"
+  local -r arg1_value="$2"
+  local -r arg2_name="$3"
+  local -r arg2_value="$4"
 
   if [[ -z "$arg1_value" && -z "$arg2_value" ]]; then
     log_error "Either the value for '$arg1_name' or '$arg2_name' must be passed, both cannot be empty"
@@ -88,8 +88,8 @@ function assert_either_or {
 
 # A retry function that attempts to run a command a number of times and returns the output
 function retry {
-  local readonly cmd=$1
-  local readonly description=$2
+  local -r cmd="$1"
+  local -r description="$2"
 
   for i in $(seq 1 5); do
     log_info "$description"
@@ -190,12 +190,12 @@ function install_dependencies {
 }
 
 function user_exists {
-  local readonly username="$1"
+  local -r username="$1"
   id "$username" >/dev/null 2>&1
 }
 
 function create_consul_user {
-  local readonly username="$1"
+  local -r username="$1"
 
   if $(user_exists "$username"); then
     echo "User $username already exists. Will not create again."
@@ -206,8 +206,8 @@ function create_consul_user {
 }
 
 function create_consul_install_paths {
-  local readonly path="$1"
-  local readonly username="$2"
+  local -r path="$1"
+  local -r username="$2"
 
   log_info "Creating install dirs for Consul at $path"
   sudo mkdir -p "$path"
@@ -222,7 +222,7 @@ function create_consul_install_paths {
 }
 
 function fetch_binary {
-  local readonly version="$1"
+  local -r version="$1"
   local download_url="$2"
 
   if [[ -z "$download_url" && -n "$version" ]];  then
@@ -235,12 +235,12 @@ function fetch_binary {
 }
 
 function install_binary {
-  local readonly install_path="$1"
-  local readonly username="$2"
+  local -r install_path="$1"
+  local -r username="$2"
 
-  local readonly bin_dir="$install_path/bin"
-  local readonly consul_dest_path="$bin_dir/consul"
-  local readonly run_consul_dest_path="$bin_dir/run-consul"
+  local -r bin_dir="$install_path/bin"
+  local -r consul_dest_path="$bin_dir/consul"
+  local -r run_consul_dest_path="$bin_dir/run-consul"
 
   unzip -d /tmp "$DOWNLOAD_PACKAGE_PATH"
 
@@ -249,7 +249,7 @@ function install_binary {
   sudo chown "$username:$username" "$consul_dest_path"
   sudo chmod a+x "$consul_dest_path"
 
-  local readonly symlink_path="$SYSTEM_BIN_DIR/consul"
+  local -r symlink_path="$SYSTEM_BIN_DIR/consul"
   if [[ -f "$symlink_path" ]]; then
     log_info "Symlink $symlink_path already exists. Will not add again."
   else
@@ -264,14 +264,14 @@ function install_binary {
 }
 
 function install_tls_certificates {
-  local readonly path="$1"
-  local readonly user="$2"
-  local readonly ca_file_path="$3"
-  local readonly cert_file_path="$4"
-  local readonly key_file_path="$5"
+  local -r path="$1"
+  local -r user="$2"
+  local -r ca_file_path="$3"
+  local -r cert_file_path="$4"
+  local -r key_file_path="$5"
 
-  local readonly consul_tls_certs_path="$path/tls"
-  local readonly ca_certs_path="$consul_tls_certs_path/ca"
+  local -r consul_tls_certs_path="$path/tls"
+  local -r ca_certs_path="$consul_tls_certs_path/ca"
 
   log_info "Moving TLS certs to $consul_tls_certs_path and $ca_certs_path"
 

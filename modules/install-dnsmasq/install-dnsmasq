@@ -34,30 +34,30 @@ function print_usage {
 }
 
 function log {
-  local readonly level="$1"
-  local readonly message="$2"
-  local readonly timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  local -r level="$1"
+  local -r message="$2"
+  local -r timestamp=$(date +"%Y-%m-%d %H:%M:%S")
   >&2 echo -e "${timestamp} [${level}] [$SCRIPT_NAME] ${message}"
 }
 
 function log_info {
-  local readonly message="$1"
+  local -r message="$1"
   log "INFO" "$message"
 }
 
 function log_warn {
-  local readonly message="$1"
+  local -r message="$1"
   log "WARN" "$message"
 }
 
 function log_error {
-  local readonly message="$1"
+  local -r message="$1"
   log "ERROR" "$message"
 }
 
 function assert_not_empty {
-  local readonly arg_name="$1"
-  local readonly arg_value="$2"
+  local -r arg_name="$1"
+  local -r arg_value="$2"
 
   if [[ -z "$arg_value" ]]; then
     log_error "The value for '$arg_name' cannot be empty"
@@ -75,7 +75,7 @@ function has_apt_get {
 }
 
 function install_dnsmasq {
-  local readonly consul_ip="$1"
+  local -r consul_ip="$1"
 
   log_info "Installing Dnsmasq"
 
@@ -95,9 +95,9 @@ function install_dnsmasq {
 }
 
 function write_consul_config {
-  local readonly consul_domain="$1"
-  local readonly consul_ip="$2"
-  local readonly consul_port="$3"
+  local -r consul_domain="$1"
+  local -r consul_ip="$2"
+  local -r consul_port="$3"
 
   log_info "Configuring Dnsmasq to forward lookups of the '$consul_domain' domain to $consul_ip:$consul_port in $CONSUL_DNS_MASQ_CONFIG_FILE"
   mkdir -p "$DNS_MASQ_CONFIG_DIR"
