@@ -22,7 +22,7 @@ you run:
 ```
 
 To start Consul in client mode, you run:
- 
+
 ```
 /opt/consul/bin/run-consul --client
 ```
@@ -54,15 +54,15 @@ See the [consul-cluster example](https://github.com/hashicorp/terraform-aws-cons
 The `run-consul` script accepts the following arguments:
 
 * `server` (optional): If set, run in server mode. Exactly one of `--server` or `--client` must be set.
-* `client` (optional): If set, run in client mode. Exactly one of `--server` or `--client` must be set. 
+* `client` (optional): If set, run in client mode. Exactly one of `--server` or `--client` must be set.
 * `cluster-tag-key` (optional): Automatically form a cluster with Instances that have this tag key and the tag value
   in `--cluster-tag-value`.
-* `cluster-tag-value` (optional): Automatically form a cluster with Instances that have the tag key in 
+* `cluster-tag-value` (optional): Automatically form a cluster with Instances that have the tag key in
   `--cluster-tag-key` and this tag value.
 * `datacenter` (optional): The name of the datacenter the cluster reports. Default is the AWS region name.
-* `config-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../config`, 
+* `config-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../config`,
   relative to the `run-consul` script itself.
-* `data-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../data`, 
+* `data-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../data`,
   relative to the `run-consul` script itself.
 * `user` (optional): The user to run Consul as. Default is to use the owner of `config-dir`.
 * `enable-gossip-encryption` (optional): Enable encryption of gossip traffic between nodes. If set, you must also specify `gossip-encryption-key`.
@@ -71,13 +71,25 @@ The `run-consul` script accepts the following arguments:
 * `ca-file-path` (optional): Path to the CA file used to verify outgoing connections. Must be specified with `enable-rpc-encryption`, `cert-file-path` and `key-file-path`.
 * `cert-file-path` (optional): Path to the certificate file used to verify incoming connections. Must be specified with `enable-rpc-encryption`, `ca-file-path`, and `key-file-path`.
 * `key-file-path` (optional): Path to the certificate key used to verify incoming connections. Must be specified with `enable-rpc-encryption`, `ca-file-path` and `cert-file-path`.
-* `skip-consul-config` (optional): If this flag is set, don't generate a Consul configuration file. This is useful if 
-  you have a custom configuration file and don't want to use any of of the default settings from `run-consul`. 
+* `skip-consul-config` (optional): If this flag is set, don't generate a Consul configuration file. This is useful if
+  you have a custom configuration file and don't want to use any of of the default settings from `run-consul`.
+
+Options for Consul Autopilot:
+
+* `--autopilot-cleanup-dead-servers` (optional): Set to true or false to control the automatic removal of dead server nodes periodically and whenever a new server is added to the cluster. Defaults to true.
+* `--autopilot-last-contact-threshold` (optional): Controls the maximum amount of time a server can go without contact from the leader before being considered unhealthy. Must be a duration value such as 10s. Defaults to 200ms.
+* `--autopilot-max-trailing-logs` (optional): Controls the maximum number of log entries that a server can trail the leader by before being considered unhealthy. Defaults to 250.
+* `--autopilot-server-stabilization-time` (optional): Controls the minimum amount of time a server must be stable in the 'healthy' state before being added to the cluster. Only takes effect if all servers are running Raft protocol version 3 or higher. Must be a duration value such as 30s. Defaults to 10s.
+* `--autopilot-redundancy-zone-tag` (optional)(enterprise-only): This controls the -node-meta key to use when Autopilot is separating servers into zones for redundancy. Only one server in each zone can be a voting member at one time. If left blank, this feature will be disabled. Defaults to az.
+* `--autopilot-disable-upgrade-migration` (optional)(enterprise-only): If this flag is set, this will disable Autopilot's upgrade migration strategy in Consul Enterprise of waiting until enough newer-versioned servers have been added to the cluster before promoting any of them to voters. Defaults to false.
+* `--autopilot-upgrade-version-tag` (optional)(enterprise-only): That tag to be used to override the version information used during a migration.
+
+
 
 Example:
 
 ```
-/opt/consul/bin/run-consul --server --cluster-tag-key consul-cluster --cluster-tag-value prod-cluster 
+/opt/consul/bin/run-consul --server --cluster-tag-key consul-cluster --cluster-tag-value prod-cluster
 ```
 
 
@@ -238,3 +250,21 @@ incoming and outgoing connections, respectively:
   "verify_outgoing": true
 }
 ```
+
+### Autopilot
+
+[Autopilot](https://www.consul.io/docs/guides/autopilot.html) is a set of features for the
+automatic management of consul servers. These features are enabled by default and already
+set with reasonable defaults. It includes automatic cleaning up of dead servers as soon as
+a replacement Consul server comes online. The internal health check runs on the leader to
+track other servers. A server is considered healthy when:
+
+* Its status is `Alive`
+* The time since its last contact with the current leader is below `autopilot-last-contact-threshold`
+* Its latest [Raft consensus algorithm](https://raft.github.io/) term matches the leader's term
+* The number of Raft log entries it trails the leader by does not exceed `autopilot-max-trailing-logs`
+
+There are Autopilot settings called [upgrade migrations](https://www.consul.io/docs/guides/autopilot.html#upgrade-migrations)
+that are useful when adding new members to the cluster either with newer configurations or using
+newer versions of Consul. These configurations manage how Consul will promote new servers and demote
+old ones. These settings, however, are only available at the Consul Enterprise version. 
