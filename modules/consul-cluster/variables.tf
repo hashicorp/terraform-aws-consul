@@ -25,7 +25,7 @@ variable "allowed_inbound_cidr_blocks" {
 }
 
 variable "user_data" {
-  description = "A User Data script to execute while the server is booting. We remmend passing in a bash script that executes the run-consul script, which should have been installed in the Consul AMI by the install-consul module."
+  description = "A User Data script to execute while the server is booting. We recommend passing in a bash script that executes the run-consul script, which should have been installed in the Consul AMI by the install-consul module."
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
