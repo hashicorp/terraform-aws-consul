@@ -29,6 +29,8 @@ resource "aws_autoscaling_group" "autoscaling_group" {
   wait_for_capacity_timeout = "${var.wait_for_capacity_timeout}"
   service_linked_role_arn   = "${var.service_linked_role_arn}"
 
+  enabled_metrics = ["${var.enabled_metrics}"]
+
   tags = [
     {
       key                 = "Name"
