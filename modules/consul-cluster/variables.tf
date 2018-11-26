@@ -211,3 +211,13 @@ variable "enabled_metrics" {
   type        = "list"
   default     = []
 }
+
+variable "enable_iam_setup" {
+  description = "If true, create the IAM Role, IAM Instance Profile, and IAM Policies. If false, these will not be created, and you can pass in your own IAM Instance Profile via var.iam_instance_profile_name."
+  default     = true
+}
+
+variable "iam_instance_profile_name" {
+  description = "If enable_iam_setup is false then this will be the name of the IAM instance profile to attach"
+  default     = ""
+}
