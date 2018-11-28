@@ -72,14 +72,14 @@ data "template_file" "user_data_server" {
   template = "${file("${path.module}/user-data-server.sh")}"
 
   vars {
-    cluster_tag_key   = "${var.cluster_tag_key}"
-    cluster_tag_value = "${var.cluster_name}"
+    cluster_tag_key          = "${var.cluster_tag_key}"
+    cluster_tag_value        = "${var.cluster_name}"
     enable_gossip_encryption = "${var.enable_gossip_encryption}"
-    gossip_encryption_key = "${var.gossip_encryption_key}"
-    enable_rpc_encryption = "${var.enable_rpc_encryption}"
-    ca_path = "${var.ca_path}"
-    cert_file_path = "${var.cert_file_path}"
-    key_file_path = "${var.key_file_path}"
+    gossip_encryption_key    = "${var.gossip_encryption_key}"
+    enable_rpc_encryption    = "${var.enable_rpc_encryption}"
+    ca_path                  = "${var.ca_path}"
+    cert_file_path           = "${var.cert_file_path}"
+    key_file_path            = "${var.key_file_path}"
   }
 }
 
@@ -127,14 +127,14 @@ data "template_file" "user_data_client" {
   template = "${file("${path.module}/user-data-client.sh")}"
 
   vars {
-    cluster_tag_key   = "${var.cluster_tag_key}"
-    cluster_tag_value = "${var.cluster_name}"
+    cluster_tag_key          = "${var.cluster_tag_key}"
+    cluster_tag_value        = "${var.cluster_name}"
     enable_gossip_encryption = "${var.enable_gossip_encryption}"
-    gossip_encryption_key = "${var.gossip_encryption_key}"
-    enable_rpc_encryption = "${var.enable_rpc_encryption}"
-    ca_path = "${var.ca_path}"
-    cert_file_path = "${var.cert_file_path}"
-    key_file_path = "${var.key_file_path}"
+    gossip_encryption_key    = "${var.gossip_encryption_key}"
+    enable_rpc_encryption    = "${var.enable_rpc_encryption}"
+    ca_path                  = "${var.ca_path}"
+    cert_file_path           = "${var.cert_file_path}"
+    key_file_path            = "${var.key_file_path}"
   }
 }
 

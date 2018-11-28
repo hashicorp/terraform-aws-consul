@@ -54,35 +54,35 @@ variable "spot_price" {
 
 variable "enable_gossip_encryption" {
   description = "Encrypt gossip traffic between nodes. Must also specify encryption key."
-  default = "true"
+  default     = "true"
 }
 
 variable "enable_rpc_encryption" {
   description = "Encrypt RPC traffic between nodes. Must also specify TLS certificates and keys."
-  default = "true"
+  default     = "true"
 }
 
 variable "gossip_encryption_key" {
   description = "16 byte cryptographic key to encrypt gossip traffic between nodes. Must set 'enable_gossip_encryption' to true for this to take effect. WARNING: Setting the encryption key here means it will be stored in plain text. We're doing this here to keep the example simple, but in production you should inject it more securely, e.g. retrieving it from KMS."
-  default = ""
+  default     = ""
 }
 
 variable "ca_path" {
   description = "Path to the directory of CA files used to verify outgoing connections."
-  default = "/opt/consul/tls/ca"
+  default     = "/opt/consul/tls/ca"
 }
 
 variable "cert_file_path" {
   description = "Path to the certificate file used to verify incoming connections."
-  default = "/opt/consul/tls/consul.crt.pem"
+  default     = "/opt/consul/tls/consul.crt.pem"
 }
 
 variable "key_file_path" {
   description = "Path to the certificate key used to verify incoming connections."
-  default = "/opt/consul/tls/consul.key.pem"
+  default     = "/opt/consul/tls/consul.key.pem"
 }
 
 variable "consul_service_linked_role_suffix" {
   description = "Suffix for the aws_iam_service_linked_role created for the consul cluster auto scaling group to use"
-  default = "test-consul-service-linked-role"
+  default     = "test-consul-service-linked-role"
 }
