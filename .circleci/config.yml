@@ -1,3 +1,4 @@
+---
 workspace_root: &workspace_root
   /go/src/github.com/hashicorp/terraform-aws-consul
 
@@ -8,6 +9,15 @@ defaults: &defaults
 
 version: 2
 jobs:
+  validate_terraform:
+    docker:
+      - image: hashicorp/terraform
+    steps:
+      - checkout
+      - run:
+          name: Validate Terraform Formatting
+          command: "[ -z \"$(terraform fmt -write=false)\" ] || { terraform fmt -write=false -diff; exit 1; }"
+
   build:
     <<: *defaults
     steps:
@@ -25,6 +35,7 @@ jobs:
       - persist_to_workspace:
           root: *workspace_root
           paths: test/vendor
+
   test:
     <<: *defaults
     steps:
