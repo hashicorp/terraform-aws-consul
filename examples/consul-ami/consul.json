@@ -45,9 +45,13 @@
     "ssh_username": "ec2-user"
   }],
   "provisioners": [{
+    "type": "shell",
+    "inline": ["mkdir -p /tmp/terraform-aws-consul/modules"]
+  },{
     "type": "file",
-    "source": "{{template_dir}}/../../../terraform-aws-consul",
-    "destination": "/tmp"
+    "source": "{{template_dir}}/../../modules/",
+    "destination": "/tmp/terraform-aws-consul/modules",
+    "pause_before": "30s"
   },{
     "type": "shell",
     "inline": [
