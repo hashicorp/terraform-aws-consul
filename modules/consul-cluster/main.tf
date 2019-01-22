@@ -57,7 +57,7 @@ resource "aws_launch_configuration" "launch_configuration" {
   user_data     = "${var.user_data}"
   spot_price    = "${var.spot_price}"
 
-  iam_instance_profile        = "${element(coalescelist(list(var.iam_instance_profile_name),aws_iam_instance_profile.instance_profile.*.name),0)}"
+  iam_instance_profile        = "${var.enable_iam_setup ? element(concat(aws_iam_instance_profile.instance_profile.*.name, list("")), 0) : var.iam_instance_profile_name}"
   key_name                    = "${var.ssh_key_name}"
   security_groups             = ["${concat(list(aws_security_group.lc_security_group.id), var.additional_security_group_ids)}"]
   placement_tenancy           = "${var.tenancy}"
@@ -165,7 +165,7 @@ resource "aws_iam_instance_profile" "instance_profile" {
 
   name_prefix = "${var.cluster_name}"
   path        = "${var.instance_profile_path}"
-  role        = "${element(coalescelist(aws_iam_role.instance_role.*.name,list("")),0)}"
+  role        = "${element(concat(aws_iam_role.instance_role.*.name,list("")),0)}"
 
   # aws_launch_configuration.launch_configuration in this module sets create_before_destroy to true, which means
   # everything it depends on, including this resource, must set it as well, or you'll get cyclic dependency errors
@@ -209,5 +209,5 @@ module "iam_policies" {
   source = "../consul-iam-policies"
 
   enabled     = "${var.enable_iam_setup}"
-  iam_role_id = "${element(coalescelist(aws_iam_role.instance_role.*.id,list("")),0)}"
+  iam_role_id = "${element(concat(aws_iam_role.instance_role.*.id,list("")),0)}"
 }
