@@ -42,20 +42,20 @@ const AWS_DEFAULT_REGION_ENV_VAR = "AWS_DEFAULT_REGION"
 // 3. Deploying that AMI using the consul-cluster Terraform code
 // 4. Checking that the Consul cluster comes up within a reasonable time period and can respond to requests
 func runConsulClusterTest(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string, sshUser string, enterpriseUrl string) {
-  runConsulClusterTestWithVars(t,
-			packerBuildName,
-			examplesFolder,
-			packerTemplatePath,
-			sshUser,
-			map[string]interface{}{},
-			enterpriseUrl)
+	runConsulClusterTestWithVars(t,
+		packerBuildName,
+		examplesFolder,
+		packerTemplatePath,
+		sshUser,
+		map[string]interface{}{},
+		enterpriseUrl)
 }
 
 func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string, sshUser string, terraformVarsMerge map[string]interface{}, enterpriseUrl string) {
 	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, REPO_ROOT, examplesFolder)
 
 	test_structure.RunTestStage(t, "setup_ami", func() {
-		awsRegion := aws.GetRandomRegion(t, nil, nil)
+		awsRegion := aws.GetRandomRegion(t, nil, []string{"eu-north-1"})
 		test_structure.SaveString(t, exampleFolder, SAVED_AWS_REGION, awsRegion)
 
 		amiId := buildAmi(t, packerTemplatePath, packerBuildName, awsRegion, enterpriseUrl)
