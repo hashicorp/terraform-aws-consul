@@ -114,7 +114,7 @@ resource "aws_security_group_rule" "allow_ssh_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_ssh_inbound_from_security_group_ids" {
-  count                    = "${length(var.allowed_ssh_security_group_ids)}"
+  count                    = "${var.allowed_ssh_security_group_count}"
   type                     = "ingress"
   from_port                = "${var.ssh_port}"
   to_port                  = "${var.ssh_port}"

@@ -77,6 +77,11 @@ variable "allowed_ssh_security_group_ids" {
   default     = []
 }
 
+variable "allowed_ssh_security_group_count" {
+  description = "The number of entries in var.allowed_ssh_security_group_ids. Ideally, this value could be computed dynamically, but we pass this variable to a Terraform resource's 'count' property and Terraform requires that 'count' be computed with literals or data sources only."
+  default     = 0
+}
+
 variable "allowed_inbound_security_group_ids" {
   description = "A list of security group IDs that will be allowed to connect to Consul"
   type        = "list"
