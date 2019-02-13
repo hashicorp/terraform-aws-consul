@@ -51,3 +51,9 @@ variable "spot_price" {
   description = "The maximum hourly price to pay for EC2 Spot Instances."
   default     = ""
 }
+variable "subnet_ids" {
+  description = "The IDs of the subnets in which the nodes will be deployed."
+  default     = []
+}
+
+
