@@ -51,3 +51,8 @@ variable "spot_price" {
   description = "The maximum hourly price to pay for EC2 Spot Instances."
   default     = ""
 }
+
+variable "instance_type" {
+  description = "The instance type that consul will use on autoscaling group instances."
+  default     = "t2.micro"
+}

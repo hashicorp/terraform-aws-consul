@@ -60,8 +60,7 @@ module "consul_servers" {
 
   cluster_name  = "${var.cluster_name}-server"
   cluster_size  = "${var.num_servers}"
-  instance_type = "t2.micro"
-  spot_price    = "${var.spot_price}"
+  instance_type = "${var.instance_type}"
 
   # The EC2 Instances will use these tags to automatically discover each other and form a cluster
   cluster_tag_key   = "${var.cluster_tag_key}"
@@ -118,8 +117,7 @@ module "consul_clients" {
 
   cluster_name  = "${var.cluster_name}-client"
   cluster_size  = "${var.num_clients}"
-  instance_type = "t2.micro"
-  spot_price    = "${var.spot_price}"
+  instance_type = "${var.instance_type}"
 
   cluster_tag_key   = "consul-clients"
   cluster_tag_value = "${var.cluster_name}"

@@ -55,7 +55,6 @@ resource "aws_launch_configuration" "launch_configuration" {
   image_id      = "${var.ami_id}"
   instance_type = "${var.instance_type}"
   user_data     = "${var.user_data}"
-  spot_price    = "${var.spot_price}"
 
   iam_instance_profile        = "${var.enable_iam_setup ? element(concat(aws_iam_instance_profile.instance_profile.*.name, list("")), 0) : var.iam_instance_profile_name}"
   key_name                    = "${var.ssh_key_name}"
