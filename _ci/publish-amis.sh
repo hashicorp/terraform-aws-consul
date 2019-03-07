@@ -1,16 +1,16 @@
 #!/bin/bash
 #
-# Build the example AMI, copy it to all AWS regions, and make all AMIs public. 
+# Build the example AMI, copy it to all AWS regions, and make all AMIs public.
 #
 # This script is meant to be run in a CircleCI job.
 #
 
 set -e
 
-readonly PACKER_TEMPLATE_PATH="/home/ubuntu/$CIRCLE_PROJECT_REPONAME/examples/consul-ami/consul.json"
+readonly PACKER_TEMPLATE_PATH="/go/src/github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/examples/consul-ami/consul.json"
 readonly PACKER_TEMPLATE_DEFAULT_REGION="us-east-1"
 readonly AMI_PROPERTIES_FILE="/tmp/ami.properties"
-readonly AMI_LIST_MARKDOWN_DIR="/home/ubuntu/$CIRCLE_PROJECT_REPONAME/_docs"
+readonly AMI_LIST_MARKDOWN_DIR="/go/src/github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/_docs"
 readonly GIT_COMMIT_MESSAGE="Add latest AMI IDs."
 readonly GIT_USER_NAME="gruntwork-ci"
 readonly GIT_USER_EMAIL="ci@gruntwork.io"
