@@ -1,6 +1,6 @@
 # Consul cluster with encryption example
 
-This folder contains a set of Terraform manifest for deploying a Consul cluster in AWS, including a Packer manifest that creates an AMI a set of insecured certs for TLS validation, as well as installing an updated version of the `run-consul` script that accepts parameters for enabling RPC and gossip encryption.
+This folder contains a set of Terraform manifest for deploying a Consul cluster in AWS, including a Packer manifest that creates an AMI with a set of insecured certs for TLS validation, as well as installing an updated version of the `run-consul` script that accepts parameters for enabling RPC and gossip encryption.
 
 The resulting AMI id can then be passed as a parameter to `variables.tf`. The `enable_gossip_encryption` and `enable_rpc_encryption` variables are set to `true` by default in this example, but they don't have to be in your implementation. In this example they're passed as parameters to the `user_data` template to generate the flags passed to `run-consul` but you can use a different strategy.
 
