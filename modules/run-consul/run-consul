@@ -8,7 +8,7 @@ readonly AWS_ASG_TAG_KEY="aws:autoscaling:groupName"
 readonly CONSUL_CONFIG_FILE="default.json"
 readonly CONSUL_GOSSIP_ENCRYPTION_CONFIG_FILE="gossip-encryption.json"
 readonly CONSUL_RPC_ENCRYPTION_CONFIG_FILE="rpc-encryption.json"
-readonly SUPERVISOR_CONFIG_PATH="/etc/supervisor/conf.d/run-consul.conf"
+readonly SYSTEMD_CONFIG_PATH="/etc/systemd/system/consul.service"
 
 readonly EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
 readonly EC2_INSTANCE_DYNAMIC_DATA_URL="http://169.254.169.254/latest/dynamic"
@@ -41,7 +41,6 @@ function print_usage {
   echo -e "  --datacenter\t\tThe name of the datacenter Consul is running in. Optional. If not specified, will default to AWS region name."
   echo -e "  --config-dir\t\tThe path to the Consul config folder. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --data-dir\t\tThe path to the Consul data folder. Optional. Default is the absolute path of '../data', relative to this script."
-  echo -e "  --log-dir\t\tThe path to the Consul log folder. Optional. Default is the absolute path of '../log', relative to this script."
   echo -e "  --bin-dir\t\tThe path to the folder with Consul binary. Optional. Default is the absolute path of the parent folder of this script."
   echo -e "  --user\t\tThe user to run Consul as. Optional. Default is to use the owner of --config-dir."
   echo -e "  --enable-gossip-encryption\t\tEnable encryption of gossip traffic between nodes. Optional. Must also specify --gossip-encryption-key."
@@ -200,11 +199,13 @@ function assert_is_installed {
   fi
 }
 
-# Based on https://stackoverflow.com/a/17841619
-function join_by {
-  local IFS="$1"
+function split_by_lines {
+  local prefix="$1"
   shift
-  echo "$*"
+
+  for var in "$@"; do
+    echo "${prefix}${var}"
+  done
 }
 
 function generate_consul_config {
@@ -315,37 +316,45 @@ EOF
   chown "$user:$user" "$config_path"
 }
 
-function generate_supervisor_config {
-  local -r supervisor_config_path="$1"
+function generate_systemd_config {
+  local -r systemd_config_path="$1"
   local -r consul_config_dir="$2"
   local -r consul_data_dir="$3"
-  local -r consul_log_dir="$4"
-  local -r consul_bin_dir="$5"
-  local -r consul_user="$6"
-  shift 6
+  local -r consul_bin_dir="$4"
+  local -r consul_user="$5"
+  shift 5
   local -r environment=("$@")
+  local -r config_path="$consul_config_dir/$CONSUL_CONFIG_FILE"
 
-  log_info "Creating Supervisor config file to run Consul in $supervisor_config_path"
-  cat > "$supervisor_config_path" <<EOF
-[program:consul]
-command=$consul_bin_dir/consul agent -config-dir $consul_config_dir -data-dir $consul_data_dir
-stdout_logfile=$consul_log_dir/consul-stdout.log
-stderr_logfile=$consul_log_dir/consul-error.log
-numprocs=1
-autostart=true
-autorestart=unexpected
-exitcodes=0
-stopsignal=INT
-user=$consul_user
-environment=$(join_by "," "${environment[@]}")
+  log_info "Creating systemd config file to run Consul in $systemd_config_path"
+  cat > "$systemd_config_path" <<EOF
+[Unit]
+Description="HashiCorp Consul - A service mesh solution"
+Documentation=https://www.consul.io/
+Requires=network-online.target
+After=network-online.target
+ConditionFileNotEmpty=$config_path
+
+[Service]
+User=$consul_user
+Group=$consul_user
+ExecStart=$consul_bin_dir/consul agent -config-dir $consul_config_dir -data-dir $consul_data_dir
+ExecReload=$consul_bin_dir/consul reload
+KillMode=process
+Restart=on-failure
+LimitNOFILE=65536
+$(split_by_lines "Environment=" "${environment[@]}")
+
+[Install]
+WantedBy=multi-user.target
 EOF
 }
 
 function start_consul {
-  log_info "Reloading Supervisor config and starting Consul"
+  log_info "Reloading systemd config and starting Consul"
 
-  supervisorctl reread
-  supervisorctl update
+  sudo systemctl daemon-reload
+  sudo systemctl restart consul.service
 }
 
 # Based on: http://unix.stackexchange.com/a/7732/215969
@@ -359,7 +368,6 @@ function run {
   local client="false"
   local config_dir=""
   local data_dir=""
-  local log_dir=""
   local bin_dir=""
   local user=""
   local cluster_tag_key=""
@@ -400,11 +408,6 @@ function run {
       --data-dir)
         assert_not_empty "$key" "$2"
         data_dir="$2"
-        shift
-        ;;
-      --log-dir)
-        assert_not_empty "$key" "$2"
-        log_dir="$2"
         shift
         ;;
       --bin-dir)
@@ -519,7 +522,7 @@ function run {
     exit 1
   fi
 
-  assert_is_installed "supervisorctl"
+  assert_is_installed "systemctl"
   assert_is_installed "aws"
   assert_is_installed "curl"
   assert_is_installed "jq"
@@ -530,10 +533,6 @@ function run {
 
   if [[ -z "$data_dir" ]]; then
     data_dir=$(cd "$SCRIPT_DIR/../data" && pwd)
-  fi
-
-  if [[ -z "$log_dir" ]]; then
-    log_dir=$(cd "$SCRIPT_DIR/../log" && pwd)
   fi
 
   if [[ -z "$bin_dir" ]]; then
@@ -581,7 +580,7 @@ function run {
       "$upgrade_version_tag"
   fi
 
-  generate_supervisor_config "$SUPERVISOR_CONFIG_PATH" "$config_dir" "$data_dir" "$log_dir" "$bin_dir" "$user" "${environment[@]}"
+  generate_systemd_config "$SYSTEMD_CONFIG_PATH" "$config_dir" "$data_dir" "$bin_dir" "$user" "${environment[@]}"
   start_consul
 }
 

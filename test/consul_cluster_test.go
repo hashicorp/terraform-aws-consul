@@ -13,5 +13,5 @@ func TestConsulClusterWithUbuntuAmi(t *testing.T) {
 // Test the example in the root folder
 func TestConsulClusterWithAmazonLinuxAmi(t *testing.T) {
 	t.Parallel()
-	runConsulClusterTest(t, "amazon-linux-ami", ".", "../examples/consul-ami/consul.json", "ec2-user", "")
+	runConsulClusterTest(t, "amazon-linux-2-ami", ".", "../examples/consul-ami/consul.json", "ec2-user", "")
 }

@@ -298,7 +298,7 @@ We will add a script in the future to automate this process (PRs are welcome!).
 
 There are two ways a Consul node may go down:
 
-1. The Consul process may crash. In that case, `supervisor` should restart it automatically.
+1. The Consul process may crash. In that case, `systemd` should restart it automatically.
 1. The EC2 Instance running Consul dies. In that case, the Auto Scaling Group should launch a replacement automatically.
    Note that in this case, since the Consul agent did not exit gracefully, and the replacement will have a different ID,
    you may have to manually clean out the old nodes using the [force-leave
