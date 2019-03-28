@@ -41,6 +41,8 @@ function print_usage {
   echo -e "  --datacenter\t\tThe name of the datacenter Consul is running in. Optional. If not specified, will default to AWS region name."
   echo -e "  --config-dir\t\tThe path to the Consul config folder. Optional. Default is the absolute path of '../config', relative to this script."
   echo -e "  --data-dir\t\tThe path to the Consul data folder. Optional. Default is the absolute path of '../data', relative to this script."
+  echo -e "  --systemd-stdout\t\tThe StandardOutput option of the systemd unit.  Optional.  If not configured, uses systemd's default (journal)."
+  echo -e "  --systemd-stderr\t\tThe StandardError option of the systemd unit.  Optional.  If not configured, uses systemd's default (inherit)."
   echo -e "  --bin-dir\t\tThe path to the folder with Consul binary. Optional. Default is the absolute path of the parent folder of this script."
   echo -e "  --user\t\tThe user to run Consul as. Optional. Default is to use the owner of --config-dir."
   echo -e "  --enable-gossip-encryption\t\tEnable encryption of gossip traffic between nodes. Optional. Must also specify --gossip-encryption-key."
@@ -320,14 +322,17 @@ function generate_systemd_config {
   local -r systemd_config_path="$1"
   local -r consul_config_dir="$2"
   local -r consul_data_dir="$3"
-  local -r consul_bin_dir="$4"
-  local -r consul_user="$5"
-  shift 5
+  local -r consul_systemd_stdout="$4"
+  local -r consul_systemd_stderr="$5"
+  local -r consul_bin_dir="$6"
+  local -r consul_user="$7"
+  shift 7
   local -r environment=("$@")
   local -r config_path="$consul_config_dir/$CONSUL_CONFIG_FILE"
 
   log_info "Creating systemd config file to run Consul in $systemd_config_path"
-  cat > "$systemd_config_path" <<EOF
+
+  local -r unit_config=$(cat <<EOF
 [Unit]
 Description="HashiCorp Consul - A service mesh solution"
 Documentation=https://www.consul.io/
@@ -335,6 +340,10 @@ Requires=network-online.target
 After=network-online.target
 ConditionFileNotEmpty=$config_path
 
+EOF
+)
+
+  local -r service_config=$(cat <<EOF
 [Service]
 User=$consul_user
 Group=$consul_user
@@ -345,9 +354,27 @@ Restart=on-failure
 LimitNOFILE=65536
 $(split_by_lines "Environment=" "${environment[@]}")
 
+EOF
+)
+
+  local log_config=""
+  if [[ ! -z $consul_systemd_stdout ]]; then
+    log_config+="StandardOutput=$consul_systemd_stdout\n"
+  fi
+  if [[ ! -z $consul_systemd_stderr ]]; then
+    log_config+="StandardError=$consul_systemd_stderr\n"
+  fi
+
+  local -r install_config=$(cat <<EOF
 [Install]
 WantedBy=multi-user.target
 EOF
+)
+
+  echo -e "$unit_config" > "$systemd_config_path"
+  echo -e "$service_config" >> "$systemd_config_path"
+  echo -e "$log_config" >> "$systemd_config_path"
+  echo -e "$install_config" >> "$systemd_config_path"
 }
 
 function start_consul {
@@ -368,6 +395,8 @@ function run {
   local client="false"
   local config_dir=""
   local data_dir=""
+  local systemd_stdout=""
+  local systemd_stderr=""
   local bin_dir=""
   local user=""
   local cluster_tag_key=""
@@ -408,6 +437,16 @@ function run {
       --data-dir)
         assert_not_empty "$key" "$2"
         data_dir="$2"
+        shift
+        ;;
+      --systemd-stdout)
+        assert_not_empty "$key" "$2"
+        systemd_stdout="$2"
+        shift
+        ;;
+      --systemd-stderr)
+        assert_not_empty "$key" "$2"
+        systemd_stderr="$2"
         shift
         ;;
       --bin-dir)
@@ -535,6 +574,8 @@ function run {
     data_dir=$(cd "$SCRIPT_DIR/../data" && pwd)
   fi
 
+  # If $systemd_stdout and/or $systemd_stderr are empty, we leave them empty so that generate_systemd_config will use systemd's defaults (journal and inherit, respectively)
+
   if [[ -z "$bin_dir" ]]; then
     bin_dir=$(cd "$SCRIPT_DIR/../bin" && pwd)
   fi
@@ -580,7 +621,7 @@ function run {
       "$upgrade_version_tag"
   fi
 
-  generate_systemd_config "$SYSTEMD_CONFIG_PATH" "$config_dir" "$data_dir" "$bin_dir" "$user" "${environment[@]}"
+  generate_systemd_config "$SYSTEMD_CONFIG_PATH" "$config_dir" "$data_dir" "$systemd_stdout" "$systemd_stderr" "$bin_dir" "$user" "${environment[@]}"
   start_consul
 }
 

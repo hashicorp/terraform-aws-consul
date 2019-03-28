@@ -107,7 +107,15 @@ After the `install-consul` script finishes running, you may wish to do the follo
    `/opt/consul/config`).
 1. If `/usr/local/bin` isn't already part of `PATH`, you should add it so you can run the `consul` command without
    specifying the full path.
-   
+
+
+
+## Dependencies
+
+The install script assumes that `systemd` is already installed.  We use it as a cross-platform supervisor to ensure Consul is started
+whenever the system boots and restarted if the Consul process crashes.  Additionally, it is used to store all logs which can be accessed
+using `journalctl`.
+
 
 
 ## Why use Git to install this code?
