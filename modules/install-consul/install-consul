@@ -155,7 +155,6 @@ function create_consul_install_paths {
   sudo mkdir -p "$path/bin"
   sudo mkdir -p "$path/config"
   sudo mkdir -p "$path/data"
-  sudo mkdir -p "$path/log"
   sudo mkdir -p "$path/tls/ca"
 
   log_info "Changing ownership of $path to $username"
