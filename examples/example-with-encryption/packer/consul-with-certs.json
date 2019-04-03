@@ -8,7 +8,7 @@
     "tls_private_key_path": "{{template_dir}}/consul.key.pem"
   },
   "builders": [{
-    "ami_name": "consul-with-encryption-ubuntu-{{isotime | clean_ami_name}}",
+    "ami_name": "consul-with-encryption-ubuntu-{{isotime | clean_ami_name}}-{{uuid}}",
     "ami_description": "An Ubuntu 16.04 AMI that has Consul installed and TLS certificates.",
     "instance_type": "t2.micro",
     "name": "ubuntu16-ami",
@@ -27,7 +27,7 @@
     },
     "ssh_username": "ubuntu"
   },{
-    "ami_name": "consul-with-encryption-amazon-linux-2-{{isotime | clean_ami_name}}",
+    "ami_name": "consul-with-encryption-amazon-linux-2-{{isotime | clean_ami_name}}-{{uuid}}",
     "ami_description": "An Amazon Linux 2 AMI that has Consul installed and TLS certificates.",
     "instance_type": "t2.micro",
     "name": "amazon-linux-2-ami",
