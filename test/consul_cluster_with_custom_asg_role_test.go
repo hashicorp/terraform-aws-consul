@@ -1,8 +1,8 @@
 package test
 
 import (
-	"testing"
 	"github.com/gruntwork-io/terratest/modules/random"
+	"testing"
 )
 
 func TestConsulClusterWithCustomASGRoleUbuntuAmi(t *testing.T) {
@@ -18,5 +18,5 @@ func TestConsulClusterWithCustomASGRoleAmazonLinuxAmi(t *testing.T) {
 	terraformVars := map[string]interface{}{
 		"consul_service_linked_role_suffix": random.UniqueId(),
 	}
-	runConsulClusterTestWithVars(t, "amazon-linux-ami", "examples/example-with-custom-asg-role", "../examples/consul-ami/consul.json", "ec2-user", terraformVars, "")
+	runConsulClusterTestWithVars(t, "amazon-linux-2-ami", "examples/example-with-custom-asg-role", "../examples/consul-ami/consul.json", "ec2-user", terraformVars, "")
 }

@@ -8,7 +8,7 @@ This folder contains a script for installing Consul and its dependencies. Use th
 This script has been tested on the following operating systems:
 
 * Ubuntu 16.04
-* Amazon Linux
+* Amazon Linux 2
 
 There is a good chance it will work on other flavors of Debian, CentOS, and RHEL as well.
 
@@ -66,7 +66,6 @@ The `install-consul` script does the following:
 1. [Creates a user and folders for Consul](#create-a-user-and-folders-for-consul)
 1. [Installs Consul binaries and scripts](#install-consul-binaries-and-scripts)
 1. [Installs provided TLS certificates](#install-tls-certificates)
-1. [Installs supervisord](#install-supervisord)
 1. [Follow-up tasks](#follow-up-tasks)
 
 
@@ -100,12 +99,6 @@ configuration directory. If provided, the CA file is copied to `/opt/consul/tls/
 are copied to `/opt/consul/tls` (assuming the default config path of `/opt/consul`). The script also sets the
 required permissions and file ownership.
 
-### Installs supervisord
-
-Installs [supervisord](http://supervisord.org/). We use it as a cross-platform supervisor to ensure Consul is started
-whenever the system boots and restarted if the Consul process crashes.
-
-
 ### Follow-up tasks
 
 After the `install-consul` script finishes running, you may wish to do the following:
@@ -114,7 +107,15 @@ After the `install-consul` script finishes running, you may wish to do the follo
    `/opt/consul/config`).
 1. If `/usr/local/bin` isn't already part of `PATH`, you should add it so you can run the `consul` command without
    specifying the full path.
-   
+
+
+
+## Dependencies
+
+The install script assumes that `systemd` is already installed.  We use it as a cross-platform supervisor to ensure Consul is started
+whenever the system boots and restarted if the Consul process crashes.  Additionally, it is used to store all logs which can be accessed
+using `journalctl`.
+
 
 
 ## Why use Git to install this code?

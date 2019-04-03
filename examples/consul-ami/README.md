@@ -6,7 +6,7 @@ Images (AMIs)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) tha
 top of:
  
 1. Ubuntu 16.04
-1. Amazon Linux
+1. Amazon Linux 2
 
 These AMIs will have [Consul](https://www.consul.io/) installed and configured to automatically join a cluster during 
 boot-up. They also have [Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) installed and configured to use 
@@ -19,7 +19,6 @@ For more info on Consul installation and configuration, check out the
 
 ## Dependencies
 1.  AWSCLI must be installed on the base AMI in order for run-consul to run
-1.  PIP must be installed on the base AMI in order to install supervisord
 1.  Git CAN be installed on the base AMI if you want to use clone commands
 
 
@@ -82,7 +81,7 @@ Your code should look more like this:
 }
 ```
 
-**NOTE:** Amazon Linux users will need to install Git first.
+**NOTE:** Amazon Linux 2 users will need to install Git first.
 
 You should replace `<MODULE_VERSION>` in the code above with the version of this module that you want to use (see
 the [Releases Page](../../releases) for all available versions). That's because for production usage, you should always

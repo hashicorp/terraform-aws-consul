@@ -27,17 +27,17 @@
     },
     "ssh_username": "ubuntu"
   },{
-    "ami_name": "consul-with-encryption-amazon-linux-{{isotime | clean_ami_name}}",
-    "ami_description": "An Amazon Linux AMI that has Consul installed and TLS certificates.",
+    "ami_name": "consul-with-encryption-amazon-linux-2-{{isotime | clean_ami_name}}",
+    "ami_description": "An Amazon Linux 2 AMI that has Consul installed and TLS certificates.",
     "instance_type": "t2.micro",
-    "name": "amazon-linux-ami",
+    "name": "amazon-linux-2-ami",
     "region": "{{user `aws_region`}}",
     "type": "amazon-ebs",
     "source_ami_filter": {
       "filters": {
         "virtualization-type": "hvm",
         "architecture": "x86_64",
-        "name": "*amzn-ami-hvm-*",
+        "name": "*amzn2-ami-hvm-*",
         "block-device-mapping.volume-type": "gp2",
         "root-device-type": "ebs"
       },

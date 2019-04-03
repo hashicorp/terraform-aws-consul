@@ -25,9 +25,9 @@
     },
     "ssh_username": "ubuntu"
   },{
-    "name": "amazon-linux-ami",
-    "ami_name": "consul-amazon-linux-{{isotime | clean_ami_name}}",
-    "ami_description": "An Amazon Linux AMI that has Consul installed.",
+    "name": "amazon-linux-2-ami",
+    "ami_name": "consul-amazon-linux-2-{{isotime | clean_ami_name}}",
+    "ami_description": "An Amazon Linux 2 AMI that has Consul installed.",
     "instance_type": "t2.micro",
     "region": "{{user `aws_region`}}",
     "type": "amazon-ebs",
@@ -35,7 +35,7 @@
       "filters": {
         "virtualization-type": "hvm",
         "architecture": "x86_64",
-        "name": "*amzn-ami-hvm-*",
+        "name": "*amzn2-ami-hvm-*",
         "block-device-mapping.volume-type": "gp2",
         "root-device-type": "ebs"
       },

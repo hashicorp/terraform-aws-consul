@@ -4,7 +4,7 @@ This folder contains a script for configuring and running Consul on an [AWS](htt
 script has been tested on the following operating systems:
 
 * Ubuntu 16.04
-* Amazon Linux
+* Amazon Linux 2
 
 There is a good chance it will work on other flavors of Debian, CentOS, and RHEL as well.
 
@@ -33,16 +33,22 @@ This will:
    See [Consul configuration](#consul-configuration) for details on what this configuration file will contain and how
    to override it with your own configuration.
    
-1. Generate a [Supervisor](http://supervisord.org/) configuration file called `run-consul.conf` in the Supervisor
-   config dir (default: `/etc/supervisor/conf.d`) with a command that will run Consul:  
+1. Generate a [systemd](https://www.freedesktop.org/wiki/Software/systemd/) configuration file called `consul.service` in the systemd
+   config dir (default: `/etc/systemd/system`) with a command that will run Consul:  
    `consul agent -config-dir=/opt/consul/config -data-dir=/opt/consul/data`.
 
-1. Tell Supervisor to load the new configuration file, thereby starting Consul.
+1. Tell systemd to load the new configuration file, thereby starting Consul.
 
 We recommend using the `run-consul` command as part of [User 
 Data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#user-data-shell-scripts), so that it executes
-when the EC2 Instance is first booting. After runing `run-consul` on that initial boot, the `supervisord` configuration 
+when the EC2 Instance is first booting. After runing `run-consul` on that initial boot, the `systemd` configuration 
 will automatically restart Consul if it crashes or the EC2 instance reboots.
+
+Note that `systemd` logs to its own journal by default.  To view the Consul logs, run `journalctl -u consul.service`.  To change
+the log output location, you can specify the `StandardOutput` and `StandardError` options by using the `--systemd-stdout` and `--systemd-stderr`
+options.  See the [`systemd.exec` man pages](https://www.freedesktop.org/software/systemd/man/systemd.exec.html#StandardOutput=) for available
+options, but note that the `file:path` option requires [systemd version >= 236](https://stackoverflow.com/a/48052152), which is not provided 
+in the base Ubuntu 16.04 and Amazon Linux 2 images.
 
 See the [consul-cluster example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/root-example) for fully-working sample code.
 
@@ -64,6 +70,8 @@ The `run-consul` script accepts the following arguments:
   relative to the `run-consul` script itself.
 * `data-dir` (optional): The path to the Consul config folder. Default is to take the absolute path of `../data`,
   relative to the `run-consul` script itself.
+* `systemd-stdout` (optional): The StandardOutput option of the systemd unit. If not specified, it will use systemd's default (journal).
+* `systemd-stderr` (optional): The StandardError option of the systemd unit. If not specified, it will use systemd's default (inherit).
 * `user` (optional): The user to run Consul as. Default is to use the owner of `config-dir`.
 * `enable-gossip-encryption` (optional): Enable encryption of gossip traffic between nodes. If set, you must also specify `gossip-encryption-key`.
 * `gossip-encryption-key` (optional): The key to use for encrypting gossip traffic. Must be specified with `enable-gossip-encryption`.
