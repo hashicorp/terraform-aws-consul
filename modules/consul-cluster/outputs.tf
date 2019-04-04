@@ -23,6 +23,11 @@ output "iam_role_id" {
   description = "This is the id of instance role if enable_iam_setup variable is set to true"
 }
 
+output "iam_role_name" {
+  value = "${element(concat(aws_iam_role.instance_role.*.name,list("")),0)}"
+  description = "This is the name of instance role if enable_iam_setup variable is set to true"
+}
+
 output "security_group_id" {
   value = "${aws_security_group.lc_security_group.id}"
   description = "This is the id of security group that governs ingress and egress for the cluster instances"
