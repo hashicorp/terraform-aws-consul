@@ -383,6 +383,7 @@ function start_consul {
   sudo systemctl daemon-reload
   sudo systemctl enable consul.service
   sudo systemctl restart consul.service
+
 }
 
 # Based on: http://unix.stackexchange.com/a/7732/215969
