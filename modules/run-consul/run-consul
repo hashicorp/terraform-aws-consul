@@ -381,6 +381,7 @@ function start_consul {
   log_info "Reloading systemd config and starting Consul"
 
   sudo systemctl daemon-reload
+  sudo systemctl enable consul.service
   sudo systemctl restart consul.service
 }
 
