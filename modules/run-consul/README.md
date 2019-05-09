@@ -81,6 +81,7 @@ The `run-consul` script accepts the following arguments:
 * `key-file-path` (optional): Path to the certificate key used to verify incoming connections. Must be specified with `enable-rpc-encryption`, `ca-file-path` and `cert-file-path`.
 * `skip-consul-config` (optional): If this flag is set, don't generate a Consul configuration file. This is useful if
   you have a custom configuration file and don't want to use any of of the default settings from `run-consul`.
+* `num-servers` (optional): The number of servers to expect in the Consul cluster. Use if you don't want to (or can't) work this out by consulting autoscaling.
 
 Options for Consul Autopilot:
 
