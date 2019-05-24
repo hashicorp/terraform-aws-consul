@@ -51,3 +51,4 @@ variable "spot_price" {
   description = "The maximum hourly price to pay for EC2 Spot Instances."
   default     = ""
 }
+

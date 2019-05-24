@@ -21,7 +21,7 @@ variable "vpc_id" {
 
 variable "allowed_inbound_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow connections to Consul"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "user_data" {
@@ -50,13 +50,13 @@ variable "cluster_tag_value" {
 
 variable "subnet_ids" {
   description = "The subnet IDs into which the EC2 Instances should be deployed. We recommend one subnet ID per node in the cluster_size variable. At least one of var.subnet_ids or var.availability_zones must be non-empty."
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "availability_zones" {
   description = "The availability zones into which the EC2 Instances should be deployed. We recommend one availability zone per node in the cluster_size variable. At least one of var.subnet_ids or var.availability_zones must be non-empty."
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
@@ -67,13 +67,13 @@ variable "ssh_key_name" {
 
 variable "allowed_ssh_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow SSH connections"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "allowed_ssh_security_group_ids" {
   description = "A list of security group IDs from which the EC2 Instances will allow SSH connections"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
@@ -84,7 +84,7 @@ variable "allowed_ssh_security_group_count" {
 
 variable "allowed_inbound_security_group_ids" {
   description = "A list of security group IDs that will be allowed to connect to Consul"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
@@ -95,13 +95,13 @@ variable "allowed_inbound_security_group_count" {
 
 variable "additional_security_group_ids" {
   description = "A list of additional security group IDs to add to Consul EC2 Instances"
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "security_group_tags" {
   description = "Tags to be applied to the LC security group"
-  type        = "map"
+  type        = map(string)
   default     = {}
 }
 
@@ -207,13 +207,13 @@ variable "ssh_port" {
 
 variable "tags" {
   description = "List of extra tag blocks added to the autoscaling group configuration. Each element in the list is a map containing keys 'key', 'value', and 'propagate_at_launch' mapped to the respective values."
-  type        = "list"
+  type        = list({key = string, value = string, propagate_at_launch = bool})
   default     = []
 }
 
 variable "enabled_metrics" {
   description = "List of autoscaling group metrics to enable."
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
@@ -226,3 +226,4 @@ variable "iam_instance_profile_name" {
   description = "If enable_iam_setup is false then this will be the name of the IAM instance profile to attach"
   default     = ""
 }
+
