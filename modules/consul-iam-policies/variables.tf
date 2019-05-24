@@ -11,3 +11,4 @@ variable "enabled" {
   description = "Give the option to disable this module if required"
   default     = true
 }
+
