@@ -37,7 +37,8 @@
         "architecture": "x86_64",
         "name": "*amzn2-ami-hvm-*",
         "block-device-mapping.volume-type": "gp2",
-        "root-device-type": "ebs"
+        "root-device-type": "ebs",
+        "owner-id":"137112412989"
       },
       "owners": ["amazon"],
       "most_recent": true
