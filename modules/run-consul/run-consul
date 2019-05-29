@@ -53,6 +53,7 @@ function print_usage {
   echo -e "  --key-file-path\tPath to the certificate key used to verify incoming connections. Optional. Must be specified with --enable-rpc-encryption and --cert-file-path."
   echo -e "  --environment\t\tA single environment variable in the key/value pair form 'KEY=\"val\"' to pass to Consul as environment variable when starting it up. Repeat this option for additional variables. Optional."
   echo -e "  --skip-consul-config\tIf this flag is set, don't generate a Consul configuration file. Optional. Default is false."
+  echo -e "  --num-servers\t\tThe number of servers to expect in the Consul cluster. Use if you don't want to work this out by consulting autoscaling."
   echo
   echo "Options for Consul Autopilot:"
   echo
@@ -230,6 +231,7 @@ function generate_consul_config {
   local -r redundancy_zone_tag="${17}"
   local -r disable_upgrade_migration="${18}"
   local -r upgrade_version_tag=${19}
+  local -r num_servers=${20}
   local -r config_path="$config_dir/$CONSUL_CONFIG_FILE"
 
   local instance_id=""
@@ -253,12 +255,15 @@ EOF
 
   local bootstrap_expect=""
   if [[ "$server" == "true" ]]; then
-    local instance_tags=""
-    local cluster_size=""
 
-    instance_tags=$(get_instance_tags "$instance_id" "$instance_region")
-    cluster_size=$(get_cluster_size "$instance_tags" "$instance_region")
-
+    if [[ -z "$num_servers" ]]; then
+        local instance_tags=""
+        local cluster_size=""
+        instance_tags=$(get_instance_tags "$instance_id" "$instance_region")
+        cluster_size=$(get_cluster_size "$instance_tags" "$instance_region")
+    else
+        cluster_size="$num_servers"
+    fi
     bootstrap_expect="\"bootstrap_expect\": $cluster_size,"
     ui="true"
   fi
@@ -412,6 +417,7 @@ function run {
   local key_file_path=""
   local environment=()
   local skip_consul_config="false"
+  local num_servers=""
   local all_args=()
   local cleanup_dead_servers="$DEFAULT_AUTOPILOT_CLEANUP_DEAD_SERVERS"
   local last_contact_threshold="$DEFAULT_AUTOPILOT_LAST_CONTACT_THRESHOLD"
@@ -543,6 +549,11 @@ function run {
       --skip-consul-config)
         skip_consul_config="true"
         ;;
+      --num-servers)
+        assert_not_empty "$key" "$2"
+        num_servers="$2"
+        shift
+        ;;
       --help)
         print_usage
         exit
@@ -619,7 +630,8 @@ function run {
       "$server_stabilization_time" \
       "$redundancy_zone_tag" \
       "$disable_upgrade_migration" \
-      "$upgrade_version_tag"
+      "$upgrade_version_tag" \
+      "$num_servers"
   fi
 
   generate_systemd_config "$SYSTEMD_CONFIG_PATH" "$config_dir" "$data_dir" "$systemd_stdout" "$systemd_stderr" "$bin_dir" "$user" "${environment[@]}"
