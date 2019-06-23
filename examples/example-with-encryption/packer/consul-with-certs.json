@@ -27,6 +27,25 @@
     },
     "ssh_username": "ubuntu"
   },{
+    "name": "ubuntu18-ami",
+    "ami_name": "consul-with-encryption-ubuntu-18.04-{{isotime | clean_ami_name}}-{{uuid}}",
+    "ami_description": "An Ubuntu 16.04 AMI that has Consul installed and TLS certificates.",
+    "instance_type": "t2.micro",
+    "region": "{{user `aws_region`}}",
+    "type": "amazon-ebs",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "architecture": "x86_64",
+        "name": "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*",
+        "block-device-mapping.volume-type": "gp2",
+        "root-device-type": "ebs"
+      },
+      "owners": ["099720109477"],
+      "most_recent": true
+    },
+    "ssh_username": "ubuntu"
+  },{
     "ami_name": "consul-with-encryption-amazon-linux-2-{{isotime | clean_ami_name}}-{{uuid}}",
     "ami_description": "An Amazon Linux 2 AMI that has Consul installed and TLS certificates.",
     "instance_type": "t2.micro",
@@ -65,8 +84,21 @@
   },{
     "type": "shell",
     "inline": [
-      "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}} --ca-file-path /tmp/ca.crt.pem --cert-file-path /tmp/consul.crt.pem --key-file-path /tmp/consul.key.pem",
+      "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}} --ca-file-path /tmp/ca.crt.pem --cert-file-path /tmp/consul.crt.pem --key-file-path /tmp/consul.key.pem"
+    ],
+    "pause_before": "30s"
+  },{
+    "type": "shell",
+    "only": ["ubuntu16-ami", "amazon-linux-2-ami"],
+    "inline": [
       "/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"
+    ],
+    "pause_before": "30s"
+  },{
+    "type": "shell",
+    "only": ["ubuntu18-ami"],
+    "inline": [
+      "/tmp/terraform-aws-consul/modules/setup-systemd-resolved/setup-systemd-resolved"
     ],
     "pause_before": "30s"
   }]

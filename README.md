@@ -44,7 +44,7 @@ To deploy Consul clients for production using this repo:
 1. Use the [install-consul module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul) to install Consul alongside your application code.
 1. Before booting your app, execute the [run-consul script](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/run-consul) with `--client` flag.
 1. Your app can now use the local Consul agent for service discovery and key/value storage.
-1. Optionally, you can use the [install-dnsmasq module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-dnsmasq) to configure Consul as the DNS for a
+1. Optionally, you can use the [install-dnsmasq module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-dnsmasq) for Ubuntu 16.04 and Amazon Linux 2 or [setup-systemd-resolved](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/setup-systemd-resolved) for Ubuntu 18.04 to configure Consul as the DNS for a
    specific domain (e.g. `.consul`) so that URLs such as `foo.service.consul` resolve automatically to the IP 
    address(es) for a service `foo` registered in Consul (all other domain names will be continue to resolve using the
    default resolver on the OS).
@@ -94,7 +94,11 @@ Gruntwork can help with:
   to create the cluster.
 
 * [install-dnsmasq module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-dnsmasq): Install [Dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html)
-  and configure it to forward requests for a specific domain to Consul. This allows you to use Consul as a DNS server
+  for Ubuntu 16.04 and Amazon Linux 2 and configure it to forward requests for a specific domain to Consul. This allows you to use Consul as a DNS server
+  for URLs such as `foo.service.consul`.
+
+* [setup-systemd-resolved module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/setup-systemd-resolved): Setup [systemd-resolved](https://www.freedesktop.org/software/systemd/man/resolved.conf.html)
+  for ubuntu 18.04 and configure it to forward requests for a specific domain to Consul. This allows you to use Consul as a DNS server
   for URLs such as `foo.service.consul`.
 
 * [consul-iam-policies](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-iam-policies): Defines the IAM policies necessary for a Consul cluster. 
