@@ -6,10 +6,12 @@
 # the examples/example-with-encryption/packer/consul-with-certs.json Packer template.
 # ---------------------------------------------------------------------------------------------------------------------
 
-# Terraform 0.9.5 suffered from https://github.com/hashicorp/terraform/issues/14399, which causes this template the
-# conditionals in this template to fail.
+# ----------------------------------------------------------------------------------------------------------------------
+# REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
+# This module has been updated with 0.12 syntax, which means it is no longer compatible with any versions below 0.12.
+# ----------------------------------------------------------------------------------------------------------------------
 terraform {
-  required_version = ">= 0.9.3, != 0.9.5"
+  required_version = ">= 0.12"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -17,7 +19,7 @@ terraform {
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_iam_service_linked_role" "consul_asg_role" {
   aws_service_name = "autoscaling.amazonaws.com"
-  custom_suffix    = "${var.consul_service_linked_role_suffix}"
+  custom_suffix    = var.consul_service_linked_role_suffix
   description      = "Service-Linked Role enables access to AWS Services and Resources used or managed by Auto Scaling"
 }
 
@@ -32,35 +34,33 @@ module "consul_servers" {
   source = "../../modules/consul-cluster"
 
   cluster_name            = "${var.cluster_name}-server"
-  cluster_size            = "${var.num_servers}"
+  cluster_size            = var.num_servers
   instance_type           = "t2.micro"
-  spot_price              = "${var.spot_price}"
-  service_linked_role_arn = "${aws_iam_service_linked_role.consul_asg_role.arn}"
+  spot_price              = var.spot_price
+  service_linked_role_arn = aws_iam_service_linked_role.consul_asg_role.arn
 
   # The EC2 Instances will use these tags to automatically discover each other and form a cluster
-  cluster_tag_key   = "${var.cluster_tag_key}"
-  cluster_tag_value = "${var.cluster_name}"
+  cluster_tag_key   = var.cluster_tag_key
+  cluster_tag_value = var.cluster_name
 
-  ami_id    = "${var.ami_id}"
-  user_data = "${data.template_file.user_data_server.rendered}"
+  ami_id    = var.ami_id
+  user_data = data.template_file.user_data_server.rendered
 
-  vpc_id     = "${data.aws_vpc.default.id}"
-  subnet_ids = "${data.aws_subnet_ids.default.ids}"
+  vpc_id     = data.aws_vpc.default.id
+  subnet_ids = data.aws_subnet_ids.default.ids
 
   # To make testing easier, we allow Consul and SSH requests from any IP address here but in a production
   # deployment, we strongly recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.
   allowed_ssh_cidr_blocks = ["0.0.0.0/0"]
 
   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
-  ssh_key_name                = "${var.ssh_key_name}"
+  ssh_key_name                = var.ssh_key_name
 
-  tags = [
-    {
-      key                 = "Environment"
-      value               = "development"
-      propagate_at_launch = true
-    },
-  ]
+  tags = {
+    key                 = "Environment"
+    value               = "development"
+    propagate_at_launch = true
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -69,17 +69,17 @@ module "consul_servers" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 data "template_file" "user_data_server" {
-  template = "${file("${path.module}/user-data-server.sh")}"
+  template = file("${path.module}/user-data-server.sh")
 
-  vars {
-    cluster_tag_key          = "${var.cluster_tag_key}"
-    cluster_tag_value        = "${var.cluster_name}"
-    enable_gossip_encryption = "${var.enable_gossip_encryption}"
-    gossip_encryption_key    = "${var.gossip_encryption_key}"
-    enable_rpc_encryption    = "${var.enable_rpc_encryption}"
-    ca_path                  = "${var.ca_path}"
-    cert_file_path           = "${var.cert_file_path}"
-    key_file_path            = "${var.key_file_path}"
+  vars = {
+    cluster_tag_key          = var.cluster_tag_key
+    cluster_tag_value        = var.cluster_name
+    enable_gossip_encryption = var.enable_gossip_encryption
+    gossip_encryption_key    = var.gossip_encryption_key
+    enable_rpc_encryption    = var.enable_rpc_encryption
+    ca_path                  = var.ca_path
+    cert_file_path           = var.cert_file_path
+    key_file_path            = var.key_file_path
   }
 }
 
@@ -97,25 +97,25 @@ module "consul_clients" {
   source = "../../modules/consul-cluster"
 
   cluster_name  = "${var.cluster_name}-client"
-  cluster_size  = "${var.num_clients}"
+  cluster_size  = var.num_clients
   instance_type = "t2.micro"
-  spot_price    = "${var.spot_price}"
+  spot_price    = var.spot_price
 
   cluster_tag_key   = "consul-clients"
-  cluster_tag_value = "${var.cluster_name}"
+  cluster_tag_value = var.cluster_name
 
-  ami_id    = "${var.ami_id}"
-  user_data = "${data.template_file.user_data_client.rendered}"
+  ami_id    = var.ami_id
+  user_data = data.template_file.user_data_client.rendered
 
-  vpc_id     = "${data.aws_vpc.default.id}"
-  subnet_ids = "${data.aws_subnet_ids.default.ids}"
+  vpc_id     = data.aws_vpc.default.id
+  subnet_ids = data.aws_subnet_ids.default.ids
 
   # To make testing easier, we allow Consul and SSH requests from any IP address here but in a production
   # deployment, we strongly recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.
   allowed_ssh_cidr_blocks = ["0.0.0.0/0"]
 
   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
-  ssh_key_name                = "${var.ssh_key_name}"
+  ssh_key_name                = var.ssh_key_name
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -124,17 +124,17 @@ module "consul_clients" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 data "template_file" "user_data_client" {
-  template = "${file("${path.module}/user-data-client.sh")}"
+  template = file("${path.module}/user-data-client.sh")
 
-  vars {
-    cluster_tag_key          = "${var.cluster_tag_key}"
-    cluster_tag_value        = "${var.cluster_name}"
-    enable_gossip_encryption = "${var.enable_gossip_encryption}"
-    gossip_encryption_key    = "${var.gossip_encryption_key}"
-    enable_rpc_encryption    = "${var.enable_rpc_encryption}"
-    ca_path                  = "${var.ca_path}"
-    cert_file_path           = "${var.cert_file_path}"
-    key_file_path            = "${var.key_file_path}"
+  vars = {
+    cluster_tag_key          = var.cluster_tag_key
+    cluster_tag_value        = var.cluster_name
+    enable_gossip_encryption = var.enable_gossip_encryption
+    gossip_encryption_key    = var.gossip_encryption_key
+    enable_rpc_encryption    = var.enable_rpc_encryption
+    ca_path                  = var.ca_path
+    cert_file_path           = var.cert_file_path
+    key_file_path            = var.key_file_path
   }
 }
 
@@ -145,12 +145,14 @@ data "template_file" "user_data_client" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 data "aws_vpc" "default" {
-  default = "${var.vpc_id == "" ? true : false}"
-  id      = "${var.vpc_id}"
+  default = var.vpc_id == null ? true : false
+  id      = var.vpc_id
 }
 
 data "aws_subnet_ids" "default" {
-  vpc_id = "${data.aws_vpc.default.id}"
+  vpc_id = data.aws_vpc.default.id
 }
 
-data "aws_region" "current" {}
+data "aws_region" "current" {
+}
+

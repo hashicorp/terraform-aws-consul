@@ -1,6 +1,7 @@
-# ---------------------------------------------------------------------------------------------------------------------
-# THESE TEMPLATES REQUIRE TERRAFORM VERSION 0.12 AND ABOVE
-# ---------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
+# REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
+# This module has been updated with 0.12 syntax, which means it is no longer compatible with any versions below 0.12.
+# ----------------------------------------------------------------------------------------------------------------------
 
 terraform {
   required_version = ">= 0.12"
@@ -31,19 +32,27 @@ resource "aws_autoscaling_group" "autoscaling_group" {
 
   enabled_metrics = var.enabled_metrics
 
-  tags = flatten([
-    {
-      key                 = "Name"
-      value               = var.cluster_name
+  tag {
+    key                 = "Name"
+    value               = var.cluster_name
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = var.cluster_tag_key
+    value               = var.cluster_tag_value
+    propagate_at_launch = true
+  }
+
+  dynamic "tag" {
+    for_each = var.tags
+
+    content {
+      key                 = tag.key
+      value               = tag.value
       propagate_at_launch = true
-    },
-    {
-      key                 = var.cluster_tag_key
-      value               = var.cluster_tag_value
-      propagate_at_launch = true
-    },
-    var.tags,
-  ])
+    }
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -57,8 +66,12 @@ resource "aws_launch_configuration" "launch_configuration" {
   user_data     = var.user_data
   spot_price    = var.spot_price
 
-  iam_instance_profile = var.enable_iam_setup &&  aws_iam_instance_profile.instance_profile.*.name != null ? element(concat(aws_iam_instance_profile.instance_profile.*.name, list("")), 0) : var.iam_instance_profile_name
+  iam_instance_profile = var.enable_iam_setup ? element(
+    concat(aws_iam_instance_profile.instance_profile.*.name, [""]),
+    0,
+  ) : var.iam_instance_profile_name
   key_name = var.ssh_key_name
+
   security_groups = concat(
     [aws_security_group.lc_security_group.id],
     var.additional_security_group_ids,

@@ -6,6 +6,10 @@
 # the examples/consul-ami/consul.json Packer template.
 # ---------------------------------------------------------------------------------------------------------------------
 
+# ----------------------------------------------------------------------------------------------------------------------
+# REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
+# This module has been updated with 0.12 syntax, which means it is no longer compatible with any versions below 0.12.
+# ----------------------------------------------------------------------------------------------------------------------
 terraform {
   required_version = ">= 0.12"
 }
@@ -65,8 +69,8 @@ module "consul_servers" {
   cluster_tag_key   = var.cluster_tag_key
   cluster_tag_value = var.cluster_name
 
-  ami_id    = var.ami_id == "" ? data.aws_ami.consul.image_id : var.ami_id
-  user_data = data.template_file.user_data_server.rendered
+  ami_id    = "${var.ami_id == null ? data.aws_ami.consul.image_id : var.ami_id}"
+  user_data = "${data.template_file.user_data_server.rendered}"
 
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnet_ids.default.ids
@@ -78,11 +82,11 @@ module "consul_servers" {
   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
   ssh_key_name                = var.ssh_key_name
 
-  tags = [{
-      key                 = "Environment"
-      value               = "development"
-      propagate_at_launch = true
-    },]
+  tags = {
+    key                 = "Environment"
+    value               = "development"
+    propagate_at_launch = true
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -120,8 +124,8 @@ module "consul_clients" {
   cluster_tag_key   = "consul-clients"
   cluster_tag_value = var.cluster_name
 
-  ami_id    = var.ami_id == "" ? data.aws_ami.consul.image_id : var.ami_id
-  user_data = data.template_file.user_data_client.rendered
+  ami_id    = "${var.ami_id == null ? data.aws_ami.consul.image_id : var.ami_id}"
+  user_data = "${data.template_file.user_data_client.rendered}"
 
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnet_ids.default.ids
@@ -155,8 +159,8 @@ data "template_file" "user_data_client" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 data "aws_vpc" "default" {
-  default = var.vpc_id == "" ? true : false
-  id      = var.vpc_id
+  default = var.vpc_id == null ? true : false
+  id      = "${var.vpc_id}"
 }
 
 data "aws_subnet_ids" "default" {
