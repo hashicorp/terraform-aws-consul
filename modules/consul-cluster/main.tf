@@ -32,27 +32,21 @@ resource "aws_autoscaling_group" "autoscaling_group" {
 
   enabled_metrics = var.enabled_metrics
 
-  tag {
-    key                 = "Name"
-    value               = var.cluster_name
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = var.cluster_tag_key
-    value               = var.cluster_tag_value
-    propagate_at_launch = true
-  }
-
-  dynamic "tag" {
-    for_each = var.tags
-
-    content {
-      key                 = tag.key
-      value               = tag.value
-      propagate_at_launch = true
-    }
-  }
+  tags = flatten(
+    [
+      {
+        key                 = "Name"
+        value               = var.cluster_name
+        propagate_at_launch = true
+      },
+      {
+        key                 = var.cluster_tag_key
+        value               = var.cluster_tag_value
+        propagate_at_launch = true
+      },
+      var.tags,
+    ]
+  )
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

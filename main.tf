@@ -82,11 +82,13 @@ module "consul_servers" {
   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
   ssh_key_name                = var.ssh_key_name
 
-  tags = {
-    key                 = "Environment"
-    value               = "development"
-    propagate_at_launch = true
-  }
+  tags = [
+    {
+      key                 = "Environment"
+      value               = "development"
+      propagate_at_launch = true
+    }
+  ]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
