@@ -1,11 +1,10 @@
 ---
-workspace_root: &workspace_root
-  /go/src/github.com/hashicorp/terraform-aws-consul
+workspace_root: &workspace_root /go/src/github.com/hashicorp/terraform-aws-consul
 
 defaults: &defaults
   working_directory: *workspace_root
   docker:
-  - image: 087285199408.dkr.ecr.us-east-1.amazonaws.com/circle-ci-test-image-base:latest
+    - image: 087285199408.dkr.ecr.us-east-1.amazonaws.com/circle-ci-test-image-base:go1.11
 
 version: 2
 jobs:
@@ -16,7 +15,7 @@ jobs:
       - checkout
       - run:
           name: Validate Terraform Formatting
-          command: "[ -z \"$(terraform fmt -write=false)\" ] || { terraform fmt -write=false -diff; exit 1; }"
+          command: '[ -z "$(terraform fmt -write=false)" ] || { terraform fmt -write=false -diff; exit 1; }'
 
   build:
     <<: *defaults
@@ -26,12 +25,12 @@ jobs:
           at: *workspace_root
       - restore_cache:
           keys:
-          - dep-{{ checksum "test/Gopkg.lock" }}
+            - dep-{{ checksum "test/Gopkg.lock" }}
       - run: configure-environment-for-gruntwork-module --go-src-path test --use-go-dep --circle-ci-2
       - save_cache:
           key: dep-{{ checksum "test/Gopkg.lock" }}
           paths:
-          - /go/src/github.com/hashicorp/terraform-aws-consul/test/vendor
+            - /go/src/github.com/hashicorp/terraform-aws-consul/test/vendor
       - persist_to_workspace:
           root: *workspace_root
           paths: test/vendor
