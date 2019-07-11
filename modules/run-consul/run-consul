@@ -360,6 +360,7 @@ EOF
 
   local -r service_config=$(cat <<EOF
 [Service]
+Type=notify
 User=$consul_user
 Group=$consul_user
 ExecStart=$consul_bin_dir/consul agent -config-dir $consul_config_dir -data-dir $consul_data_dir
