@@ -13,7 +13,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/retry"
 	"github.com/gruntwork-io/terratest/modules/ssh"
 	"github.com/gruntwork-io/terratest/modules/terraform"
-	"github.com/gruntwork-io/terratest/modules/test-structure"
+	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 	"github.com/hashicorp/consul/api"
 )
 
@@ -96,7 +96,7 @@ func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examples
 
 		terraformOptions := &terraform.Options{
 			TerraformDir: exampleFolder,
-			Vars: terraformVars,
+			Vars:         terraformVars,
 			EnvVars: map[string]string{
 				AWS_DEFAULT_REGION_ENV_VAR: awsRegion,
 			},

@@ -6,9 +6,14 @@ import (
 )
 
 // Test the example in the root folder
-func TestConsulInstallFromURLWithUbuntuAmi(t *testing.T) {
+func TestConsulInstallFromURLWithUbuntu16Ami(t *testing.T) {
 	t.Parallel()
 	runConsulClusterTest(t, "ubuntu16-ami", ".", "../examples/consul-ami/consul.json", "ubuntu", getUrlFromEnv(t))
+}
+
+func TestConsulInstallFromURLWithUbuntu18Ami(t *testing.T) {
+	t.Parallel()
+	runConsulClusterTest(t, "ubuntu18-ami", ".", "../examples/consul-ami/consul.json", "ubuntu", getUrlFromEnv(t))
 }
 
 func TestConsulInstallFromURLWithAmazonLinuxAmi(t *testing.T) {
