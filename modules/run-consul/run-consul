@@ -367,6 +367,7 @@ ExecStart=$consul_bin_dir/consul agent -config-dir $consul_config_dir -data-dir 
 ExecReload=$consul_bin_dir/consul reload
 KillMode=process
 Restart=on-failure
+TimeoutSec=300s
 LimitNOFILE=65536
 $(split_by_lines "Environment=" "${environment[@]}")
 
