@@ -339,6 +339,13 @@ EOF
     "http": -1,
     "https": 8501
 },
+"connect": {
+  "enabled": true,
+  "ca_config": {
+    "private_key_type": "ec",
+    "private_key_bits": 256
+  }
+},
 EOF
 )
     fi
