@@ -75,8 +75,8 @@ To deploy Consul servers for production using this repo:
     **WARNING! Do NOT use these AMIs in your production setup. In production, you should build your own AMIs in your own 
     AWS account.**
    
-1. Deploy that AMI across an Auto Scaling Group using the Terraform link:/modules/consul-cluster[consul-cluster module] 
-   and execute the link:/modules/run-consul[run-consul script] with the `--server` flag during boot on each 
+1. Deploy that AMI across an Auto Scaling Group using the Terraform [consul-cluster module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster)
+   and execute the [run-consul script](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/run-consul) with the `--server` flag during boot on each 
    Instance in the Auto Scaling Group to form the Consul cluster. Here is an example [Terraform configuration](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/root-example#quick-start) to provision a Consul cluster.
 
 To deploy Consul clients for production using this repo:
