@@ -80,7 +80,6 @@
       "else",
       " /tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}};",
       "fi",
-      "/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"
     ],
     "pause_before": "30s"
   },{
