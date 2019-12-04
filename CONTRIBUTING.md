@@ -3,13 +3,10 @@
 Contributions to this Module are very welcome! We follow a fairly standard [pull request 
 process](https://help.github.com/articles/about-pull-requests/) for contributions, subject to the following guidelines:
  
-- [Contribution Guidelines](#contribution-guidelines)
   - [File a GitHub issue](#file-a-github-issue)
   - [Update the documentation](#update-the-documentation)
   - [Update the tests](#update-the-tests)
   - [Update the code](#update-the-code)
-    - [Backwards compatibility](#backwards-compatibility)
-    - [Downtime](#downtime)
   - [Create a pull request](#create-a-pull-request)
   - [Sign HashiCorp CLA](#sign-hashicorp-cla)
   - [Merge and release](#merge-and-release)
