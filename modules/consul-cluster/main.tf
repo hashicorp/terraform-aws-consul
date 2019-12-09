@@ -75,10 +75,19 @@ resource "aws_launch_configuration" "launch_configuration" {
 
   ebs_optimized = var.root_volume_ebs_optimized
 
+  ebs_block_device {
+    device_name           = var.ebs_device_name
+    volume_size           = var.ebs_volume_size
+    volume_type           = var.ebs_volume_type
+    delete_on_termination = var.ebs_volume_delete_on_termination
+    encrypted             = var.ebs_volume_encrypted
+  }
+
   root_block_device {
     volume_type           = var.root_volume_type
     volume_size           = var.root_volume_size
     delete_on_termination = var.root_volume_delete_on_termination
+    encrypted             = var.root_volume_encrypted
   }
 
   # Important note: whenever using a launch configuration with an auto scaling group, you must set

@@ -164,6 +164,42 @@ variable "root_volume_delete_on_termination" {
   default     = true
 }
 
+variable "root_volume_encrypted" {
+  description = "If true, the root volume will be encrypted."
+  type        = bool
+  default     = false
+}
+
+variable "ebs_device_name" {
+  description = "The name of the ebs volume. For example /dev/sdb"
+  type        = bool
+  default     = "/dev/sdb"
+}
+
+variable "ebs_volume_size" {
+  description = "The size, in GB, of the ebs EBS volume."
+  type        = bool
+  default     = number
+}
+
+variable "ebs_volume_type" {
+  description = "The type of volume. Must be one of: standard, gp2, or io1.."
+  type        = string
+  default     = "standard"
+}
+
+variable "ebs_volume_delete_on_termination" {
+  description = "Whether the volume should be destroyed on instance termination."
+  type        = bool
+  default     = true
+}
+
+variable "ebs_volume_encrypted" {
+  description = "If true, the root volume will be encrypted."
+  type        = bool
+  default     = false
+}
+
 variable "wait_for_capacity_timeout" {
   description = "A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. Setting this to '0' causes Terraform to skip all Capacity Waiting behavior."
   type        = string
