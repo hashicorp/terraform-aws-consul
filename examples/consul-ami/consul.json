@@ -79,8 +79,7 @@
       " /tmp/terraform-aws-consul/modules/install-consul/install-consul --download-url {{user `download_url`}};",
       "else",
       " /tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}};",
-      "fi",
-      "/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"
+      "fi"
     ],
     "pause_before": "30s"
   },{
