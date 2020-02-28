@@ -125,9 +125,9 @@ function install_dependencies {
   elif $(has_yum); then
     sudo yum update -y
     sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-    sudo yum install python-pip -y
+    sudo yum install python-pip 
     sudo pip install --upgrade pip
-    sudo pip install awscli -y 
+    sudo pip install awscli 
     sudo yum install curl unzip -y
     sudo yum install jq -y 
   else
