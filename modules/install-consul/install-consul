@@ -124,7 +124,9 @@ function install_dependencies {
     sudo apt-get install -y awscli curl unzip jq
   elif $(has_yum); then
     sudo yum update -y
-    sudo yum install -y aws curl unzip jq
+    sudo yum install -y aws curl unzip 
+    sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    sudo yum install jq -y 
   else
     log_error "Could not find apt-get or yum. Cannot install dependencies on this OS."
     exit 1
