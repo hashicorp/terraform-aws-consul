@@ -125,10 +125,10 @@ function install_dependencies {
   elif $(has_yum); then
     sudo yum update -y
     sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-    sudo yum install python-pip
+    sudo yum install python-pip -y
     sudo pip install --upgrade pip
-    sudo pip install awscli
-    sudo yum install -y curl unzip 
+    sudo pip install awscli -y 
+    sudo yum install curl unzip -y
     sudo yum install jq -y 
   else
     log_error "Could not find apt-get or yum. Cannot install dependencies on this OS."
