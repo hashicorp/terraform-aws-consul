@@ -106,7 +106,7 @@ function write_consul_config {
 # Enable forward lookup of the '$consul_domain' domain:
 server=/${consul_domain}/${consul_ip}#${consul_port}
 
-listen-address=${consul_ip}
+listen-address=0.0.0.0
 bind-interfaces
 EOF
 }
