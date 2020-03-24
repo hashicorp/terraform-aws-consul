@@ -7,7 +7,7 @@
   },
   "builders": [{
     "name": "ubuntu16-ami",
-    "ami_name": "consul-ubuntu-{{isotime | clean_ami_name}}-{{uuid}}",
+    "ami_name": "consul-ubuntu-{{isotime | clean_resource_name}}-{{uuid}}",
     "ami_description": "An Ubuntu 16.04 AMI that has Consul installed.",
     "instance_type": "t2.micro",
     "region": "{{user `aws_region`}}",
@@ -26,7 +26,7 @@
     "ssh_username": "ubuntu"
   },{
     "name": "ubuntu18-ami",
-    "ami_name": "consul-ubuntu-{{isotime | clean_ami_name}}-{{uuid}}",
+    "ami_name": "consul-ubuntu-{{isotime | clean_resource_name}}-{{uuid}}",
     "ami_description": "An Ubuntu 18.04 AMI that has Consul installed.",
     "instance_type": "t2.micro",
     "region": "{{user `aws_region`}}",
@@ -46,7 +46,7 @@
     "ssh_username": "ubuntu"
   },{
     "name": "amazon-linux-2-ami",
-    "ami_name": "consul-amazon-linux-2-{{isotime | clean_ami_name}}-{{uuid}}",
+    "ami_name": "consul-amazon-linux-2-{{isotime | clean_resource_name}}-{{uuid}}",
     "ami_description": "An Amazon Linux 2 AMI that has Consul installed.",
     "instance_type": "t2.micro",
     "region": "{{user `aws_region`}}",
