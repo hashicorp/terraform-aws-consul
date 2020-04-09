@@ -4,7 +4,9 @@ workspace_root: &workspace_root /go/src/github.com/hashicorp/terraform-aws-consu
 defaults: &defaults
   working_directory: *workspace_root
   docker:
-    - image: 087285199408.dkr.ecr.us-east-1.amazonaws.com/circle-ci-test-image-base:go1.11
+    - image: 087285199408.dkr.ecr.us-east-1.amazonaws.com/circle-ci-test-image-base:go1.13
+  environment:
+    GOLANG_VERSION: 1.13.8
 
 version: 2
 jobs:
@@ -25,15 +27,15 @@ jobs:
           at: *workspace_root
       - restore_cache:
           keys:
-            - dep-{{ checksum "test/Gopkg.lock" }}
-      - run: configure-environment-for-gruntwork-module --go-src-path test --use-go-dep --circle-ci-2
+            - gomod-{{ checksum "test/go.sum" }}
+      - run: configure-environment-for-gruntwork-module --go-src-path test --go-version ${GOLANG_VERSION}
       - save_cache:
-          key: dep-{{ checksum "test/Gopkg.lock" }}
+          key: gomod-{{ checksum "test/go.sum" }}
           paths:
             - /go/src/github.com/hashicorp/terraform-aws-consul/test/vendor
       - persist_to_workspace:
           root: *workspace_root
-          paths: test/vendor
+          paths: project
 
   test:
     <<: *defaults
