@@ -32,7 +32,7 @@ jobs:
       - save_cache:
           key: gomod-{{ checksum "test/go.sum" }}
           paths:
-            - /go/src/github.com/hashicorp/terraform-aws-consul/test/vendor
+            - $HOME/go/src/
       - persist_to_workspace:
           root: *workspace_root
           paths: project
