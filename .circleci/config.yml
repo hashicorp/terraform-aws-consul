@@ -28,7 +28,7 @@ jobs:
       - restore_cache:
           keys:
             - gomod-{{ checksum "test/go.sum" }}
-      - run: configure-environment-for-gruntwork-module --go-src-path test --go-version ${GOLANG_VERSION}
+      - run: configure-environment-for-gruntwork-module --go-version ${GOLANG_VERSION} --go-src-path ./test/
       - save_cache:
           key: gomod-{{ checksum "test/go.sum" }}
           paths:
