@@ -55,16 +55,11 @@ workflows:
   version: 2
   build-and-test:
     jobs:
-      - build
       - test:
-          requires:
-            - build
           filters:
             branches:
               ignore: publish-amis
       - deploy:
-          requires:
-            - build
           filters:
             branches:
               only: publish-amis
