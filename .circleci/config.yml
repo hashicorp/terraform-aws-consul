@@ -4,7 +4,7 @@ workspace_root: &workspace_root /go/src/github.com/hashicorp/terraform-aws-consu
 defaults: &defaults
   working_directory: *workspace_root
   docker:
-    - image: 087285199408.dkr.ecr.us-east-1.amazonaws.com/circle-ci-test-image-base:go1.11
+    - image: 087285199408.dkr.ecr.us-east-1.amazonaws.com/circle-ci-test-image-base:go1.13
 
 version: 2
 jobs:
@@ -17,24 +17,6 @@ jobs:
           name: Validate Terraform Formatting
           command: '[ -z "$(terraform fmt -write=false)" ] || { terraform fmt -write=false -diff; exit 1; }'
 
-  build:
-    <<: *defaults
-    steps:
-      - checkout
-      - attach_workspace:
-          at: *workspace_root
-      - restore_cache:
-          keys:
-            - dep-{{ checksum "test/Gopkg.lock" }}
-      - run: configure-environment-for-gruntwork-module --go-src-path test --use-go-dep --circle-ci-2
-      - save_cache:
-          key: dep-{{ checksum "test/Gopkg.lock" }}
-          paths:
-            - /go/src/github.com/hashicorp/terraform-aws-consul/test/vendor
-      - persist_to_workspace:
-          root: *workspace_root
-          paths: test/vendor
-
   test:
     <<: *defaults
     steps:
@@ -42,7 +24,17 @@ jobs:
       - run: echo 'export PATH=$HOME/terraform:$HOME/packer:$PATH' >> $BASH_ENV
       - attach_workspace:
           at: *workspace_root
-      - run: run-go-tests --circle-ci-2 --path test
+      - run:
+          command: |
+            mkdir -p /tmp/logs
+            run-go-tests --path test | tee /tmp/logs/test-all.log
+      - run:
+          command: terratest_log_parser --testlog /tmp/logs/test-all.log --outputdir /tmp/logs
+          when: always
+      - store_artifacts:
+          path: /tmp/logs
+      - store_test_results:
+          path: /tmp/logs
 
   deploy:
     <<: *defaults
