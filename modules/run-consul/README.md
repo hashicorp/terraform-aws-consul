@@ -117,7 +117,7 @@ available.
 
 `run-consul` sets the following configuration values by default:
 
-* [advertise_addr](https://www.consul.io/docs/agent/options.html#advertise_addr): Set to the EC2 Instance's private IP
+* [advertise_addr](https://www.consul.io/docs/agent/options.html#advertise_addr): Set to the EC2 Instance's private IP 
   address, as fetched from [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
 
 * [bind_addr](https://www.consul.io/docs/agent/options.html#bind_addr): Set to the EC2 Instance's private IP address,
@@ -277,4 +277,4 @@ track other servers. A server is considered healthy when:
 There are Autopilot settings called [upgrade migrations](https://www.consul.io/docs/guides/autopilot.html#upgrade-migrations)
 that are useful when adding new members to the cluster either with newer configurations or using
 newer versions of Consul. These configurations manage how Consul will promote new servers and demote
-old ones. These settings, however, are only available at the Consul Enterprise version. 
+old ones. These settings, however, are only available at the Consul Enterprise version.
