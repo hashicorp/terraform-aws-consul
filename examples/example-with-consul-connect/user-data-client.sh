@@ -12,4 +12,44 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 # These variables are passed in via Terraform template interplation
 /opt/consul/bin/run-consul --client --cluster-tag-key "${cluster_tag_key}" --cluster-tag-value "${cluster_tag_value}"
 
-# You could add commands to boot your other apps here
+# Create service foo
+cat << 'EOF' >> /opt/consul/config/serv_foo.json
+{
+ "service": {
+    "name": "foo",
+    "port": 8181,
+    "connect": {
+      "sidecar_service": {}
+    }
+  }
+}
+EOF
+
+# Start a proxy sidecar for service foo
+nohup consul connect proxy -sidecar-for foo &>/dev/null &
+
+
+# Create service bar that is upstream to foo
+cat << 'EOF' >> /opt/consul/config/serv_bar.json
+{
+ "service": {
+    "name": "bar",
+    "port": 8080,
+    "connect": {
+      "sidecar_service": {
+        "proxy": {
+          "upstreams": [
+            {
+              "destination_name": "foo",
+              "local_bind_port": 9191
+            }
+          ]
+        }  
+      }
+    }
+  }
+}
+EOF
+
+# Start a proxy sidecar for service bar
+nohup consul connect proxy -sidecar-for bar &>/dev/null &
