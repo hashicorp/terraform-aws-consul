@@ -6,7 +6,6 @@ import (
 	"strings"
 	"testing"
 	"time"
-	"os"
 	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -56,7 +55,7 @@ func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examples
 	//os.Setenv("SKIP_setup_ami", "true")
 	//os.Setenv("SKIP_deploy", "true")
 	//os.Setenv("SKIP_validate", "true")
-	os.Setenv("SKIP_teardown", "true")
+	//os.Setenv("SKIP_teardown", "true")
 
 	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, REPO_ROOT, examplesFolder)
 
@@ -126,6 +125,9 @@ func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examples
 
 		// Check the Consul clients
 		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terraformOptions, awsRegion)
+		
+		// Check the Consul CA
+		checkConsulCA(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME, terraformOptions, awsRegion, sshUser, keyPair)
 	})
 }
 
@@ -213,3 +215,32 @@ func checkEnterpriseInstall(t *testing.T, asgNameOutputVar string, terratestOpti
 		t.Fatalf("This consul package is not the enterprise version.\n")
 	}
 }
+
+
+func checkConsulCA(t *testing.T, asgNameOutputVar string, terratestOptions *terraform.Options, awsRegion string, sshUser string, keyPair *aws.Ec2Keypair) {
+	asgName := terraform.OutputRequired(t, terratestOptions, asgNameOutputVar)
+	nodeIpAddress := getIpAddressOfAsgInstance(t, asgName, awsRegion)
+	
+	host := ssh.Host{
+		Hostname:    nodeIpAddress,
+		SshUserName: sshUser,
+		SshKeyPair:  keyPair.KeyPair,
+	}
+
+	maxRetries := 10
+	sleepBetweenRetries := 10 * time.Second
+	
+	output := retry.DoWithRetry(t, "Check Consul Built-in Certificate Authority", maxRetries, sleepBetweenRetries, func() (string, error) {
+		out, err := ssh.CheckSshCommandE(t, host, "consul connect ca get-config")
+		if err != nil {
+			return "", fmt.Errorf("Error running consul command: %s\n", err)
+		}
+
+		return out, nil
+	})
+
+	if !strings.Contains(output, "Config") {
+		t.Fatalf("Consul CA does not have a Config\n")
+	}
+}
+
