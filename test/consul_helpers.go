@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 	"time"
-
+	"os"
 	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -56,7 +56,7 @@ func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examples
 	//os.Setenv("SKIP_setup_ami", "true")
 	//os.Setenv("SKIP_deploy", "true")
 	//os.Setenv("SKIP_validate", "true")
-	//os.Setenv("SKIP_teardown", "true")
+	os.Setenv("SKIP_teardown", "true")
 
 	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, REPO_ROOT, examplesFolder)
 
