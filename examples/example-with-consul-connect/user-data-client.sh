@@ -25,10 +25,6 @@ cat << 'EOF' >> /opt/consul/config/serv_foo.json
 }
 EOF
 
-# Start a proxy sidecar for service foo
-nohup consul connect proxy -sidecar-for foo &>/dev/null &
-
-
 # Create service bar that is upstream to foo
 cat << 'EOF' >> /opt/consul/config/serv_bar.json
 {
@@ -50,6 +46,13 @@ cat << 'EOF' >> /opt/consul/config/serv_bar.json
   }
 }
 EOF
+
+# Register boths services foo & bar
+consul services register /opt/consul/config/serv_foo.json
+consul services register /opt/consul/config/serv_bar.json
+
+# Start a proxy sidecar for service foo
+nohup consul connect proxy -sidecar-for foo &>/dev/null &
 
 # Start a proxy sidecar for service bar
 nohup consul connect proxy -sidecar-for bar &>/dev/null &
