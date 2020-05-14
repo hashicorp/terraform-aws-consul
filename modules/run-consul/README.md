@@ -277,4 +277,4 @@ track other servers. A server is considered healthy when:
 There are Autopilot settings called [upgrade migrations](https://www.consul.io/docs/guides/autopilot.html#upgrade-migrations)
 that are useful when adding new members to the cluster either with newer configurations or using
 newer versions of Consul. These configurations manage how Consul will promote new servers and demote
-old ones. These settings, however, are only available at the Consul Enterprise version.
+old ones. These settings, however, are only available at the Consul Enterprise version. 
