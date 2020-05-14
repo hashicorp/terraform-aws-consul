@@ -15,7 +15,7 @@
 variable "ami_id" {
   description = "The ID of the AMI to run in the cluster. This should be an AMI built from the Packer template under examples/consul-ami/consul.json. To keep this example simple, we run the same AMI on both server and client nodes, but in real-world usage, your client nodes would also run your apps. If the default value is used, Terraform will look up the latest AMI build automatically."
   type        = string
-  default     = null
+  default     = "ami-0d2cef6a8db479d82"
 }
 
 variable "cluster_name" {
@@ -45,7 +45,7 @@ variable "cluster_tag_key" {
 variable "ssh_key_name" {
   description = "The name of an EC2 Key Pair that can be used to SSH to the EC2 Instances in this cluster. Set to an empty string to not associate a Key Pair."
   type        = string
-  default     = null
+  default     = "nt-trial"
 }
 
 variable "vpc_id" {
@@ -59,4 +59,3 @@ variable "spot_price" {
   type        = number
   default     = null
 }
-
