@@ -35,13 +35,14 @@ data "aws_iam_policy_document" "auto_discover_cluster" {
 
 
 resource "aws_iam_role_policy" "snapshot_agent_to_s3" {
-  count  = var.enabled ? 1 : 0
+  count  = "${var.enabled && var.enable_snapshot_agent ? 1 : 0}"
   name   = "consul-snapshot-agent"
   role   = var.iam_role_id
   policy = data.aws_iam_policy_document.snapshot_agent_to_s3.json
 }
 
 data "aws_iam_policy_document" "snapshot_agent_to_s3" {
+  count = "${var.enabled && var.enable_snapshot_agent ? 1 : 0}"
   statement {
     effect = "Allow"
 
