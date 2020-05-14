@@ -260,3 +260,14 @@ variable "iam_instance_profile_name" {
   default     = null
 }
 
+variable "enable_snapshot_agent" {
+  description = "(Consul Enterprise only) If true, add policy rules to allow for snapshots to be sent to the specified s3 bucket"
+  type        = bool
+  default     = false
+}
+
+variable "snapshot_agent_bucket" {
+  description = "(Consul Enterprise only) The s3 bucket name the snapshot agent writes to.  Required if enable_snapshot_agent is true."
+  type        = string
+  default     = null
+}

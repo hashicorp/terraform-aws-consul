@@ -31,3 +31,37 @@ data "aws_iam_policy_document" "auto_discover_cluster" {
   }
 }
 
+# Additionally, if desired, add the necessary policy to allow snapshots to s3 buckets
+
+
+resource "aws_iam_role_policy" "snapshot_agent_to_s3" {
+  count  = var.enabled ? 1 : 0
+  name   = "consul-snapshot-agent"
+  role   = var.iam_role_id
+  policy = data.aws_iam_policy_document.snapshot_agent_to_s3.json
+}
+
+data "aws_iam_policy_document" "snapshot_agent_to_s3" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:ListBucket",
+      "s3:ListBucketVersions"
+    ]
+
+    resources = ["arn:aws:s3:::${var.snapshot_agent_bucket}"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:PutObject",
+      "s3:DeleteObject",
+      "s3:GetObject"
+    ]
+
+    resources = ["arn:aws:s3:::${var.snapshot_agent_bucket}/*"]
+  }
+}
