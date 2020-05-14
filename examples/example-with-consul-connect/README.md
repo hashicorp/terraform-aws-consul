@@ -1,8 +1,8 @@
 # Consul Cluster with Connect service mesh
 
 This folder shows an example of Terraform code that uses the [run-consul module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-cluster) to deploy
-a [Consul](https://www.consul.io/) cluster in [AWS](https://aws.amazon.com/) with the Consul Connect Service Mesh turned on. The cluster consists of three Services with
-side-proxies and Intentions that enable secure service mesh connections.
+a [Consul](https://www.consul.io/) cluster in [AWS](https://aws.amazon.com/) with the Consul Connect Service Mesh turned on. The cluster consists of 2 Services with
+side-proxies and upstream dependencies between them
 
 You will need to create an [Amazon Machine Image (AMI)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html)
 that has Consul installed, which you can do using the [consul-ami example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-ami)). Note that to keep
