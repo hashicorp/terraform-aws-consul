@@ -81,6 +81,7 @@ The `run-consul` script accepts the following arguments:
 * `cert-file-path` (optional): Path to the certificate file used to verify incoming connections. Must be specified with `enable-rpc-encryption`, `ca-file-path`, and `key-file-path`.
 * `key-file-path` (optional): Path to the certificate key used to verify incoming connections. Must be specified with `enable-rpc-encryption`, `ca-file-path` and `cert-file-path`.
 * `enable-connect` (optional): If this flag is set, turn on Consul Connect when bootstrapping a cluster. To specify your own CA, specify an override config as outlined below.
+* `services-config-dir` (optional): Path to dir of one or many service configurations. Services can be further configured to set Consul Connect Proxies, Sidecar registrations & upstream service dependencies for a Service Mesh
 * `skip-consul-config` (optional): If this flag is set, don't generate a Consul configuration file. This is useful if
   you have a custom configuration file and don't want to use any of of the default settings from `run-consul`.
 

@@ -65,6 +65,10 @@ function print_usage {
   echo -e "  --autopilot-disable-upgrade-migration\t(Enterprise-only) If this flag is set, this will disable Autopilot's upgrade migration strategy in Consul Enterprise of waiting until enough newer-versioned servers have been added to the cluster before promoting any of them to voters. Defaults to $DEFAULT_AUTOPILOT_DISABLE_UPGRADE_MIGRATION. Optional."
   echo -e "  --autopilot-upgrade-version-tag\t\t(Enterprise-only) That tag to be used to override the version information used during a migration. Optional."
   echo
+  echo "Options for Consul Connect:"
+  echo
+  echo -e "  --enable-connect\tIf set, turn on Consul Connect(only Server Mode)"
+  echo
   echo
   echo "Example:"
   echo
@@ -309,6 +313,17 @@ EOF
 )
   fi
 
+  local connect_configuration=""
+  if [[ "$enable_connect" == "true" && "$server" == "true" ]]; then
+    log_info "Creating Consul Connect configuration"
+    connect_configuration=$(cat <<EOF
+"connect" : {
+  "enabled" : true
+},
+EOF
+)
+  fi
+
   log_info "Creating default Consul configuration"
   local default_config_json=$(cat <<EOF
 {
@@ -324,6 +339,7 @@ EOF
   $gossip_encryption_configuration
   $rpc_encryption_configuration
   $autopilot_configuration
+  $connect_configuration
   "ui": $ui
 }
 EOF
@@ -529,6 +545,9 @@ function run {
         ;;
       --enable-gossip-encryption)
         enable_gossip_encryption="true"
+        ;;
+      --enable-connect)
+        enable_connect="true"
         ;;
       --gossip-encryption-key)
         assert_not_empty "$key" "$2"
