@@ -117,7 +117,7 @@ available.
 
 `run-consul` sets the following configuration values by default:
 
-* [advertise_addr](https://www.consul.io/docs/agent/options.html#advertise_addr): Set to the EC2 Instance's private IP 
+* [advertise_addr](https://www.consul.io/docs/agent/options.html#advertise_addr): Set to the EC2 Instance's private IP
   address, as fetched from [Metadata](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).
 
 * [bind_addr](https://www.consul.io/docs/agent/options.html#bind_addr): Set to the EC2 Instance's private IP address,
