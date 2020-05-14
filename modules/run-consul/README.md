@@ -279,3 +279,15 @@ There are Autopilot settings called [upgrade migrations](https://www.consul.io/d
 that are useful when adding new members to the cluster either with newer configurations or using
 newer versions of Consul. These configurations manage how Consul will promote new servers and demote
 old ones. These settings, however, are only available at the Consul Enterprise version. 
+
+### Consul Connect
+[Consul Connect](https://www.consul.io/docs/connect) provides service-to-service connection authorization and encryption using mutual Transport Layer Security (TLS). 
+Applications can use sidecar proxies in a service mesh configuration to establish TLS connections for inbound and outbound connections. 
+Connect can help you secure your services and provide data about service-to-service communications.
+
+The following are supported in this Terraform module to enable Consul Connect in your environment:
+
+* Enabling Connect on cluster bootstrap
+* Specify a set of services with their sidecar proxies and upstream service dependences in a directory of config files
+* The `run-consul` script accepts the above and registers and turns on these services
+
