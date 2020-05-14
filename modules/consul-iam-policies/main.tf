@@ -38,7 +38,7 @@ resource "aws_iam_role_policy" "snapshot_agent_to_s3" {
   count  = "${var.enabled && var.enable_snapshot_agent ? 1 : 0}"
   name   = "consul-snapshot-agent"
   role   = var.iam_role_id
-  policy = data.aws_iam_policy_document.snapshot_agent_to_s3.json
+  policy = data.aws_iam_policy_document.snapshot_agent_to_s3[0].json
 }
 
 data "aws_iam_policy_document" "snapshot_agent_to_s3" {
