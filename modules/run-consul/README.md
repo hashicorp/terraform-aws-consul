@@ -285,7 +285,7 @@ Applications can use sidecar proxies in a service mesh configuration to establis
 Connect can help you secure your services and provide data about service-to-service communications.
 
 #### Enabling Connect on cluster bootstrap. 
-Connect is enabled only on Consul servers, so your run-consul command must issue a server flag if it also issues a enable-connect flag
+To enable Consul Connect on your servers, pass in the `--enable-connect` flag to the `run-consul` command used to start the consul service on the server.
 
 #### Examples
 The examples/example-with-consul-connect directory shows a working Terraform implementation of deploying a Consul Cluster with 3 servers, 1 client, 2 Services with their sidecar proxies respectively where one service is an upstream dependent for the other
@@ -296,4 +296,3 @@ To run Consul in production, ensure the following:
 * [You can choose to use Envoy as a proxy](https://www.consul.io/docs/connect/proxies/envoy)
 
 For all of the above your Consul server configuration should override the default configuration as specified above in Section "Overriding the configuration"
-
