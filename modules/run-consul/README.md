@@ -287,6 +287,9 @@ Connect can help you secure your services and provide data about service-to-serv
 #### Enabling Connect on cluster bootstrap. 
 To enable Consul Connect on your servers, pass in the `--enable-connect` flag to the `run-consul` command used to start the consul service on the server.
 
+#### Declaring Services and Sidecar Proxies on cluster bootstrap. 
+A simple way to declare services and sidecar proxies is to include these in the user-data-client scripts that call run-consul. We have shown this in our example. A word of caution: if you have multiple Consul Clients this rudimentary approach will have the services and sidecar proxies duplicated on each client node.
+
 #### Examples
 The examples/example-with-consul-connect directory shows a working Terraform implementation of deploying a Consul Cluster with 3 servers, 1 client, 2 Services with their sidecar proxies respectively where one service is an upstream dependent for the other
 
