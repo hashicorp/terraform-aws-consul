@@ -47,7 +47,7 @@ cat << 'EOF' >> /opt/consul/config/serv_bar.json
 }
 EOF
 
-# Register boths services foo & bar
+# Register both services foo & bar
 consul services register /opt/consul/config/serv_foo.json
 consul services register /opt/consul/config/serv_bar.json
 
