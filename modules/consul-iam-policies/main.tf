@@ -62,6 +62,6 @@ data "aws_iam_policy_document" "snapshot_agent_to_s3" {
       "s3:DeleteObject"
     ]
 
-    resources = ["arn:aws:s3:::${var.snapshot_agent_bucket}/${var.snapshot_agent_s3_key_prefix}*.snap"]
+    resources = ["arn:aws:s3:::${var.snapshot_agent_bucket}/${var.snapshot_agent_s3_key_prefix}/*.snap"]
   }
 }
