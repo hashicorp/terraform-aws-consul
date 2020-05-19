@@ -31,7 +31,7 @@ variable "snapshot_agent_bucket" {
   default     = null
 }
 
-variable "snapshot_agent_bucket_path" {
+variable "snapshot_agent_s3_key_prefix" {
   description = "(Consul Enterprise only) The path within the s3 bucket that the snapshot agent writes to.  Defaults to consul-snapshot."
   type        = string
   default     = "consul-snapshot"
