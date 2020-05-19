@@ -223,9 +223,10 @@ data "aws_iam_policy_document" "instance_role" {
 module "iam_policies" {
   source = "../consul-iam-policies"
 
-  enabled               = var.enable_iam_setup
-  enable_snapshot_agent = var.enable_snapshot_agent
-  snapshot_agent_bucket = var.snapshot_agent_bucket
-  iam_role_id           = element(concat(aws_iam_role.instance_role.*.id, [""]), 0)
+  enabled                    = var.enable_iam_setup
+  enable_snapshot_agent      = var.enable_snapshot_agent
+  snapshot_agent_bucket      = var.snapshot_agent_bucket
+  snapshot_agent_bucket_path = var.snapshot_agent_bucket_path
+  iam_role_id                = element(concat(aws_iam_role.instance_role.*.id, [""]), 0)
 }
 

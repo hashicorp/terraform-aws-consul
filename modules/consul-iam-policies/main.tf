@@ -63,6 +63,6 @@ data "aws_iam_policy_document" "snapshot_agent_to_s3" {
       "s3:GetObject"
     ]
 
-    resources = ["arn:aws:s3:::${var.snapshot_agent_bucket}/*"]
+    resources = ["arn:aws:s3:::${var.snapshot_agent_bucket}/${var.snapshot_agent_bucket_path}*.snap"]
   }
 }
