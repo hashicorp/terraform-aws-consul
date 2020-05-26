@@ -59,7 +59,8 @@ data "aws_iam_policy_document" "snapshot_agent_to_s3" {
 
     actions = [
       "s3:PutObject",
-      "s3:DeleteObject"
+      "s3:DeleteObject",
+      "s3:GetObject",
     ]
 
     resources = ["arn:aws:s3:::${var.snapshot_agent_bucket}/${var.snapshot_agent_s3_key_prefix}/*.snap"]
