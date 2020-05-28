@@ -42,7 +42,7 @@ resource "aws_iam_role_policy" "snapshot_agent_to_s3" {
 }
 
 data "aws_iam_policy_document" "snapshot_agent_to_s3" {
-  count = "${var.enabled && var.enable_snapshot_agent}" ? 1 : 0
+  count = var.enabled && var.enable_snapshot_agent ? 1 : 0
   statement {
     effect = "Allow"
 
