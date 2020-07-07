@@ -32,6 +32,8 @@ resource "aws_autoscaling_group" "autoscaling_group" {
 
   enabled_metrics = var.enabled_metrics
 
+  protect_from_scale_in = var.protect_from_scale_in
+
   tags = flatten(
     [
       {
