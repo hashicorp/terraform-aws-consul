@@ -49,7 +49,7 @@ The `install-consul` script accepts the following arguments:
 * `download-url URL`: Install the Consul package hosted in this url. Optional if version is provided.
 * `path DIR`: Install Consul into folder DIR. Optional.
 * `user USER`: The install dirs will be owned by user USER. Optional.
-* `header`: Additional header(s) to pass when downloading. Optional.
+* `header`: Additional header(s) to pass when downloading. May be specified multiple times. Optional.
 * `ca-file-path PATH`: Path to a PEM-encoded certificate authority used to encrypt and verify authenticity of client and server connections. Optional.
 * `cert-file-path PATH`: Path to a PEM-encoded certificate, which will be provided to clients or servers to verify the agent's authenticity. Optional.
 * `key-file-path PATH`: Path to a PEM-encoded private key, used with the certificate to verify the agent's authenticity. Optional.
