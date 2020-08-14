@@ -242,7 +242,7 @@ function install_tls_certificates {
 }
 
 function install {
-  declare -a addtl_headers
+  local -a addtl_headers=()
   local version=""
   local download_url=""
   local path="$DEFAULT_INSTALL_PATH"
