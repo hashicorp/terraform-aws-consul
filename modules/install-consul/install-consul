@@ -177,7 +177,7 @@ function fetch_binary {
     download_url="https://releases.hashicorp.com/consul/${version}/consul_${version}_linux_amd64.zip"
   fi
 
-  if [[ ! -z "$addtl_headers" ]]; then
+  if [[ "${#addtl_headers[@]}" -gt 0 ]]; then
     local headers
 
     for value in "${addtl_headers[@]}"
