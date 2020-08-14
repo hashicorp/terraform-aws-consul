@@ -171,7 +171,7 @@ function fetch_binary {
   shift
   local download_url="$1"
   shift
-  local addtl_headers=("$@")
+  local -ar addtl_headers=("$@")
 
   if [[ -z "$download_url" && -n "$version" ]];  then
     download_url="https://releases.hashicorp.com/consul/${version}/consul_${version}_linux_amd64.zip"
