@@ -180,8 +180,7 @@ function fetch_binary {
   if [[ "${#addtl_headers[@]}" -gt 0 ]]; then
     local headers
 
-    for value in "${addtl_headers[@]}"
-    do
+    for value in "${addtl_headers[@]}"; do
       headers+="-H \"$value\" "
     done
   fi
