@@ -6,8 +6,6 @@ set -e
 readonly AWS_ASG_TAG_KEY="aws:autoscaling:groupName"
 
 readonly CONSUL_CONFIG_FILE="default.json"
-readonly CONSUL_GOSSIP_ENCRYPTION_CONFIG_FILE="gossip-encryption.json"
-readonly CONSUL_RPC_ENCRYPTION_CONFIG_FILE="rpc-encryption.json"
 readonly SYSTEMD_CONFIG_PATH="/etc/systemd/system/consul.service"
 
 readonly EC2_INSTANCE_METADATA_URL="http://169.254.169.254/latest/meta-data"
@@ -258,7 +256,7 @@ EOF
   local recursors_config=""
   if (( ${#recursors[@]} != 0 )); then
         recursors_config="\"recursors\" : [ "
-        for recursor in ${recursors[@]}
+        for recursor in "${recursors[@]}"
         do
             recursors_config="${recursors_config}\"${recursor}\", "
         done
@@ -277,7 +275,8 @@ EOF
     ui="true"
   fi
 
-  local autopilot_configuration=$(cat <<EOF
+  local autopilot_configuration
+  autopilot_configuration=$(cat <<EOF
 "autopilot": {
   "cleanup_dead_servers": $cleanup_dead_servers,
   "last_contact_threshold": "$last_contact_threshold",
@@ -291,13 +290,13 @@ EOF
 )
 
   local gossip_encryption_configuration=""
-  if [[ "$enable_gossip_encryption" == "true" && ! -z "$gossip_encryption_key" ]]; then
+  if [[ "$enable_gossip_encryption" == "true" && -n "$gossip_encryption_key" ]]; then
     log_info "Creating gossip encryption configuration"
     gossip_encryption_configuration="\"encrypt\": \"$gossip_encryption_key\","
   fi
 
   local rpc_encryption_configuration=""
-  if [[ "$enable_rpc_encryption" == "true" && ! -z "$ca_path" && ! -z "$cert_file_path" && ! -z "$key_file_path" ]]; then
+  if [[ "$enable_rpc_encryption" == "true" && -n "$ca_path" && -n "$cert_file_path" && -n "$key_file_path" ]]; then
     log_info "Creating RPC encryption configuration"
     rpc_encryption_configuration=$(cat <<EOF
 "verify_outgoing": true,
@@ -310,7 +309,8 @@ EOF
   fi
 
   log_info "Creating default Consul configuration"
-  local default_config_json=$(cat <<EOF
+  local default_config_json
+  default_config_json=$(cat <<EOF
 {
   "advertise_addr": "$instance_ip_address",
   "bind_addr": "$instance_ip_address",
@@ -375,10 +375,10 @@ EOF
 )
 
   local log_config=""
-  if [[ ! -z $consul_systemd_stdout ]]; then
+  if [[ -n $consul_systemd_stdout ]]; then
     log_config+="StandardOutput=$consul_systemd_stdout\n"
   fi
-  if [[ ! -z $consul_systemd_stderr ]]; then
+  if [[ -n $consul_systemd_stderr ]]; then
     log_config+="StandardError=$consul_systemd_stderr\n"
   fi
 
@@ -430,7 +430,6 @@ function run {
   local environment=()
   local skip_consul_config="false"
   local recursors=()
-  local all_args=()
   local cleanup_dead_servers="$DEFAULT_AUTOPILOT_CLEANUP_DEAD_SERVERS"
   local last_contact_threshold="$DEFAULT_AUTOPILOT_LAST_CONTACT_THRESHOLD"
   local max_trailing_logs="$DEFAULT_AUTOPILOT_MAX_TRAILING_LOGS"
@@ -438,7 +437,7 @@ function run {
   local redundancy_zone_tag="$DEFAULT_AUTOPILOT_REDUNDANCY_ZONE_TAG"
   local disable_upgrade_migration="$DEFAULT_AUTOPILOT_DISABLE_UPGRADE_MIGRATION"
 
-  while [[ $# > 0 ]]; do
+  while [[ $# -gt 0 ]]; do
     local key="$1"
 
     case "$key" in
