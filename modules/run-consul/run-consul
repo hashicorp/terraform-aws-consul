@@ -51,6 +51,7 @@ function print_usage {
   echo -e "  --ca-path\t\tPath to the directory of CA files used to verify outgoing connections. Optional. Must be specified with --enable-rpc-encryption."
   echo -e "  --cert-file-path\tPath to the certificate file used to verify incoming connections. Optional. Must be specified with --enable-rpc-encryption and --key-file-path."
   echo -e "  --key-file-path\tPath to the certificate key used to verify incoming connections. Optional. Must be specified with --enable-rpc-encryption and --cert-file-path."
+  echo -e "  --verify-server-hostname\tWhen passed in, enable server hostname verification as part of RPC encryption. Each server in Consul should get their own certificate that contains SERVERNAME.DATACENTERNAME.consul in the hostname or SAN. This prevents an authenticated agent from being converted into a server that streams all data, bypassing ACLs."
   echo -e "  --environment\t\tA single environment variable in the key/value pair form 'KEY=\"val\"' to pass to Consul as environment variable when starting it up. Repeat this option for additional variables. Optional."
   echo -e "  --skip-consul-config\tIf this flag is set, don't generate a Consul configuration file. Optional. Default is false."
   echo -e "  --recursor\tThis flag provides address of upstream DNS server that is used to recursively resolve queries if they are not inside the service domain for Consul. Repeat this option for additional variables. Optional."
@@ -221,19 +222,20 @@ function generate_consul_config {
   local -r enable_gossip_encryption="${7}"
   local -r gossip_encryption_key="${8}"
   local -r enable_rpc_encryption="${9}"
-  local -r ca_path="${10}"
-  local -r cert_file_path="${11}"
-  local -r key_file_path="${12}"
-  local -r cleanup_dead_servers="${13}"
-  local -r last_contact_threshold="${14}"
-  local -r max_trailing_logs="${15}"
-  local -r server_stabilization_time="${16}"
-  local -r redundancy_zone_tag="${17}"
-  local -r disable_upgrade_migration="${18}"
-  local -r upgrade_version_tag=${19}
+  local -r verify_server_hostname="${10}"
+  local -r ca_path="${11}"
+  local -r cert_file_path="${12}"
+  local -r key_file_path="${13}"
+  local -r cleanup_dead_servers="${14}"
+  local -r last_contact_threshold="${15}"
+  local -r max_trailing_logs="${16}"
+  local -r server_stabilization_time="${17}"
+  local -r redundancy_zone_tag="${18}"
+  local -r disable_upgrade_migration="${19}"
+  local -r upgrade_version_tag=${20}
   local -r config_path="$config_dir/$CONSUL_CONFIG_FILE"
 
-  shift 19
+  shift 20
   local -r recursors=("$@")
 
   local instance_id=""
@@ -302,6 +304,7 @@ EOF
     rpc_encryption_configuration=$(cat <<EOF
 "verify_outgoing": true,
 "verify_incoming": true,
+"verify_server_hostname": $verify_server_hostname,
 "ca_path": "$ca_path",
 "cert_file": "$cert_file_path",
 "key_file": "$key_file_path",
@@ -424,6 +427,7 @@ function run {
   local enable_gossip_encryption="false"
   local gossip_encryption_key=""
   local enable_rpc_encryption="false"
+  local verify_server_hostname="false"
   local ca_path=""
   local cert_file_path=""
   local key_file_path=""
@@ -538,6 +542,9 @@ function run {
       --enable-rpc-encryption)
         enable_rpc_encryption="true"
         ;;
+      --verify-server-hostname)
+        verify_server_hostname="true"
+        ;;
       --ca-path)
         assert_not_empty "$key" "$2"
         ca_path="$2"
@@ -633,6 +640,7 @@ function run {
       "$enable_gossip_encryption" \
       "$gossip_encryption_key" \
       "$enable_rpc_encryption" \
+      "$verify_server_hostname" \
       "$ca_path" \
       "$cert_file_path" \
       "$key_file_path" \
