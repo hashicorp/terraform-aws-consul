@@ -79,10 +79,10 @@ function install_dnsmasq {
 
   log_info "Installing Dnsmasq"
 
-  if $(has_apt_get); then
+  if has_apt_get; then
     sudo apt-get update -y
     sudo apt-get install -y dnsmasq
-  elif $(has_yum); then
+  elif has_yum; then
     sudo yum update -y
     sudo yum install -y dnsmasq
     echo "prepend domain-name-servers $consul_ip;" | sudo tee -a "/etc/dhcp/dhclient.conf" > /dev/null
@@ -116,7 +116,7 @@ function install {
   local consul_ip="$DEFAULT_CONSUL_IP"
   local consul_dns_port="$DEFAULT_CONSUL_DNS_PORT"
 
-  while [[ $# > 0 ]]; do
+  while [[ $# -gt 0 ]]; do
     local key="$1"
 
     case "$key" in
