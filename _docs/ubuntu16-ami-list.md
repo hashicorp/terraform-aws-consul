@@ -5,19 +5,19 @@
 
 | AWS Region | AMI ID |
 | ---------- | ------ |
-| eu-north-1 | ami-0af269d41c360643d |
-| ap-south-1 | ami-0115126c92b91602a |
-| eu-west-3 | ami-05aee26d25d6e3337 |
-| eu-west-2 | ami-0a42e99a92c109837 |
-| eu-west-1 | ami-07acdef1337c26996 |
-| ap-northeast-2 | ami-07f81b91c68054452 |
-| ap-northeast-1 | ami-064a2d20e70519f27 |
-| sa-east-1 | ami-081bde43d7f7e8d44 |
-| ca-central-1 | ami-0d986ad8cc00d6929 |
-| ap-southeast-1 | ami-080c6373a0d986a35 |
-| ap-southeast-2 | ami-02d7ec40897619485 |
-| eu-central-1 | ami-09a00358c34bf94ce |
-| us-east-1 | ami-02e32339582462bba |
-| us-east-2 | ami-05985b80a7754cffb |
-| us-west-1 | ami-0f9c0fe1b00ce783a |
-| us-west-2 | ami-0f8eb5fbf07844874 |
+| eu-north-1 | ami-076e63d6666455915 |
+| ap-south-1 | ami-03f94eedf0e16253a |
+| eu-west-3 | ami-01209818ecb2f4134 |
+| eu-west-2 | ami-0b3c854a0fa03a317 |
+| eu-west-1 | ami-005d4326e304aa61c |
+| ap-northeast-2 | ami-01d145e9609ef9b4d |
+| ap-northeast-1 | ami-09ea75ecfb353cbe0 |
+| sa-east-1 | ami-0ad6600d3c0fa535b |
+| ca-central-1 | ami-0ce7ba7c6d3959fd1 |
+| ap-southeast-1 | ami-0dc0e10cadd349b03 |
+| ap-southeast-2 | ami-0b35cfd04499612ce |
+| eu-central-1 | ami-022b1c4fc8e53e122 |
+| us-east-1 | ami-072403bab4a3d96d4 |
+| us-east-2 | ami-09ae9cd3613c4f7be |
+| us-west-1 | ami-0e0ebb84db7eb1125 |
+| us-west-2 | ami-03b8b11d6f1e8be6e |
