@@ -2,6 +2,7 @@ package test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/gruntwork-io/terratest/modules/packer"
 )
@@ -20,6 +21,11 @@ func buildAmi(t *testing.T, packerTemplatePath string, packerBuildName string, a
 		Env: map[string]string{
 			CONSUL_AMI_TEMPLATE_VAR_DOWNLOAD_URL: downloadUrl,
 		},
+		RetryableErrors: map[string]string{
+			"Error waiting for AMI: Failed with ResourceNotReady error": "https://www.packer.io/docs/builders/amazon.html#resourcenotready-error",
+		},
+		MaxRetries:         3,
+		TimeBetweenRetries: 10 * time.Second,
 	}
 
 	return packer.BuildAmi(t, options)

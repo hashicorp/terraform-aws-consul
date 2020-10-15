@@ -1,8 +1,8 @@
 package test
 
 import (
-	"testing"
 	"github.com/gruntwork-io/terratest/modules/aws"
+	"testing"
 )
 
 // Get the IP address from a randomly chosen EC2 Instance in an Auto Scaling Group of the given name in the given
