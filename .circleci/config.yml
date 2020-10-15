@@ -1,8 +1,5 @@
 ---
-workspace_root: &workspace_root /go/src/github.com/hashicorp/terraform-aws-consul
-
 defaults: &defaults
-  working_directory: *workspace_root
   docker:
     - image: 087285199408.dkr.ecr.us-east-1.amazonaws.com/circle-ci-test-image-base:tf13
 
@@ -13,8 +10,6 @@ jobs:
     steps:
       - checkout
       - run: echo 'export PATH=$HOME/terraform:$HOME/packer:$PATH' >> $BASH_ENV
-      - attach_workspace:
-          at: *workspace_root
       - run:
           # Fail the build if the pre-commit hooks don't pass. Note: if you run $ pre-commit install locally within this repo, these hooks will
           # execute automatically every time before you commit, ensuring the build never fails at this step!
