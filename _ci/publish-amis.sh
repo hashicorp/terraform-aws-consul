@@ -47,7 +47,6 @@ publish-ami \
   --all-regions \
   --source-ami-id "$ARTIFACT_ID" \
   --source-ami-region "$PACKER_TEMPLATE_DEFAULT_REGION" \
-  --output-markdown > "$AMI_LIST_MARKDOWN_DIR/$PACKER_BUILD_NAME-list.md" \
   --markdown-title-text "$PACKER_BUILD_NAME: Latest Public AMIs" \
   --markdown-description-text "**WARNING! Do NOT use these AMIs in a production setting.** They are meant only to make
     initial experiments with this module more convenient."
