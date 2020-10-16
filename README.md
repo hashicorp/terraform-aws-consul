@@ -27,9 +27,8 @@ To deploy Consul servers for production using this repo:
 1. Create a Consul AMI using a Packer template that references the [install-consul module](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/install-consul).
    Here is an [example Packer template](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/consul-ami#quick-start). 
    
-   If you are just experimenting with this Module, you may find it more convenient to use one of our official public AMIs:
-   - [Latest Ubuntu 16 AMIs](https://github.com/hashicorp/terraform-aws-consul/tree/master/_docs/ubuntu16-ami-list.md).
-   - [Latest Amazon Linux 2 AMIs](https://github.com/hashicorp/terraform-aws-consul/tree/master/_docs/amazon-linux-ami-list.md).
+   If you are just experimenting with this Module, you may find it more convenient to use one of our official public AMIs.
+   Check out the `aws_ami` data source usage in `main.tf` for how to auto-discover this AMI.
   
     **WARNING! Do NOT use these AMIs in your production setup. In production, you should build your own AMIs in your own 
     AWS account.**
