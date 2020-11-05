@@ -102,7 +102,7 @@ resource "aws_launch_configuration" "launch_configuration" {
     for_each = var.ebs_block_devices
     content {
       delete_on_termination = lookup(ebs_block_device.value, "delete_on_termination", null)
-      device_name           = ebs_block_device.value.device_name
+      device_name           = lookup(ebs_block_device.value, "device_name", null)
       encrypted             = lookup(ebs_block_device.value, "encrypted", null)
       iops                  = lookup(ebs_block_device.value, "iops", null)
       snapshot_id           = lookup(ebs_block_device.value, "snapshot_id", null)
