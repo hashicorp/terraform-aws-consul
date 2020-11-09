@@ -97,7 +97,7 @@ resource "aws_launch_configuration" "launch_configuration" {
     delete_on_termination = var.root_volume_delete_on_termination
     encrypted             = var.root_volume_encrypted
   }
-  
+
   dynamic "ebs_block_device" {
     for_each = var.ebs_block_devices
     content {
