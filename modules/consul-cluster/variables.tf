@@ -166,11 +166,12 @@ variable "root_volume_delete_on_termination" {
 
 variable "root_volume_encrypted" {
   description = "Encrypt the volume at rest"
+  type        = bool
   default     = false
 }
 
 variable "ebs_block_device" {
-  description = "Additional EBS block devices to attach to autoscaling instances" 
+  description = "Additional EBS block devices to attach to autoscaling instances"
   type        = list(map(string))
   default     = []
 }

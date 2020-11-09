@@ -109,8 +109,8 @@ resource "aws_launch_configuration" "launch_configuration" {
       volume_size           = lookup(ebs_block_device.value, "volume_size", null)
       volume_type           = lookup(ebs_block_device.value, "volume_type", null)
     }
-  }  
-  
+  }
+
   # Important note: whenever using a launch configuration with an auto scaling group, you must set
   # create_before_destroy = true. However, as soon as you set create_before_destroy = true in one resource, you must
   # also set it in every resource that it depends on, or you'll get an error about cyclic dependencies (especially when
