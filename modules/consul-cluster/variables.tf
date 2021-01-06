@@ -230,6 +230,12 @@ variable "http_api_port" {
   default     = 8500
 }
 
+variable "https_api_port" {
+  description = "The port used by clients to talk to the HTTP API"
+  type        = number
+  default     = 8501
+}
+
 variable "dns_port" {
   description = "The port used to resolve DNS queries."
   type        = number

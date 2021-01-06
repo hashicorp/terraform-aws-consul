@@ -183,6 +183,7 @@ module "security_group_rules" {
   serf_lan_port   = var.serf_lan_port
   serf_wan_port   = var.serf_wan_port
   http_api_port   = var.http_api_port
+  https_api_port  = var.https_api_port
   dns_port        = var.dns_port
 }
 
