@@ -73,3 +73,8 @@ variable "dns_port" {
   default     = 8600
 }
 
+variable "enable_https_port" {
+  description = "HTTPS API (Optional) Is off by default. If true, security group for consul HTTPS API is created."
+  type        = bool
+  default     = false
+}

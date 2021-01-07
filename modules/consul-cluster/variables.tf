@@ -266,6 +266,12 @@ variable "enable_iam_setup" {
   default     = true
 }
 
+variable "enable_https_port" {
+  description = "HTTPS API (Optional) Is off by default. If true, security group for consul HTTPS API is created."
+  type        = bool
+  default     = false
+}
+
 variable "iam_instance_profile_name" {
   description = "If enable_iam_setup is false then this will be the name of the IAM instance profile to attach"
   type        = string

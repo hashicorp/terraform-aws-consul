@@ -185,6 +185,8 @@ module "security_group_rules" {
   http_api_port   = var.http_api_port
   https_api_port  = var.https_api_port
   dns_port        = var.dns_port
+
+  enable_https_port = var.enable_https_port
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
