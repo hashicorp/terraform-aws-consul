@@ -230,6 +230,12 @@ variable "http_api_port" {
   default     = 8500
 }
 
+variable "https_api_port" {
+  description = "The port used by clients to talk to the HTTPS API. Only used if enable_https_port is set to true."
+  type        = number
+  default     = 8501
+}
+
 variable "dns_port" {
   description = "The port used to resolve DNS queries."
   type        = number
@@ -258,6 +264,12 @@ variable "enable_iam_setup" {
   description = "If true, create the IAM Role, IAM Instance Profile, and IAM Policies. If false, these will not be created, and you can pass in your own IAM Instance Profile via var.iam_instance_profile_name."
   type        = bool
   default     = true
+}
+
+variable "enable_https_port" {
+  description = "If set to true, allow access to the Consul HTTPS port defined via the https_api_port variable."
+  type        = bool
+  default     = false
 }
 
 variable "iam_instance_profile_name" {
