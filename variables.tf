@@ -61,7 +61,7 @@ variable "spot_price" {
 }
 
 variable "enable_https_port" {
-  description = "HTTPS API (Optional) Is off by default. If true, security group for consul HTTPS API is created."
+  description = "If set to true, allow access to the Consul HTTPS port defined via the https_api_port variable."
   type        = bool
   default     = false
 }

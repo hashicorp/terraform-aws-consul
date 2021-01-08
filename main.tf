@@ -77,7 +77,7 @@ module "consul_servers" {
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnet_ids.default.ids
 
-  # To create security group for consul HTTPS API. HTTPS API (Optional) Is off by default.
+  # If set to true, this allows access to the consul HTTPS API
   enable_https_port = var.enable_https_port
 
   # To make testing easier, we allow Consul and SSH requests from any IP address here but in a production

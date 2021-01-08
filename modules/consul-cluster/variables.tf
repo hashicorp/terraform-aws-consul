@@ -231,7 +231,7 @@ variable "http_api_port" {
 }
 
 variable "https_api_port" {
-  description = "The port used by clients to talk to the HTTP API"
+  description = "The port used by clients to talk to the HTTPS API. Only used if enable_https_port is set to true."
   type        = number
   default     = 8501
 }
@@ -267,7 +267,7 @@ variable "enable_iam_setup" {
 }
 
 variable "enable_https_port" {
-  description = "HTTPS API (Optional) Is off by default. If true, security group for consul HTTPS API is created."
+  description = "If set to true, allow access to the Consul HTTPS port defined via the https_api_port variable."
   type        = bool
   default     = false
 }

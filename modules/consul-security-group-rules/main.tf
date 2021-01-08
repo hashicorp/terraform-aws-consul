@@ -156,7 +156,7 @@ resource "aws_security_group_rule" "allow_http_api_inbound_from_security_group_i
 }
 
 resource "aws_security_group_rule" "allow_https_api_inbound_from_security_group_ids" {
-  count                    = var.allowed_inbound_security_group_count
+  count                    = var.enable_https_port ? var.allowed_inbound_security_group_count : 0
   type                     = "ingress"
   from_port                = var.https_api_port
   to_port                  = var.https_api_port
@@ -241,6 +241,7 @@ resource "aws_security_group_rule" "allow_http_api_inbound_from_self" {
 }
 
 resource "aws_security_group_rule" "allow_https_api_inbound_from_self" {
+  count     = var.enable_https_port ? 1 : 0
   type      = "ingress"
   from_port = var.https_api_port
   to_port   = var.https_api_port
