@@ -5,7 +5,7 @@ import (
 )
 
 // Test the example in the example-with-consul-connect folder
-func TestConsulClusterWithUbuntu16Ami(t *testing.T) {
+func TestConsulConnectWithUbuntu16Ami(t *testing.T) {
 	t.Parallel()
 	runConsulConnectTest(t, "ubuntu16-ami", "examples/example-with-consul-connect", "../examples/consul-ami/consul.json", "ubuntu")
 }
@@ -17,7 +17,7 @@ func TestConsulConnectWithUbuntu18Ami(t *testing.T) {
 }
 
 // Test the example in the example-with-consul-connect folder
-func TestConsulClusterWithAmazonLinuxAmi(t *testing.T) {
+func TestConsulConnectWithAmazonLinuxAmi(t *testing.T) {
 	t.Parallel()
 	runConsulConnectTest(t, "amazon-linux-2-ami", "examples/example-with-consul-connect", "../examples/consul-ami/consul.json", "ec2-user")
 }
