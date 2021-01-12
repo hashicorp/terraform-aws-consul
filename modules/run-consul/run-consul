@@ -235,6 +235,7 @@ function generate_consul_config {
   local -r redundancy_zone_tag="${18}"
   local -r disable_upgrade_migration="${19}"
   local -r upgrade_version_tag=${20}
+  local -r enable_connect="${21}"
   local -r config_path="$config_dir/$CONSUL_CONFIG_FILE"
 
   shift 20
@@ -456,6 +457,7 @@ function run {
   local server_stabilization_time="$DEFAULT_AUTOPILOT_SERVER_STABILIZATION_TIME"
   local redundancy_zone_tag="$DEFAULT_AUTOPILOT_REDUNDANCY_ZONE_TAG"
   local disable_upgrade_migration="$DEFAULT_AUTOPILOT_DISABLE_UPGRADE_MIGRATION"
+  local enable_connect="false"
 
   while [[ $# -gt 0 ]]; do
     local key="$1"
@@ -669,6 +671,7 @@ function run {
       "$redundancy_zone_tag" \
       "$disable_upgrade_migration" \
       "$upgrade_version_tag" \
+      "$enable_connect" \
       "${recursors[@]}"
   fi
 
