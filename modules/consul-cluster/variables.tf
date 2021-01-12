@@ -59,13 +59,13 @@ variable "cluster_tag_value" {
 variable "subnet_ids" {
   description = "The subnet IDs into which the EC2 Instances should be deployed. We recommend one subnet ID per node in the cluster_size variable. At least one of var.subnet_ids or var.availability_zones must be non-empty."
   type        = list(string)
-  default     = []
+  default     = null
 }
 
 variable "availability_zones" {
   description = "The availability zones into which the EC2 Instances should be deployed. We recommend one availability zone per node in the cluster_size variable. At least one of var.subnet_ids or var.availability_zones must be non-empty."
   type        = list(string)
-  default     = []
+  default     = null
 }
 
 variable "ssh_key_name" {
@@ -164,6 +164,12 @@ variable "root_volume_delete_on_termination" {
   default     = true
 }
 
+variable "root_volume_encrypted" {
+  description = "Encrypt the root volume at rest"
+  type        = bool
+  default     = false
+}
+
 variable "wait_for_capacity_timeout" {
   description = "A maximum duration that Terraform should wait for ASG instances to be healthy before timing out. Setting this to '0' causes Terraform to skip all Capacity Waiting behavior."
   type        = string
@@ -224,6 +230,12 @@ variable "http_api_port" {
   default     = 8500
 }
 
+variable "https_api_port" {
+  description = "The port used by clients to talk to the HTTPS API. Only used if enable_https_port is set to true."
+  type        = number
+  default     = 8501
+}
+
 variable "dns_port" {
   description = "The port used to resolve DNS queries."
   type        = number
@@ -254,9 +266,20 @@ variable "enable_iam_setup" {
   default     = true
 }
 
+variable "enable_https_port" {
+  description = "If set to true, allow access to the Consul HTTPS port defined via the https_api_port variable."
+  type        = bool
+  default     = false
+}
+
 variable "iam_instance_profile_name" {
   description = "If enable_iam_setup is false then this will be the name of the IAM instance profile to attach"
   type        = string
   default     = null
 }
 
+variable "protect_from_scale_in" {
+  description = "(Optional) Allows setting instance protection. The autoscaling group will not select instances with this setting for termination during scale in events."
+  type        = bool
+  default     = false
+}

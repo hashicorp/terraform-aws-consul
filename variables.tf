@@ -59,3 +59,9 @@ variable "spot_price" {
   type        = number
   default     = null
 }
+
+variable "enable_https_port" {
+  description = "If set to true, allow access to the Consul HTTPS port defined via the https_api_port variable."
+  type        = bool
+  default     = false
+}

@@ -1,10 +1,12 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
-# This module has been updated with 0.12 syntax, which means it is no longer compatible with any versions below 0.12.
 # ----------------------------------------------------------------------------------------------------------------------
 
 terraform {
-  required_version = ">= 0.12"
+  # This module is now only being tested with Terraform 0.13.x. However, to make upgrading easier, we are setting
+  # 0.12.26 as the minimum version, as that version added support for required_providers with source URLs, making it
+  # forwards compatible with 0.13.x code.
+  required_version = ">= 0.12.26"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -32,6 +34,8 @@ resource "aws_autoscaling_group" "autoscaling_group" {
 
   enabled_metrics = var.enabled_metrics
 
+  protect_from_scale_in = var.protect_from_scale_in
+
   tags = flatten(
     [
       {
@@ -47,6 +51,18 @@ resource "aws_autoscaling_group" "autoscaling_group" {
       var.tags,
     ]
   )
+
+  lifecycle {
+    # As of AWS Provider 3.x, inline load_balancers and target_group_arns
+    # in an aws_autoscaling_group take precedence over attachment resources.
+    # Since the consul-cluster module does not define any Load Balancers,
+    # it's safe to assume that we will always want to favor an attachment
+    # over these inline properties.
+    #
+    # For further discussion and links to relevant documentation, see
+    # https://github.com/hashicorp/terraform-aws-vault/issues/210
+    ignore_changes = [load_balancers, target_group_arns]
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -79,6 +95,7 @@ resource "aws_launch_configuration" "launch_configuration" {
     volume_type           = var.root_volume_type
     volume_size           = var.root_volume_size
     delete_on_termination = var.root_volume_delete_on_termination
+    encrypted             = var.root_volume_encrypted
   }
 
   # Important note: whenever using a launch configuration with an auto scaling group, you must set
@@ -166,7 +183,10 @@ module "security_group_rules" {
   serf_lan_port   = var.serf_lan_port
   serf_wan_port   = var.serf_wan_port
   http_api_port   = var.http_api_port
+  https_api_port  = var.https_api_port
   dns_port        = var.dns_port
+
+  enable_https_port = var.enable_https_port
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

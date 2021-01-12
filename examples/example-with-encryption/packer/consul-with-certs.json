@@ -78,9 +78,12 @@
     "source": "{{user `tls_private_key_path`}}",
     "destination": "/tmp/consul.key.pem"
   },{
+    "type": "shell",
+    "inline": ["mkdir -p /tmp/terraform-aws-consul"]
+  },{
     "type": "file",
-    "source": "{{template_dir}}/../../../../terraform-aws-consul",
-    "destination": "/tmp"
+    "source": "{{template_dir}}/../../../",
+    "destination": "/tmp/terraform-aws-consul"
   },{
     "type": "shell",
     "inline": [

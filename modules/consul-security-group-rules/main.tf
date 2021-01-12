@@ -1,18 +1,11 @@
 # ----------------------------------------------------------------------------------------------------------------------
 # REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
-# This module has been updated with 0.12 syntax, which means it is no longer compatible with any versions below 0.12.
 # ----------------------------------------------------------------------------------------------------------------------
 terraform {
-  required_version = ">= 0.12"
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# THIS CONFIGURATION REQUIRES TERRAFORM VERSION 0.12+
-# ---------------------------------------------------------------------------------------------------------------------
-
-
-terraform {
-  required_version = ">= 0.12"
+  # This module is now only being tested with Terraform 0.13.x. However, to make upgrading easier, we are setting
+  # 0.12.26 as the minimum version, as that version added support for required_providers with source URLs, making it
+  # forwards compatible with 0.13.x code.
+  required_version = ">= 0.12.26"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -68,6 +61,17 @@ resource "aws_security_group_rule" "allow_http_api_inbound" {
   type        = "ingress"
   from_port   = var.http_api_port
   to_port     = var.http_api_port
+  protocol    = "tcp"
+  cidr_blocks = var.allowed_inbound_cidr_blocks
+
+  security_group_id = var.security_group_id
+}
+
+resource "aws_security_group_rule" "allow_https_api_inbound" {
+  count       = var.enable_https_port ? 1 : 0
+  type        = "ingress"
+  from_port   = var.https_api_port
+  to_port     = var.https_api_port
   protocol    = "tcp"
   cidr_blocks = var.allowed_inbound_cidr_blocks
 
@@ -151,6 +155,17 @@ resource "aws_security_group_rule" "allow_http_api_inbound_from_security_group_i
   security_group_id = var.security_group_id
 }
 
+resource "aws_security_group_rule" "allow_https_api_inbound_from_security_group_ids" {
+  count                    = var.enable_https_port ? var.allowed_inbound_security_group_count : 0
+  type                     = "ingress"
+  from_port                = var.https_api_port
+  to_port                  = var.https_api_port
+  protocol                 = "tcp"
+  source_security_group_id = element(var.allowed_inbound_security_group_ids, count.index)
+
+  security_group_id = var.security_group_id
+}
+
 resource "aws_security_group_rule" "allow_dns_tcp_inbound_from_security_group_ids" {
   count                    = var.allowed_inbound_security_group_count
   type                     = "ingress"
@@ -219,6 +234,17 @@ resource "aws_security_group_rule" "allow_http_api_inbound_from_self" {
   type      = "ingress"
   from_port = var.http_api_port
   to_port   = var.http_api_port
+  protocol  = "tcp"
+  self      = true
+
+  security_group_id = var.security_group_id
+}
+
+resource "aws_security_group_rule" "allow_https_api_inbound_from_self" {
+  count     = var.enable_https_port ? 1 : 0
+  type      = "ingress"
+  from_port = var.https_api_port
+  to_port   = var.https_api_port
   protocol  = "tcp"
   self      = true
 

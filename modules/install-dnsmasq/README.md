@@ -50,6 +50,8 @@ The `install-dnsmasq` script accepts the following arguments:
 * `consul-ip IP`: The IP address to use for Consul. Optional. Default: `127.0.0.1`. This assumes a Consul agent is 
   running locally and connected to a Consul cluster.
 * `consul-dns-port PORT`: The port Consul uses for DNS requests. Optional. Default: `8600`.
+* `dnsmasq-listen-address IP`: The IP address for dnsmasq to listen on. Optional. Defaults to the value of `consul-ip`. 
+Make sure that the network interface you provide for the IP has already been configured before you pass it to dnsmasq.
 
 Example:
 
