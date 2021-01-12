@@ -102,7 +102,7 @@ func runConsulConnectTestWithVars(t *testing.T, packerBuildName string, examples
 
 		// Check the Consul clients
 		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terraformOptions, awsRegion)
-		
+
 		// Check the Consul CA
 		checkConsulCA(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME, terraformOptions, awsRegion, sshUser, keyPair)
 	})
@@ -111,7 +111,7 @@ func runConsulConnectTestWithVars(t *testing.T, packerBuildName string, examples
 func checkConsulCA(t *testing.T, asgNameOutputVar string, terratestOptions *terraform.Options, awsRegion string, sshUser string, keyPair *aws.Ec2Keypair) {
 	asgName := terraform.OutputRequired(t, terratestOptions, asgNameOutputVar)
 	nodeIpAddress := getIpAddressOfAsgInstance(t, asgName, awsRegion)
-	
+
 	host := ssh.Host{
 		Hostname:    nodeIpAddress,
 		SshUserName: sshUser,
@@ -120,7 +120,7 @@ func checkConsulCA(t *testing.T, asgNameOutputVar string, terratestOptions *terr
 
 	maxRetries := 10
 	sleepBetweenRetries := 10 * time.Second
-	
+
 	output := retry.DoWithRetry(t, "Check Consul Built-in Certificate Authority", maxRetries, sleepBetweenRetries, func() (string, error) {
 		out, err := ssh.CheckSshCommandE(t, host, "consul connect ca get-config")
 		if err != nil {
@@ -134,4 +134,3 @@ func checkConsulCA(t *testing.T, asgNameOutputVar string, terratestOptions *terr
 		t.Fatalf("Consul CA does not have a Config\n")
 	}
 }
-
