@@ -66,14 +66,30 @@ function assert_not_empty {
   fi
 }
 
+function has_yum {
+  [ -n "$(command -v yum)" ]
+}
+
+function has_apt_get {
+  [ -n "$(command -v apt-get)" ]
+}
+
 function install_dependencies {
   local -r consul_ip="$1"
 
   log_info "Installing dependencies"
-  sudo apt-get update -y
-  echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
-  echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
-  sudo apt-get install -y iptables-persistent
+  if has_apt_get; then
+    sudo apt-get update -y
+    echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
+    echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
+    sudo apt-get install -y iptables-persistent
+  elif has_yum; then
+    sudo yum update -y
+    sudo yum install -y iptables-services
+  else
+    log_error "Could not find apt-get or yum. Cannot install dependencies on this OS."
+    exit 1
+  fi
 }
 
 function configure_systemd_resolved {
