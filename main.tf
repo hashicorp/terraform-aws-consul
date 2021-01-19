@@ -71,8 +71,8 @@ module "consul_servers" {
   cluster_tag_key   = var.cluster_tag_key
   cluster_tag_value = var.cluster_name
 
-  ami_id    = "${var.ami_id == null ? data.aws_ami.consul.image_id : var.ami_id}"
-  user_data = "${data.template_file.user_data_server.rendered}"
+  ami_id    = var.ami_id == null ? data.aws_ami.consul.image_id : var.ami_id
+  user_data = data.template_file.user_data_server.rendered
 
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnet_ids.default.ids
@@ -131,8 +131,8 @@ module "consul_clients" {
   cluster_tag_key   = "consul-clients"
   cluster_tag_value = var.cluster_name
 
-  ami_id    = "${var.ami_id == null ? data.aws_ami.consul.image_id : var.ami_id}"
-  user_data = "${data.template_file.user_data_client.rendered}"
+  ami_id    = var.ami_id == null ? data.aws_ami.consul.image_id : var.ami_id
+  user_data = data.template_file.user_data_client.rendered
 
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnet_ids.default.ids
@@ -167,7 +167,7 @@ data "template_file" "user_data_client" {
 
 data "aws_vpc" "default" {
   default = var.vpc_id == null ? true : false
-  id      = "${var.vpc_id}"
+  id      = var.vpc_id
 }
 
 data "aws_subnet_ids" "default" {
