@@ -111,7 +111,7 @@ Your code should look more like this:
 **NOTE:** Amazon Linux 2 users will need to install Git first.
 
 You should replace `<MODULE_VERSION>` in the code above with the version of this module that you want to use (see
-the [Releases Page](../../releases) for all available versions). That's because for production usage, you should always
+the [Releases Page](https://github.com/hashicorp/terraform-aws-consul/releases) for all available versions). That's because for production usage, you should always
 use a fixed, known version of this Module, downloaded from the official Git repo. On the other hand, when you're 
 just experimenting with the Module, it's OK to use a local checkout of the Module, uploaded from your own 
 computer.
