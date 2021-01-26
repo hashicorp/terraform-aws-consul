@@ -278,6 +278,12 @@ variable "iam_instance_profile_name" {
   default     = null
 }
 
+variable "iam_permissions_boundary" {
+  description = "If set, restricts the created IAM role to the given permissions boundary"
+  type        = string
+  default     = null
+}
+
 variable "protect_from_scale_in" {
   description = "(Optional) Allows setting instance protection. The autoscaling group will not select instances with this setting for termination during scale in events."
   type        = bool
