@@ -149,4 +149,3 @@ data "aws_subnet_ids" "default" {
 
 data "aws_region" "current" {
 }
-

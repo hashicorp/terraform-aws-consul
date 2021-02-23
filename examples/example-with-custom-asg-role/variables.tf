@@ -101,4 +101,3 @@ variable "consul_service_linked_role_suffix" {
   type        = string
   default     = "test-consul-service-linked-role"
 }
-
