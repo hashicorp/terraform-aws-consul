@@ -300,7 +300,7 @@ function install {
     install_tls_certificates "$path" "$user" "$ca_file_path" "$cert_file_path" "$key_file_path"
   fi
 
-  if command -v consul; then
+  if sudo bash -c "command -v consul"; then
     log_info "Consul install complete!";
   else
     log_info "Could not find consul command. Aborting.";
