@@ -302,7 +302,7 @@ function install {
 
   # This command is run with sudo rights so that it will succeed in cases where image hardening alters the permissions
   # on the directories where Consul may be installed. See https://github.com/hashicorp/terraform-aws-consul/issues/210.
-  if sudo bash -c "command -v consul"; then
+  if sudo -E PATH=$PATH bash -c "command -v consul"; then
     log_info "Consul install complete!";
   else
     log_info "Could not find consul command. Aborting.";
