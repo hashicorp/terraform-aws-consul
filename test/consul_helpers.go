@@ -133,7 +133,19 @@ func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examples
 func checkConsulClusterIsWorking(t *testing.T, asgNameOutputVar string, terratestOptions *terraform.Options, awsRegion string) {
 	asgName := terraform.OutputRequired(t, terratestOptions, asgNameOutputVar)
 	nodeIpAddress := getIpAddressOfAsgInstance(t, asgName, awsRegion)
-	testConsulCluster(t, nodeIpAddress)
+
+	token := ""
+	if terratestOptions.Vars["enable_acl"] == true {
+		// TODO: Actually retrieve the token here
+		token = "token"
+	}
+	
+	clientArgs := CreateConsulClientArgs{
+		ipAddress: nodeIpAddress,
+		token: token,
+	}
+
+	testConsulCluster(t, &clientArgs)
 }
 
 // Use a Consul client to connect to the given node and use it to verify that:
@@ -141,8 +153,8 @@ func checkConsulClusterIsWorking(t *testing.T, asgNameOutputVar string, terrates
 // 1. The Consul cluster has deployed
 // 2. The cluster has the expected number of members
 // 3. The cluster has elected a leader
-func testConsulCluster(t *testing.T, nodeIpAddress string) {
-	consulClient := createConsulClient(t, nodeIpAddress)
+func testConsulCluster(t *testing.T, clientArgs *CreateConsulClientArgs) {
+	consulClient := createConsulClient(t, clientArgs)
 	maxRetries := 60
 	sleepBetweenRetries := 10 * time.Second
 	expectedMembers := CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS + CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS
@@ -172,11 +184,18 @@ func testConsulCluster(t *testing.T, nodeIpAddress string) {
 	logger.Logf(t, "Consul cluster is properly deployed and has elected leader %s", leader)
 }
 
-// Create a Consul client
-func createConsulClient(t *testing.T, ipAddress string) *api.Client {
-	config := api.DefaultConfig()
-	config.Address = fmt.Sprintf("%s:8500", ipAddress)
+type CreateConsulClientArgs struct {
+	ipAddress string
+	token			string
+}
 
+// Create a Consul client
+func createConsulClient(t *testing.T, clientArgs *CreateConsulClientArgs) *api.Client {
+	config := api.DefaultConfig()
+	config.Address = fmt.Sprintf("%s:8500", clientArgs.ipAddress)
+	if clientArgs.token != "" {
+		config.Token = clientArgs.token
+	}
 	client, err := api.NewClient(config)
 	if err != nil {
 		t.Fatalf("Failed to create Consul client due to error: %v", err)
