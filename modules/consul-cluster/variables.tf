@@ -289,3 +289,13 @@ variable "protect_from_scale_in" {
   type        = bool
   default     = false
 }
+
+variable "acl_store_type" {
+  description = "The type of cloud store where the cluster will be able to write / read ACL tokens. If left at the default then no related policies will be created."
+  type        = string
+  default     = ""
+  validation {
+    condition     = contains(["ssm",""],var.acl_store_type)
+    error_message = "You must specify a supported store type for ACL tokens. Currently the only allowed value is 'ssm'."
+  } 
+}
