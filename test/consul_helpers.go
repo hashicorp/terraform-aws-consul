@@ -41,17 +41,18 @@ const AWS_DEFAULT_REGION_ENV_VAR = "AWS_DEFAULT_REGION"
 // 2. Building the AMI in the consul-ami example with the given build name
 // 3. Deploying that AMI using the consul-cluster Terraform code
 // 4. Checking that the Consul cluster comes up within a reasonable time period and can respond to requests
-func runConsulClusterTest(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string, sshUser string, enterpriseUrl string) {
+func runConsulClusterTest(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string, sshUser string, enterpriseUrl string, enableAcl bool) {
 	runConsulClusterTestWithVars(t,
 		packerBuildName,
 		examplesFolder,
 		packerTemplatePath,
 		sshUser,
 		map[string]interface{}{},
-		enterpriseUrl)
+		enterpriseUrl,
+		enableAcl,)
 }
 
-func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string, sshUser string, terraformVarsMerge map[string]interface{}, enterpriseUrl string) {
+func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string, sshUser string, terraformVarsMerge map[string]interface{}, enterpriseUrl string, enableAcl bool) {
 	// Uncomment any of the following to skip that section during the test
 	// os.Setenv("SKIP_setup_ami", "true")
 	// os.Setenv("SKIP_deploy", "true")
@@ -122,22 +123,33 @@ func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examples
 		}
 
 		// Check the Consul servers
-		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME, terraformOptions, awsRegion)
+		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME, terraformOptions, awsRegion, enableAcl)
 
 		// Check the Consul clients
-		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terraformOptions, awsRegion)
+		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terraformOptions, awsRegion, enableAcl)
 	})
 }
 
 // Check that the Consul cluster comes up within a reasonable time period and can respond to requests
-func checkConsulClusterIsWorking(t *testing.T, asgNameOutputVar string, terratestOptions *terraform.Options, awsRegion string) {
+func checkConsulClusterIsWorking(t *testing.T, asgNameOutputVar string, terratestOptions *terraform.Options, awsRegion string, enableAcl bool) {
 	asgName := terraform.OutputRequired(t, terratestOptions, asgNameOutputVar)
 	nodeIpAddress := getIpAddressOfAsgInstance(t, asgName, awsRegion)
 
+	maxRetries := 60
+	sleepBetweenRetries := 10 * time.Second
+
 	token := ""
-	if terratestOptions.Vars["enable_acl"] == true {
+
+	if enableAcl {
 		// TODO: Actually retrieve the token here
-		token = "token"
+		token = retry.DoWithRetry(t, "Check for SSM token", maxRetries, sleepBetweenRetries, func() (string,error) {
+			parameterName := fmt.Sprintf("/%s/token/bootstrap",terratestOptions.Vars["cluster_name"])
+			token, err := aws.GetParameterE(t, awsRegion, parameterName)
+			if err != nil {
+				return "", err
+			}
+			return token, nil
+		})
 	}
 	
 	clientArgs := CreateConsulClientArgs{

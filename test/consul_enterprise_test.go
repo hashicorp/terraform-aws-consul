@@ -8,17 +8,17 @@ import (
 // Test the example in the root folder
 func TestConsulInstallFromURLWithUbuntu16Ami(t *testing.T) {
 	t.Parallel()
-	runConsulClusterTest(t, "ubuntu16-ami", ".", "../examples/consul-ami/consul.json", "ubuntu", getUrlFromEnv(t))
+	runConsulClusterTest(t, "ubuntu16-ami", ".", "../examples/consul-ami/consul.json", "ubuntu", getUrlFromEnv(t),false)
 }
 
 func TestConsulInstallFromURLWithUbuntu18Ami(t *testing.T) {
 	t.Parallel()
-	runConsulClusterTest(t, "ubuntu18-ami", ".", "../examples/consul-ami/consul.json", "ubuntu", getUrlFromEnv(t))
+	runConsulClusterTest(t, "ubuntu18-ami", ".", "../examples/consul-ami/consul.json", "ubuntu", getUrlFromEnv(t),false)
 }
 
 func TestConsulInstallFromURLWithAmazonLinuxAmi(t *testing.T) {
 	t.Parallel()
-	runConsulClusterTest(t, "amazon-linux-2-ami", ".", "../examples/consul-ami/consul.json", "ec2-user", getUrlFromEnv(t))
+	runConsulClusterTest(t, "amazon-linux-2-ami", ".", "../examples/consul-ami/consul.json", "ec2-user", getUrlFromEnv(t),false)
 }
 
 // To test this on circle ci you need a url set as an environment variable, CONSUL_AMI_TEMPLATE_VAR_DOWNLOAD_URL
