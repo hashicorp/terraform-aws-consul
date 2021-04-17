@@ -428,7 +428,7 @@ function get_owner_of_path {
   ls -ld "$path" | awk '{print $3}'
 }
 
-function run {
+function execute {
   local server="false"
   local client="false"
   local config_dir=""
@@ -679,4 +679,7 @@ function run {
   start_consul
 }
 
-run "$@"
+# Support sourcing of this script
+if [ "$0" = "$BASH_SOURCE" ] ; then
+    execute "$@"
+fi
