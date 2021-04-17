@@ -95,4 +95,3 @@ variable "key_file_path" {
   type        = string
   default     = "/opt/consul/tls/consul.key.pem"
 }
-

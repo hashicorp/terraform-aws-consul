@@ -53,10 +53,10 @@ func runConsulClusterTest(t *testing.T, packerBuildName string, examplesFolder s
 
 func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string, sshUser string, terraformVarsMerge map[string]interface{}, enterpriseUrl string) {
 	// Uncomment any of the following to skip that section during the test
-	//os.Setenv("SKIP_setup_ami", "true")
-	//os.Setenv("SKIP_deploy", "true")
-	//os.Setenv("SKIP_validate", "true")
-	//os.Setenv("SKIP_teardown", "true")
+	// os.Setenv("SKIP_setup_ami", "true")
+	// os.Setenv("SKIP_deploy", "true")
+	// os.Setenv("SKIP_validate", "true")
+	// os.Setenv("SKIP_teardown", "true")
 
 	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, REPO_ROOT, examplesFolder)
 
@@ -196,8 +196,7 @@ func checkEnterpriseInstall(t *testing.T, asgNameOutputVar string, terratestOpti
 		SshUserName: sshUser,
 		SshKeyPair:  keyPair.KeyPair,
 	}
-
-	maxRetries := 10
+	maxRetries := 20
 	sleepBetweenRetries := 10 * time.Second
 
 	output := retry.DoWithRetry(t, "Check Enterprise Install", maxRetries, sleepBetweenRetries, func() (string, error) {
