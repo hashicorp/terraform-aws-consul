@@ -55,6 +55,7 @@ call_generate_consul_config() {
        "${enable_connect}"
 }
 
+
 @test "Consul Connect: activated" {
     # Prepare
     setup_mocks
@@ -70,6 +71,11 @@ call_generate_consul_config() {
     assert_output --partial "connect"
     assert_output --partial "enabled"
     assert_output --partial "true"
+
+    # recursors should be unset - command which follows enable-connect
+    run awk '/recursors/,/}/' "${CONSUL_CONFIG}"
+    assert_success
+    refute_output --partial "recursors"
 }
 
 @test "Consul Connect: deactivated" {
@@ -87,6 +93,11 @@ call_generate_consul_config() {
     refute_output --partial "connect"
     refute_output --partial "enabled"
     refute_output --partial "true"
+
+    # recursors should be unset - command which follows enable-connect
+    run awk '/recursors/,/}/' "${CONSUL_CONFIG}"
+    assert_success
+    refute_output --partial "recursors"
 }
 
 @test "Consul Connect Configuration Generation: activated" {
@@ -104,6 +115,11 @@ call_generate_consul_config() {
     assert_output --partial "connect"
     assert_output --partial "enabled"
     assert_output --partial "true"
+
+    # recursors should be unset - command which follows enable-connect
+    run awk '/recursors/,/}/' "${CONSUL_CONFIG}"
+    assert_success
+    refute_output --partial "recursors"
 }
 
 @test "Consul Connect Configuration Generation: deactivated" {
@@ -121,4 +137,9 @@ call_generate_consul_config() {
     refute_output --partial "connect"
     refute_output --partial "enabled"
     refute_output --partial "true"
+
+    # recursors should be unset - command which follows enable-connect
+    run awk '/recursors/,/}/' "${CONSUL_CONFIG}"
+    assert_success
+    refute_output --partial "recursors"
 }
