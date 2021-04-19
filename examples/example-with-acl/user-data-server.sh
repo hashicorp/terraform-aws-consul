@@ -23,4 +23,4 @@ fi
 
 # TODO: Add option for enabling ACL
 
-/opt/consul/bin/run-consul --server --cluster-tag-key "${cluster_tag_key}" --cluster-tag-value "${cluster_tag_value}" $gossip_encryption_configuration $rpc_encryption_configuration
+/opt/consul/bin/run-consul --server --cluster-tag-key "${cluster_tag_key}" --cluster-tag-value "${cluster_tag_value}" $gossip_encryption_configuration $rpc_encryption_configuration --enable-acl
