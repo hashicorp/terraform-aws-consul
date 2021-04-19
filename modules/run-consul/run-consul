@@ -326,6 +326,18 @@ function run {
   generate_systemd_config "$SYSTEMD_CONFIG_PATH" "$config_dir" "$data_dir" "$systemd_stdout" "$systemd_stderr" "$bin_dir" "$user" "${environment[@]}"
   log_info "Starting Consul"
   start_consul
+
+  if [[ "$enable_acl" == "true" ]]; then
+    
+    local -r asg_name=$(aws_wrapper_get_asg_name $MAX_RETRIES $SLEEP_BETWEEN_RETRIES_SEC)
+    local -r aws_region=$(aws_get_instance_region)
+
+    # Calculate the rally point server for the ASG
+    local -r rally_point_hostname=$(aws_wrapper_get_asg_rally_point $asg_name $aws_region "false")
+    log_info "Calculated rally point instance is $rally_point_hostname."
+    local -r local_hostname=$(aws_wrapper_get_hostname)
+    log_info "Local hostname is $local_hostname"
+  fi
 }
 
 run "$@"
