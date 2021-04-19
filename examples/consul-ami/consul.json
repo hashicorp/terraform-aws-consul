@@ -100,7 +100,7 @@
     "type": "shell",
     "inline": [
       "sudo mkdir -p /opt/gruntwork",
-      "git clone --branch v0.1git .4 https://github.com/gruntwork-io/bash-commons.git /tmp/bash-commons",
+      "git clone --branch v0.1.4 https://github.com/gruntwork-io/bash-commons.git /tmp/bash-commons",
       "sudo cp -r /tmp/bash-commons/modules/bash-commons/src /opt/gruntwork/bash-commons"
     ]
   }]
