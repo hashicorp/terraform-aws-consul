@@ -298,7 +298,7 @@ function generate_consul_config {
   local -r config_path="$config_dir/$CONSUL_CONFIG_FILE"
   local -r enable_acl="${21}"
 
-  shift 20
+  shift 21
   local -r recursors=("$@")
 
   local instance_id=""
@@ -401,6 +401,7 @@ EOF
   "node_name": "$instance_id",
   $recursors_config
   $retry_join_json
+  $acl_configuration
   "server": $server,
   $gossip_encryption_configuration
   $rpc_encryption_configuration
