@@ -248,5 +248,6 @@ module "iam_policies" {
   enabled        = var.enable_iam_setup
   iam_role_id    = element(concat(aws_iam_role.instance_role.*.id, [""]), 0)
   acl_store_type = var.acl_store_type
+  cluster_name   = var.cluster_name
 }
 
