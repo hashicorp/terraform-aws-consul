@@ -47,6 +47,13 @@ data "aws_iam_policy_document" "acl_token_cluster_ssm" {
   }
 }
 
+resource "aws_iam_role_policy" "ssm" {
+  count  = var.acl_store_type == "ssm" ? 1 : 0
+  name   = "ssm-cluster"
+  role   = var.iam_role_id
+  policy = data.aws_iam_policy_document.acl_token_cluster_ssm[0].json
+}
+
 data "aws_caller_identity" "current" {
   
 }
