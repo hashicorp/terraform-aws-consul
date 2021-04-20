@@ -338,10 +338,17 @@ function run {
     log_info "Local hostname is $local_hostname"
 
     if [[ "$rally_point_hostname" == "$local_hostname" ]]; then
-      log_info "Generating bootstrap ACL token"
-      local -r bootstrap_token=$(generate_bootstrap_acl_token $MAX_RETRIES $SLEEP_BETWEEN_RETRIES_SEC)
-      log_info "Persisting bootstrap token to SSM parameter"
-      write_acl_token $bootstrap_token $cluster_tag_value $aws_region "ssm"
+      log_info "Checking if bootstrap token already exists"
+      local -r existing_token=$(read_acl_token $cluster_tag_value "bootstrap" $aws_region "ssm" 1 0 "true")
+
+      if [[ -z "$existing_token" ]]; then
+        log_info "Generating bootstrap ACL token"
+        local -r bootstrap_token=$(generate_bootstrap_acl_token $MAX_RETRIES $SLEEP_BETWEEN_RETRIES_SEC)
+        log_info "Persisting bootstrap token to SSM parameter"
+        write_acl_token $bootstrap_token $cluster_tag_value "bootstrap" $aws_region "ssm"
+      else
+        log_info "Bootstrap token already exists, skipping"
+      fi      
       # TODO: Add step to create agent token and store it
     fi
   fi

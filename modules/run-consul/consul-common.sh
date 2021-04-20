@@ -224,23 +224,27 @@ function get_owner_of_path {
 
 function get_acl_token_ssm_parameter_name {
   local -r cluster_name="$1"
-  echo "/$cluster_name/token/bootstrap"
+  local -r token_name="${2:-bootstrap}"
+  echo "/$cluster_name/token/$token_name"
 }
 
 function read_acl_token {
   local -r cluster_name="$1"
-  local -r storage_type="$2"
-  local -r max_retries="${3:-60}"
-  local -r sleep_between_retries="${4:-5}"
+  local -r token_name="${2:-bootstrap}"
+  local -r aws_region="$3"
+  local -r storage_type="$4"
+  local -r max_retries="${5:-60}"
+  local -r sleep_between_retries="${6:-5}"
+  local -r ignore_error="${7:-false}"
 
   if [[ $storage_type == "ssm" ]]; then
-    local parameter_name=$(get_acl_token_ssm_parameter_name $cluster_name)
+    local parameter_name=$(get_acl_token_ssm_parameter_name $cluster_name $token_name)
     local parameters
     local parameter_exists
     local token
 
     for (( i=0; i<"$max_retries"; i++ )); do
-      parameters=$(aws ssm get-parameters --names $parameter_name --with-decryption)
+      parameters=$(aws ssm get-parameters --names $parameter_name --with-decryption --region $aws_region)
       parameter_exists=$(echo $parameters | jq '[.Parameters[]] | length')
       if [[ $parameter_exists -eq 1 ]]; then
         token=$(echo $parameters | jq '.Parameters[0].Value' -r)
@@ -252,7 +256,9 @@ function read_acl_token {
       fi
     done
     log_error "Parameter $parameter_name still does not exist after exceeding maximum number of retries."
-    exit 1
+    if [[ "$ignore_error" == "false" ]]; then
+      exit 1
+    fi
   else
     log_error "ACL storage type '${storage_type}' is not supported."
     exit 1
@@ -262,11 +268,12 @@ function read_acl_token {
 function write_acl_token {
   local -r token="$1"
   local -r cluster_name="$2"
-  local -r aws_region="$3"
-  local -r storage_type="$4"
+  local -r token_name="${3:-bootstrap}"
+  local -r aws_region="$4"
+  local -r storage_type="$5"
 
   if [[ $storage_type == "ssm" ]]; then
-    local -r parameter_name=$(get_acl_token_ssm_parameter_name $cluster_name)
+    local -r parameter_name=$(get_acl_token_ssm_parameter_name $cluster_name $token_name)
     aws ssm put-parameter --name $parameter_name --value $token --type SecureString --region $aws_region
   else
     log_error "ACL storage type '${storage_type}' is not supported."
