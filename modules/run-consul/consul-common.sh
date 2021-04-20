@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# set -e
+set -e
 
 source "/opt/gruntwork/bash-commons/log.sh"
 source "/opt/gruntwork/bash-commons/string.sh"
@@ -262,11 +262,12 @@ function read_acl_token {
 function write_acl_token {
   local -r token="$1"
   local -r cluster_name="$2"
-  local -r storage_type="$3"
+  local -r aws_region="$3"
+  local -r storage_type="$4"
 
   if [[ $storage_type == "ssm" ]]; then
     local -r parameter_name=$(get_acl_token_ssm_parameter_name $cluster_name)
-    aws ssm put-parameter --name $parameter_name --value $token --type SecureString
+    aws ssm put-parameter --name $parameter_name --value $token --type SecureString --region $aws_region
   else
     log_error "ACL storage type '${storage_type}' is not supported."
     exit 1
@@ -377,7 +378,6 @@ EOF
 )
   fi
 
-  # INPROGRESS: Add step to add ACL section if --enable-acl is set, including token section if client == true
   local acl_configuration=""
   if [[ "$enable_acl" == "true" ]]; then
     log_info "Creating ACL configuration"
@@ -418,4 +418,25 @@ EOF
   log_info "Installing Consul config file in $config_path"
   echo "$default_config_json" | jq '.' > "$config_path"
   chown "$user:$user" "$config_path"
+}
+
+function generate_bootstrap_acl_token {
+  local -r max_retries="$1"
+  local -r sleep_between_retries="$2"
+  
+  local token
+
+  for (( i=0; i<"$max_retries"; i++ )); do
+    token=$(consul acl bootstrap -format=json | jq '.SecretID' -r)
+    if [[ "$token" == "" ]]; then
+      log_info "Token could not be obtained, retrying."
+      sleep $sleep_between_retries
+    else
+      echo $token
+      return
+    fi
+  done
+
+  log_error "Unable to obtain ACL token. Aborting."
+  exit 1
 }

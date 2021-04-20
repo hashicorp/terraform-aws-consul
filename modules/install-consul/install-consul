@@ -203,7 +203,7 @@ function install_binary {
   log_info "Copying Consul run script to $run_consul_dest_path"
   sudo cp "$SCRIPT_DIR/../run-consul/run-consul" "$run_consul_dest_path"
   log_info "Copying common scripts to $run_consul_dest_path"
-  sudo cp "$SCRIPT_DIR/../run-consul/consul-common.sh" "$run_consul_dest_path"
+  sudo cp "$SCRIPT_DIR/../run-consul/consul-common.sh" "$bin_dir/consul-common.sh"
   sudo chown "$username:$username" "$run_consul_dest_path"
   sudo chmod a+x "$run_consul_dest_path"
 }

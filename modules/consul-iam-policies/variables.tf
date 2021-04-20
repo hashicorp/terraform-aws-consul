@@ -19,8 +19,8 @@ variable "enabled" {
 # You may provide a value for each of these parameters; in some cases they may be required if certain other options are turned on.
 # ---------------------------------------------------------------------------------------------------------------------
 
-variable "cluster_name" {
-  description = "The name of the cluster that is being created. This is only required if you set 'acl_store_type' to 'ssm', so that the instances can write to / read from SSM parameters under the cluster name root path."
+variable "cluster_tag_value" {
+  description = "The EC2 tag value used to identify cluster members. This is only required if you set 'acl_store_type' to 'ssm', so that the instances can write to / read from SSM parameters under the correct path."
   type        = string
   default  =  ""
 }

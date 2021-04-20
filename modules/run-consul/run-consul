@@ -328,7 +328,6 @@ function run {
   start_consul
 
   if [[ "$enable_acl" == "true" ]]; then
-    
     local -r asg_name=$(aws_wrapper_get_asg_name $MAX_RETRIES $SLEEP_BETWEEN_RETRIES_SEC)
     local -r aws_region=$(aws_get_instance_region)
 
@@ -337,6 +336,14 @@ function run {
     log_info "Calculated rally point instance is $rally_point_hostname."
     local -r local_hostname=$(aws_wrapper_get_hostname)
     log_info "Local hostname is $local_hostname"
+
+    if [[ "$rally_point_hostname" == "$local_hostname" ]]; then
+      log_info "Generating bootstrap ACL token"
+      local -r bootstrap_token=$(generate_bootstrap_acl_token $MAX_RETRIES $SLEEP_BETWEEN_RETRIES_SEC)
+      log_info "Persisting bootstrap token to SSM parameter"
+      write_acl_token $bootstrap_token $cluster_tag_value $aws_region "ssm"
+      # TODO: Add step to create agent token and store it
+    fi
   fi
 }
 

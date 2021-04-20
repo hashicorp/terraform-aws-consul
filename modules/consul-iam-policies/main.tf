@@ -43,7 +43,7 @@ data "aws_iam_policy_document" "acl_token_cluster_ssm" {
 
     actions = [ "ssm:PutParameter", "ssm:GetParameters" ]
 
-    resources = [ "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.cluster_name}/*" ]
+    resources = [ "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.cluster_tag_value}/*" ]
   }
 }
 
