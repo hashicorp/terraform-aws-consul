@@ -390,7 +390,9 @@ EOF
     log_info "Creating ACL configuration"
     acl_configuration=$(cat <<EOF
 "acl": {
-  "enabled":true
+  "enabled": true,
+  "default_policy": "deny",
+  "enable_token_persistence": true
 },
 EOF
 )
@@ -446,4 +448,67 @@ function generate_bootstrap_acl_token {
 
   log_error "Unable to obtain ACL token. Aborting."
   exit 1
+}
+
+function generate_node_acl_policy {
+  local -r node_name="$1"
+
+  local -r policy_hcl=$(cat <<EOF
+node_prefix "" {
+  policy = "read"
+}
+
+node "${node_name}" {
+  policy = "write"
+}
+EOF
+)
+  echo $policy_hcl
+}
+
+function write_acl_policy {
+  local -r policy_name="$1"
+  local -r policy_hcl="$2"
+  local -r token="$3"
+
+  local token_arg
+
+  if [[ ! "$token" == "" ]]; then
+    token_arg="-token $token"
+  else
+    token_arg=""
+  fi
+
+  consul acl policy create -name $policy_name -rules "$policy_hcl" $token_arg
+}
+
+function generate_token {
+  local -r policy_name="$1"
+  local -r description="$2"
+  local -r token="$3"
+
+  if [[ ! "$token" == "" ]]; then
+    token_arg="-token $token"
+  else
+    token_arg=""
+  fi
+
+  local -r generated_token=$(consul acl token create -format=json -policy-name $policy_name -description "$description" $token_arg | jq '.SecretID' -r)
+
+  echo $generated_token
+}
+
+function set_agent_token {
+  local -r agent_token="$1"
+  local -r token="$2"
+
+  local token_arg
+  
+  if [[ ! "$token" == "" ]]; then
+    token_arg="-token $token"
+  else
+    token_arg=""
+  fi
+  
+  consul acl set-agent-token $token_arg agent "$token"
 }

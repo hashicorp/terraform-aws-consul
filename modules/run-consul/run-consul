@@ -330,6 +330,9 @@ function run {
   if [[ "$enable_acl" == "true" ]]; then
     local -r asg_name=$(aws_wrapper_get_asg_name $MAX_RETRIES $SLEEP_BETWEEN_RETRIES_SEC)
     local -r aws_region=$(aws_get_instance_region)
+    local -r instance_id=$(aws_get_instance_id)
+
+    local bootstrap_token
 
     # Calculate the rally point server for the ASG
     local -r rally_point_hostname=$(aws_wrapper_get_asg_rally_point $asg_name $aws_region "false")
@@ -343,14 +346,30 @@ function run {
 
       if [[ -z "$existing_token" ]]; then
         log_info "Generating bootstrap ACL token"
-        local -r bootstrap_token=$(generate_bootstrap_acl_token $MAX_RETRIES $SLEEP_BETWEEN_RETRIES_SEC)
+        bootstrap_token=$(generate_bootstrap_acl_token $MAX_RETRIES $SLEEP_BETWEEN_RETRIES_SEC)
         log_info "Persisting bootstrap token to SSM parameter"
         write_acl_token $bootstrap_token $cluster_tag_value "bootstrap" $aws_region "ssm"
       else
         log_info "Bootstrap token already exists, skipping"
       fi      
-      # TODO: Add step to create agent token and store it
     fi
+
+    # If the bootstrap token isn't already read (i.e. if this is running on the non rally point node)
+    # then we need to read it.
+    if [[ -z "$bootstrap_token" ]]; then
+      log_info "Acquiring bootstrap token"
+      bootstrap_token=$(read_acl_token $cluster_tag_value "bootstrap" $aws_region "ssm")
+    fi
+
+    # Generate agent policy dynamically and write it
+    log_info "Creating agent policy and token"
+    local -r agent_policy=$(generate_node_acl_policy $local_hostname)
+    write_acl_policy "$instance_id" "$agent_policy" "$bootstrap_token"
+
+    # Generate agent token and persist it
+    local -r agent_token=$(generate_token "$instance_id" "$instance_id agent policy" $bootstrap_token)
+    set_agent_token "$agent_token" "$bootstrap_token"
+
   fi
 }
 
