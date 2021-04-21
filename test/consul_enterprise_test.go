@@ -16,6 +16,11 @@ func TestConsulInstallFromURLWithUbuntu18Ami(t *testing.T) {
 	runConsulClusterTest(t, "ubuntu18-ami", ".", "../examples/consul-ami/consul.json", "ubuntu", getUrlFromEnv(t))
 }
 
+func TestConsulInstallFromURLWithUbuntu20Ami(t *testing.T) {
+	t.Parallel()
+	runConsulClusterTest(t, "ubuntu20-ami", ".", "../examples/consul-ami/consul.json", "ubuntu", getUrlFromEnv(t))
+}
+
 func TestConsulInstallFromURLWithAmazonLinuxAmi(t *testing.T) {
 	t.Parallel()
 	runConsulClusterTest(t, "amazon-linux-2-ami", ".", "../examples/consul-ami/consul.json", "ec2-user", getUrlFromEnv(t))

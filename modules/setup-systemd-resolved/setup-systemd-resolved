@@ -82,7 +82,7 @@ function configure_systemd_resolved {
   local -r consul_port="$3"
 
   UBUNTU_VERSION=`lsb_release -s -r`
-  if [ "$UBUNTU_VERSION" == "18.04" ]; then
+  if [ "$UBUNTU_VERSION" == "18.04" ] || [ "$UBUNTU_VERSION" == "20.04" ]; then
     log_info "Configuring systemd-resolved to forward lookups of the '$consul_domain' domain to $consul_ip:$consul_port in $CONSUL_DNS_MASQ_CONFIG_FILE"
 
     sudo iptables -t nat -A OUTPUT -d localhost -p udp -m udp --dport 53 -j REDIRECT --to-ports $consul_port

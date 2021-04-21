@@ -11,6 +11,7 @@ DNS Forwarding Guide](https://www.consul.io/docs/guides/forwarding.html) and [Gi
 This script has been tested on the following operating systems:
 
 * Ubuntu 18.04
+* Ubuntu 20.04
 
 ## Quick start
 
