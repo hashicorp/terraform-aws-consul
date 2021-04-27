@@ -68,7 +68,7 @@ resource "aws_security_group_rule" "allow_http_api_inbound" {
 }
 
 resource "aws_security_group_rule" "allow_https_api_inbound" {
-  count       = var.enable_https_port ? 1 : 0
+  count       = var.enable_https_port && length(var.allowed_inbound_cidr_blocks) >= 1 ? 1 : 0
   type        = "ingress"
   from_port   = var.https_api_port
   to_port     = var.https_api_port
