@@ -344,7 +344,7 @@ function run {
       log_info "Checking if bootstrap token already exists"
       local -r existing_token=$(read_acl_token $cluster_tag_value "bootstrap" $aws_region "ssm" 1 0 "true")
 
-      if [[ -z "$existing_token" ]]; then
+      if [[ "$existing_token" == "" ]] && [ "${server}" == "true" ]; then
         log_info "Generating bootstrap ACL token"
         bootstrap_token=$(generate_bootstrap_acl_token $MAX_RETRIES $SLEEP_BETWEEN_RETRIES_SEC)
         log_info "Persisting bootstrap token to SSM parameter"
