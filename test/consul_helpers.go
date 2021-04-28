@@ -126,7 +126,7 @@ func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examples
 		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME, terraformOptions, awsRegion, enableAcl)
 
 		// Check the Consul clients
-		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terraformOptions, awsRegion, enableAcl)
+		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terraformOptions, awsRegion, false)
 	})
 }
 
@@ -192,6 +192,25 @@ func testConsulCluster(t *testing.T, clientArgs *CreateConsulClientArgs) {
 
 		return leader, nil
 	})
+
+	if clientArgs.token != "" {
+		logger.Logf(t, "Attempting to retrieve members without token")
+		consulClient = createConsulClient(t, &CreateConsulClientArgs{
+			ipAddress: clientArgs.ipAddress,
+			token: "",
+		})
+		leader = retry.DoWithRetry(t, "Check for empty members with no token", maxRetries, sleepBetweenRetries, func() (string, error) {
+			members, err := consulClient.Agent().Members(false)
+			if err != nil {
+				return "", err
+			}
+			if len(members) != 0 {
+				return "",fmt.Errorf("expected an empty member list when not using token, found %d members instead", len(members))
+			}
+
+			return "",nil
+		})
+	}
 
 	logger.Logf(t, "Consul cluster is properly deployed and has elected leader %s", leader)
 }
