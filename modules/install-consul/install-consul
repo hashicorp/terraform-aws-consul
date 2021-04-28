@@ -123,10 +123,10 @@ function install_dependencies {
 
   if has_apt_get; then
     sudo apt-get update -y
-    sudo apt-get install -y awscli curl unzip jq
+    sudo apt-get install -y awscli curl unzip jq git
   elif has_yum; then
     sudo yum update -y
-    sudo yum install -y aws curl unzip jq
+    sudo yum install -y aws curl unzip jq git
   else
     log_error "Could not find apt-get or yum. Cannot install dependencies on this OS."
     exit 1
