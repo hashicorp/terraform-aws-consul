@@ -13,7 +13,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 variable "ami_id" {
-  description = "The ID of the AMI to run in the cluster. This should be an AMI built from the Packer template under examples/example-with-encryption/packer/consul-with-certs.json. To keep this example simple, we run the same AMI on both server and client nodes, but in real-world usage, your client nodes would also run your apps. If the default value is used, Terraform will look up the latest AMI build automatically."
+  description = "The ID of the AMI to run in the cluster. This should be an AMI built from the Packer template under examples/consul-ami. To keep this example simple, we run the same AMI on both server and client nodes, but in real-world usage, your client nodes would also run your apps. If the default value is used, Terraform will look up the latest AMI build automatically."
   type        = string
   default     = null
 }
