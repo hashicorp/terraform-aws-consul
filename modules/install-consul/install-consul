@@ -175,7 +175,7 @@ function fetch_binary {
     x86)
       binary_arch="386"
       ;;
-    aarch64)
+    arm64|aarch64)
       binary_arch="arm64"
       ;;
     arm*)
