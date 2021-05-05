@@ -194,7 +194,7 @@ function fetch_binary {
       #
       local vfp_tag
       vfp_tag="$(readelf -a /proc/self/exe | grep -q -c Tag_ABI_VFP_args)"
-      if [[ ! $vfp_tag  ]]; then
+      if [[ -z $vfp_tag  ]]; then
         binary_arch="armelv5"
       else
         binary_arch="armhfv6"
