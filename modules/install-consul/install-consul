@@ -166,7 +166,8 @@ function fetch_binary {
   local -r version="$1"
   local download_url="$2"
 
-  local -r cpu_arch="$(uname -m)"
+  local cpu_arch
+  cpu_arch="$(uname -m)"
   local binary_arch=""
   case "$cpu_arch" in
     x86_64)
@@ -191,7 +192,8 @@ function fetch_binary {
       # $ uname -m
       # $ readelf -a /proc/self/exe | grep -q -c Tag_ABI_VFP_args && echo "armhf" || echo "armel"
       #
-      local -r vfp_tag="$(readelf -a /proc/self/exe | grep -q -c Tag_ABI_VFP_args)"
+      local vfp_tag
+      vfp_tag="$(readelf -a /proc/self/exe | grep -q -c Tag_ABI_VFP_args)"
       if [[ ! $vfp_tag  ]]; then
         binary_arch="armelv5"
       else
