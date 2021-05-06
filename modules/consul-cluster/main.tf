@@ -57,12 +57,12 @@ resource "aws_autoscaling_group" "autoscaling_group" {
     
     content {
       name                    = initial_lifecycle_hook.key
-      default_result          = initial_lifecycle_hook.value.default_result
-      heartbeat_timeout       = initial_lifecycle_hook.value.heartbeat_timeout
+      default_result          = lookup(initial_lifecycle_hook.value,"default_result",null)
+      heartbeat_timeout       = lookup(initial_lifecycle_hook.value,"heartbeat_timeout",null)
       lifecycle_transition    = "autoscaling:EC2_INSTANCE_LAUNCHING"
-      notification_metadata   = initial_lifecycle_hook.value.notification_metadata
-      notification_target_arn = initial_lifecycle_hook.value.notification_target_arn
-      role_arn                = initial_lifecycle_hook.value.role_arn
+      notification_metadata   = lookup(initial_lifecycle_hook.value,"notification_metadata",null)
+      notification_target_arn = lookup(initial_lifecycle_hook.value,"notification_target_arn",null)
+      role_arn                = lookup(initial_lifecycle_hook.value,"role_arn",null)
     }
   }
 
@@ -71,12 +71,12 @@ resource "aws_autoscaling_group" "autoscaling_group" {
     
     content {
       name                    = initial_lifecycle_hook.key
-      default_result          = initial_lifecycle_hook.value.default_result
-      heartbeat_timeout       = initial_lifecycle_hook.value.heartbeat_timeout
+      default_result          = lookup(initial_lifecycle_hook.value,"default_result",null)
+      heartbeat_timeout       = lookup(initial_lifecycle_hook.value,"heartbeat_timeout",null)
       lifecycle_transition    = "autoscaling:EC2_INSTANCE_TERMINATING"
-      notification_metadata   = initial_lifecycle_hook.value.notification_metadata
-      notification_target_arn = initial_lifecycle_hook.value.notification_target_arn
-      role_arn                = initial_lifecycle_hook.value.role_arn
+      notification_metadata   = lookup(initial_lifecycle_hook.value,"notification_metadata",null)
+      notification_target_arn = lookup(initial_lifecycle_hook.value,"notification_target_arn",null)
+      role_arn                = lookup(initial_lifecycle_hook.value,"role_arn",null)
     }
   }
 
