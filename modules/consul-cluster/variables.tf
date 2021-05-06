@@ -122,6 +122,18 @@ variable "termination_policies" {
   default     = "Default"
 }
 
+variable "lifecycle_hook_launching" {
+  description = "A map of hook names to lifecycle_hook objects.  Default is no launch hooks"
+  type        = map
+  default     = {}
+}
+
+variable "lifecycle_hook_terminating" {
+  description = "A map of hook names to lifecycle_hook objects.  Default is no termination hooks"
+  type        = map
+  default     = {}
+}
+
 variable "associate_public_ip_address" {
   description = "If set to true, associate a public IP address with each EC2 Instance in the cluster."
   type        = bool
