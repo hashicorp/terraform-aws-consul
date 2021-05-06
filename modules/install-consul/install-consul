@@ -166,8 +166,48 @@ function fetch_binary {
   local -r version="$1"
   local download_url="$2"
 
-  if [[ -z "$download_url" && -n "$version" ]];  then
-    download_url="https://releases.hashicorp.com/consul/${version}/consul_${version}_linux_amd64.zip"
+  local cpu_arch
+  cpu_arch="$(uname -m)"
+  local binary_arch=""
+  case "$cpu_arch" in
+    x86_64)
+      binary_arch="amd64"
+      ;;
+    x86)
+      binary_arch="386"
+      ;;
+    arm64|aarch64)
+      binary_arch="arm64"
+      ;;
+    arm*)
+      # The following info is taken from https://www.consul.io/downloads
+      #
+      # Note for ARM users:
+      #
+      # Use Armelv5 for all 32-bit armel systems
+      # Use Armhfv6 for all armhf systems with v6+ architecture
+      # Use Arm64 for all v8 64-bit architectures
+      # The following commands can help determine the right version for your system:
+      #
+      # $ uname -m
+      # $ readelf -a /proc/self/exe | grep -q -c Tag_ABI_VFP_args && echo "armhf" || echo "armel"
+      #
+      local vfp_tag
+      vfp_tag="$(readelf -a /proc/self/exe | grep -q -c Tag_ABI_VFP_args)"
+      if [[ -z $vfp_tag  ]]; then
+        binary_arch="armelv5"
+      else
+        binary_arch="armhfv6"
+      fi
+      ;;
+    *)
+      log_error "CPU architecture $cpu_arch is not a supported by Consul."
+      exit 1
+      ;;
+    esac
+
+  if [[ -z "$download_url" && -n "$version" ]]; then
+    download_url="https://releases.hashicorp.com/consul/${version}/consul_${version}_linux_${binary_arch}.zip"
   fi
 
   retry \
