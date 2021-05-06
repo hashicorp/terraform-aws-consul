@@ -51,6 +51,34 @@ resource "aws_autoscaling_group" "autoscaling_group" {
       var.tags,
     ]
   )
+  
+  dynamic "initial_lifecycle_hook" {
+    for_each = var.lifecycle_hook_launching
+    
+    content {
+      name                    = initial_lifecycle_hook.key
+      default_result          = initial_lifecycle_hook.value.default_result
+      heartbeat_timeout       = initial_lifecycle_hook.value.heartbeat_timeout
+      lifecycle_transition    = "autoscaling:EC2_INSTANCE_LAUNCHING"
+      notification_metadata   = initial_lifecycle_hook.value.notification_metadata
+      notification_target_arn = initial_lifecycle_hook.value.notification_target_arn
+      role_arn                = initial_lifecycle_hook.value.role_arn
+    }
+  }
+
+  dynamic "initial_lifecycle_hook" {
+    for_each = var.lifecycle_hook_terminating
+    
+    content {
+      name                    = initial_lifecycle_hook.key
+      default_result          = initial_lifecycle_hook.value.default_result
+      heartbeat_timeout       = initial_lifecycle_hook.value.heartbeat_timeout
+      lifecycle_transition    = "autoscaling:EC2_INSTANCE_TERMINATING"
+      notification_metadata   = initial_lifecycle_hook.value.notification_metadata
+      notification_target_arn = initial_lifecycle_hook.value.notification_target_arn
+      role_arn                = initial_lifecycle_hook.value.role_arn
+    }
+  }
 
   lifecycle {
     # As of AWS Provider 3.x, inline load_balancers and target_group_arns
