@@ -361,13 +361,27 @@ function run {
       bootstrap_token=$(read_acl_token $cluster_tag_value "bootstrap" $aws_region "ssm")
     fi
 
-    # Generate agent policy dynamically and write it
-    log_info "Creating agent policy and token"
-    local -r agent_policy=$(generate_node_acl_policy $local_hostname)
-    write_acl_policy "$instance_id" "$agent_policy" "$bootstrap_token"
+    local -r consul_major_version=$(get_consul_major_version)
+    local -r consul_minor_version=$(get_consul_minor_version)
+    local -r consul_build_version=$(get_consul_build_version)
 
-    # Generate agent token and persist it
-    local -r agent_token=$(generate_token "$instance_id" "$instance_id agent policy" $bootstrap_token)
+    
+    local agent_token
+
+    if ([ $consul_major_version -ge 1 ] && ( [ $consul_minor_version -ge 9 ] || ([ $consul_minor_version -eq 8 ] && [ $consul_build_version -ge 1 ]))) || [ $consul_major_version -gt 1 ]; then
+      # Generate the agent token using the newer method
+      log_info "Creating agent token using -node-idenity"
+      agent_token=$(generate_agent_token $local_hostname $datacenter $bootstrap_token)
+    else
+      # Generate agent policy dynamically and write it
+      log_info "Creating agent policy and token"
+      local -r agent_policy=$(generate_node_acl_policy $local_hostname)
+      write_acl_policy "$instance_id" "$agent_policy" "$bootstrap_token"
+
+      # Generate agent token and persist it
+      agent_token=$(generate_token "$instance_id" "$instance_id agent policy" $bootstrap_token)
+    fi
+
     set_agent_token "$agent_token" "$bootstrap_token"
 
   fi

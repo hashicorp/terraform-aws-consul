@@ -498,6 +498,23 @@ function generate_token {
   echo $generated_token
 }
 
+function generate_agent_token {
+  local -r node_name="$1"
+  local -r datacenter_name="$2"
+  local -r token="$3"
+
+  if [[ ! "$token" == "" ]]; then
+    token_arg="-token $token"
+  else
+    token_arg=""
+  fi
+
+  local -r generated_token=$(consul acl token create -node-identity="$node_name:$datacenter_name" -format=json $token_arg | jq '.SecretID' -r)
+
+  echo $generated_token
+
+}
+
 function set_agent_token {
   local -r agent_token="$1"
   local -r token="$2"
@@ -511,4 +528,33 @@ function set_agent_token {
   fi
   
   consul acl set-agent-token $token_arg agent "$token"
+}
+
+function get_consul_version {
+  local consul_version
+
+  consul_version=$(consul -version | grep 'v[0-9]' | sed 's/Consul v//g')
+
+  echo $consul_version
+}
+
+function get_consul_major_version {
+  local major_version
+
+  major_version=$(get_consul_version | cut -d'.' -f1)
+  echo $major_version
+}
+
+function get_consul_minor_version {
+  local minor_version
+
+  minor_version=$(get_consul_version | cut -d'.' -f2)
+  echo $minor_version
+}
+
+function get_consul_build_version {
+  local build_version
+
+  minor_version=$(get_consul_version | cut -d'.' -f3)
+  echo $build_version
 }
