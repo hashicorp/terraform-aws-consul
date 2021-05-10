@@ -14,7 +14,7 @@ if [[ "${enable_gossip_encryption}" == "true" && ! -z "${gossip_encryption_key}"
   # Note that setting the encryption key in plain text here means that it will be readable from the Terraform state file
   # and/or the EC2 API/console. We're doing this for simplicity, but in a real production environment you should pass an
   # encrypted key to Terraform and decrypt it before passing it to run-consul with something like KMS.
-  gossip_encryption_configuration="--enable-gossip-encryption --gossip-encryption-key ${gossip_encryption_key}" --enable-acl
+  gossip_encryption_configuration="--enable-gossip-encryption --gossip-encryption-key ${gossip_encryption_key}"
 fi
 
 if [[ "${enable_rpc_encryption}" == "true" && ! -z "${ca_path}" && ! -z "${cert_file_path}" && ! -z "${key_file_path}" ]]; then
@@ -23,6 +23,6 @@ fi
 
 # TODO: Add option for enabling ACL 
 
-/opt/consul/bin/run-consul --client --cluster-tag-key "${cluster_tag_key}" --cluster-tag-value "${cluster_tag_value}" $gossip_encryption_configuration $rpc_encryption_configuration
+/opt/consul/bin/run-consul --client --cluster-tag-key "${cluster_tag_key}" --cluster-tag-value "${cluster_tag_value}" $gossip_encryption_configuration $rpc_encryption_configuration --enable-acl  --acl-storage-type ssm
 
 # You could add commands to boot your other apps here

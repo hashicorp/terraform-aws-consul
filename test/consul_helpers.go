@@ -126,7 +126,7 @@ func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examples
 		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME, terraformOptions, awsRegion, enableAcl)
 
 		// Check the Consul clients
-		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terraformOptions, awsRegion, false)
+		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terraformOptions, awsRegion, enableAcl)
 	})
 }
 
