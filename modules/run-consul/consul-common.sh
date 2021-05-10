@@ -394,10 +394,6 @@ function generate_node_acl_policy {
   local -r node_name="$1"
 
   local -r policy_hcl=$(cat <<EOF
-node_prefix "" {
-  policy = "read"
-}
-
 node "${node_name}" {
   policy = "write"
 }
