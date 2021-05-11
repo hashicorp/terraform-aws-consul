@@ -123,15 +123,31 @@ variable "termination_policies" {
 }
 
 variable "lifecycle_hook_launching" {
-  description = "A map of hook names to lifecycle_hook objects.  Default is no launch hooks"
-  type        = map
+  description = "The lifecycle hooks to create that are triggered by the launch event. This is a map where the keys are the name of the hook and the values are an object with the keys and values defined in the lifecycle_hook block of the aws_autoscaling_group resource.  Default is no launch hooks"
+  type        = map(any)
   default     = {}
+#    example = {
+#      name = {
+#        default_result          = string : CONTINUE | ABANDON
+#        heartbeat_timeout       = int
+#        notification_metadata   = string
+#        notification_target_arn = string
+#        role_arn                = string
+#    }
 }
 
 variable "lifecycle_hook_terminating" {
-  description = "A map of hook names to lifecycle_hook objects.  Default is no termination hooks"
-  type        = map
+  description = "The lifecycle hooks to create that are triggered by the terminate event. This is a map where the keys are the name of the hook and the values are an object with the keys and values defined in the lifecycle_hook block of the aws_autoscaling_group resource.  Default is no termination hooks"
+  type        = map(any)
   default     = {}
+#    example = {
+#      name = {
+#        default_result          = string : CONTINUE | ABANDON
+#        heartbeat_timeout       = int
+#        notification_metadata   = string
+#        notification_target_arn = string
+#        role_arn                = string
+#    }
 }
 
 variable "associate_public_ip_address" {
