@@ -127,23 +127,23 @@ variable "lifecycle_hooks" {
   type        = map(any)
   default     = {}
 
-#    example = {
-#      name = {
-#        default_result          = string : CONTINUE | ABANDON
-#        heartbeat_timeout       = int
-#        lifecycle_transition    = string : "autoscaling:EC2_INSTANCE_LAUNCHING" | "autoscaling:EC2_INSTANCE_TERMINATING"
-#        notification_metadata   = string
-#        notification_target_arn = string
-#        role_arn                = string
-#    }
+  #    example = {
+  #      name = {
+  #        default_result          = string : CONTINUE | ABANDON
+  #        heartbeat_timeout       = int
+  #        lifecycle_transition    = string : "autoscaling:EC2_INSTANCE_LAUNCHING" | "autoscaling:EC2_INSTANCE_TERMINATING"
+  #        notification_metadata   = string
+  #        notification_target_arn = string
+  #        role_arn                = string
+  #    }
 
   validation {
-    condition = (length([for x in values(var.lifecycle_hooks): x if !contains(["CONTINUE","ABANDON"], lookup(x,"default_result","CONTINUE"))])==0)
+    condition     = anytrue([for x in values(var.lifecycle_hooks) : !contains(["CONTINUE", "ABANDON"], lookup(x, "default_result", "CONTINUE"))])
     error_message = "Lifecycle_hooks[x].default_result must be set to either \"CONTINUE\" or \"ABANDON\"."
   }
 
   validation {
-    condition = (length([for x in values(var.lifecycle_hooks): x if !contains(["autoscaling:EC2_INSTANCE_LAUNCHING","autoscaling:EC2_INSTANCE_TERMINATING"], lookup(x,"lifecycle_transition","BLANK"))])==0)
+    condition     = anytrue([for x in values(var.lifecycle_hooks) : !contains(["autoscaling:EC2_INSTANCE_LAUNCHING", "autoscaling:EC2_INSTANCE_TERMINATING"], lookup(x, "lifecycle_transition", "BLANK"))])
     error_message = "Lifecycle_hooks[x].lifecycle_transition must be set to either \"autoscaling:EC2_INSTANCE_LAUNCHING\" or \"autoscaling:EC2_INSTANCE_TERMINATING\"."
   }
 }
