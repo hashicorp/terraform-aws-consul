@@ -138,12 +138,12 @@ variable "lifecycle_hooks" {
   #    }
 
   validation {
-    condition     = anytrue([for x in values(var.lifecycle_hooks) : !contains(["CONTINUE", "ABANDON"], lookup(x, "default_result", "CONTINUE"))])
+    condition     = alltrue([for x in values(var.lifecycle_hooks) : contains(["CONTINUE", "ABANDON"], lookup(x, "default_result", "CONTINUE"))])
     error_message = "Lifecycle_hooks[x].default_result must be set to either \"CONTINUE\" or \"ABANDON\"."
   }
 
   validation {
-    condition     = anytrue([for x in values(var.lifecycle_hooks) : !contains(["autoscaling:EC2_INSTANCE_LAUNCHING", "autoscaling:EC2_INSTANCE_TERMINATING"], lookup(x, "lifecycle_transition", "BLANK"))])
+    condition     = alltrue([for x in values(var.lifecycle_hooks) : contains(["autoscaling:EC2_INSTANCE_LAUNCHING", "autoscaling:EC2_INSTANCE_TERMINATING"], lookup(x, "lifecycle_transition", "BLANK"))])
     error_message = "Lifecycle_hooks[x].lifecycle_transition must be set to either \"autoscaling:EC2_INSTANCE_LAUNCHING\" or \"autoscaling:EC2_INSTANCE_TERMINATING\"."
   }
 }
