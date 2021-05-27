@@ -10,10 +10,9 @@
 # REQUIRE A SPECIFIC TERRAFORM VERSION OR HIGHER
 # ----------------------------------------------------------------------------------------------------------------------
 terraform {
-  # This module is now only being tested with Terraform 0.14.x. However, to make upgrading easier, we are setting
-  # 0.13.0 as the minimum version, as 0.12.26 added support for required_providers with source URLs, and we are also
-  # using validation which arrived in 0.13.0 - making it forwards compatible with 0.14.x code.
-  required_version = ">= 0.13.0"
+  # This module is only being tested with Terraform 0.14.x.
+  # Removing the variable validation yields a version compatible with 0.12.26 as that added support for required_providers with source URLs
+  required_version = ">= 0.14.0"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
