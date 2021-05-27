@@ -46,6 +46,25 @@
     },
     "ssh_username": "ubuntu"
   },{
+    "name": "ubuntu20-ami",
+    "ami_name": "consul-with-encryption-ubuntu-20.04-{{isotime | clean_resource_name}}-{{uuid}}",
+    "ami_description": "An Ubuntu 20.04 AMI that has Consul installed and TLS certificates.",
+    "instance_type": "t2.micro",
+    "region": "{{user `aws_region`}}",
+    "type": "amazon-ebs",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "architecture": "x86_64",
+        "name": "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*",
+        "block-device-mapping.volume-type": "gp2",
+        "root-device-type": "ebs"
+      },
+      "owners": ["099720109477"],
+      "most_recent": true
+    },
+    "ssh_username": "ubuntu"
+  },{
     "ami_name": "consul-with-encryption-amazon-linux-2-{{isotime | clean_resource_name}}-{{uuid}}",
     "ami_description": "An Amazon Linux 2 AMI that has Consul installed and TLS certificates.",
     "instance_type": "t2.micro",
@@ -99,7 +118,7 @@
     "pause_before": "30s"
   },{
     "type": "shell",
-    "only": ["ubuntu18-ami"],
+    "only": ["ubuntu18-ami", "ubuntu20-ami"],
     "inline": [
       "/tmp/terraform-aws-consul/modules/setup-systemd-resolved/setup-systemd-resolved"
     ],
