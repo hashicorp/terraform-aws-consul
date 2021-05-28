@@ -52,6 +52,20 @@ resource "aws_autoscaling_group" "autoscaling_group" {
     ]
   )
 
+  dynamic "initial_lifecycle_hook" {
+    for_each = var.lifecycle_hooks
+
+    content {
+      name                    = initial_lifecycle_hook.key
+      default_result          = lookup(initial_lifecycle_hook.value, "default_result", null)
+      heartbeat_timeout       = lookup(initial_lifecycle_hook.value, "heartbeat_timeout", null)
+      lifecycle_transition    = initial_lifecycle_hook.value.lifecycle_transition
+      notification_metadata   = lookup(initial_lifecycle_hook.value, "notification_metadata", null)
+      notification_target_arn = lookup(initial_lifecycle_hook.value, "notification_target_arn", null)
+      role_arn                = lookup(initial_lifecycle_hook.value, "role_arn", null)
+    }
+  }
+
   lifecycle {
     # As of AWS Provider 3.x, inline load_balancers and target_group_arns
     # in an aws_autoscaling_group take precedence over attachment resources.

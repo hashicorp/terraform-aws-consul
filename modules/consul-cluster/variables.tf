@@ -122,6 +122,32 @@ variable "termination_policies" {
   default     = "Default"
 }
 
+variable "lifecycle_hooks" {
+  description = "The lifecycle hooks to create that are triggered by the launch event. This is a map where the keys are the name of the hook and the values are an object with the keys and values defined in the lifecycle_hook block of the aws_autoscaling_group resource.  Default is no launch hooks"
+  type        = map(any)
+  default     = {}
+
+  #    example = {
+  #      name = {
+  #        default_result          = string : CONTINUE | ABANDON
+  #        heartbeat_timeout       = int
+  #        lifecycle_transition    = string : "autoscaling:EC2_INSTANCE_LAUNCHING" | "autoscaling:EC2_INSTANCE_TERMINATING"
+  #        notification_metadata   = string
+  #        notification_target_arn = string
+  #        role_arn                = string
+  #    }
+
+  validation {
+    condition     = alltrue([for x in values(var.lifecycle_hooks) : contains(["CONTINUE", "ABANDON"], lookup(x, "default_result", "CONTINUE"))])
+    error_message = "Lifecycle_hooks[x].default_result must be set to either \"CONTINUE\" or \"ABANDON\"."
+  }
+
+  validation {
+    condition     = alltrue([for x in values(var.lifecycle_hooks) : contains(["autoscaling:EC2_INSTANCE_LAUNCHING", "autoscaling:EC2_INSTANCE_TERMINATING"], lookup(x, "lifecycle_transition", "BLANK"))])
+    error_message = "Lifecycle_hooks[x].lifecycle_transition must be set to either \"autoscaling:EC2_INSTANCE_LAUNCHING\" or \"autoscaling:EC2_INSTANCE_TERMINATING\"."
+  }
+}
+
 variable "associate_public_ip_address" {
   description = "If set to true, associate a public IP address with each EC2 Instance in the cluster."
   type        = bool
