@@ -72,8 +72,11 @@ module "consul_servers" {
   cluster_tag_key   = var.cluster_tag_key
   cluster_tag_value = var.cluster_name
 
-  ami_id    = var.ami_id == null ? data.aws_ami.consul.image_id : var.ami_id
-  user_data = data.template_file.user_data_server.rendered
+  ami_id = var.ami_id == null ? data.aws_ami.consul.image_id : var.ami_id
+  user_data = templatefile("${path.module}/examples/root-example/user-data-server.sh", {
+    cluster_tag_key   = var.cluster_tag_key
+    cluster_tag_value = var.cluster_name
+  })
 
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnet_ids.default.ids
@@ -98,20 +101,6 @@ module "consul_servers" {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# THE USER DATA SCRIPT THAT WILL RUN ON EACH CONSUL SERVER EC2 INSTANCE WHEN IT'S BOOTING
-# This script will configure and start Consul
-# ---------------------------------------------------------------------------------------------------------------------
-
-data "template_file" "user_data_server" {
-  template = file("${path.module}/examples/root-example/user-data-server.sh")
-
-  vars = {
-    cluster_tag_key   = var.cluster_tag_key
-    cluster_tag_value = var.cluster_name
-  }
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
 # DEPLOY THE CONSUL CLIENT NODES
 # Note that you do not have to use the consul-cluster module to deploy your clients. We do so simply because it
 # provides a convenient way to deploy an Auto Scaling Group with the necessary IAM and security group permissions for
@@ -132,8 +121,11 @@ module "consul_clients" {
   cluster_tag_key   = "consul-clients"
   cluster_tag_value = var.cluster_name
 
-  ami_id    = var.ami_id == null ? data.aws_ami.consul.image_id : var.ami_id
-  user_data = data.template_file.user_data_client.rendered
+  ami_id = var.ami_id == null ? data.aws_ami.consul.image_id : var.ami_id
+  user_data = templatefile("${path.module}/examples/root-example/user-data-client.sh", {
+    cluster_tag_key   = var.cluster_tag_key
+    cluster_tag_value = var.cluster_name
+  })
 
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnet_ids.default.ids
@@ -144,20 +136,6 @@ module "consul_clients" {
 
   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
   ssh_key_name                = var.ssh_key_name
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# THE USER DATA SCRIPT THAT WILL RUN ON EACH CONSUL CLIENT EC2 INSTANCE WHEN IT'S BOOTING
-# This script will configure and start Consul
-# ---------------------------------------------------------------------------------------------------------------------
-
-data "template_file" "user_data_client" {
-  template = file("${path.module}/examples/root-example/user-data-client.sh")
-
-  vars = {
-    cluster_tag_key   = var.cluster_tag_key
-    cluster_tag_value = var.cluster_name
-  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

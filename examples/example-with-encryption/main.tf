@@ -35,8 +35,17 @@ module "consul_servers" {
   cluster_tag_key   = var.cluster_tag_key
   cluster_tag_value = var.cluster_name
 
-  ami_id    = var.ami_id
-  user_data = data.template_file.user_data_server.rendered
+  ami_id = var.ami_id
+  user_data = templatefile("${path.module}/user-data-server.sh", {
+    cluster_tag_key          = var.cluster_tag_key
+    cluster_tag_value        = var.cluster_name
+    enable_gossip_encryption = var.enable_gossip_encryption
+    gossip_encryption_key    = var.gossip_encryption_key
+    enable_rpc_encryption    = var.enable_rpc_encryption
+    ca_path                  = var.ca_path
+    cert_file_path           = var.cert_file_path
+    key_file_path            = var.key_file_path
+  })
 
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnet_ids.default.ids
@@ -55,26 +64,6 @@ module "consul_servers" {
       propagate_at_launch = true
     }
   ]
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# THE USER DATA SCRIPT THAT WILL RUN ON EACH CONSUL SERVER EC2 INSTANCE WHEN IT'S BOOTING
-# This script will configure and start Consul
-# ---------------------------------------------------------------------------------------------------------------------
-
-data "template_file" "user_data_server" {
-  template = file("${path.module}/user-data-server.sh")
-
-  vars = {
-    cluster_tag_key          = var.cluster_tag_key
-    cluster_tag_value        = var.cluster_name
-    enable_gossip_encryption = var.enable_gossip_encryption
-    gossip_encryption_key    = var.gossip_encryption_key
-    enable_rpc_encryption    = var.enable_rpc_encryption
-    ca_path                  = var.ca_path
-    cert_file_path           = var.cert_file_path
-    key_file_path            = var.key_file_path
-  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -98,9 +87,17 @@ module "consul_clients" {
   cluster_tag_key   = "consul-clients"
   cluster_tag_value = var.cluster_name
 
-  ami_id    = var.ami_id
-  user_data = data.template_file.user_data_client.rendered
-
+  ami_id = var.ami_id
+  user_data = templatefile("${path.module}/user-data-client.sh", {
+    cluster_tag_key          = var.cluster_tag_key
+    cluster_tag_value        = var.cluster_name
+    enable_gossip_encryption = var.enable_gossip_encryption
+    gossip_encryption_key    = var.gossip_encryption_key
+    enable_rpc_encryption    = var.enable_rpc_encryption
+    ca_path                  = var.ca_path
+    cert_file_path           = var.cert_file_path
+    key_file_path            = var.key_file_path
+  })
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnet_ids.default.ids
 
@@ -110,26 +107,6 @@ module "consul_clients" {
 
   allowed_inbound_cidr_blocks = ["0.0.0.0/0"]
   ssh_key_name                = var.ssh_key_name
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# THE USER DATA SCRIPT THAT WILL RUN ON EACH CONSUL CLIENT EC2 INSTANCE WHEN IT'S BOOTING
-# This script will configure and start Consul
-# ---------------------------------------------------------------------------------------------------------------------
-
-data "template_file" "user_data_client" {
-  template = file("${path.module}/user-data-client.sh")
-
-  vars = {
-    cluster_tag_key          = var.cluster_tag_key
-    cluster_tag_value        = var.cluster_name
-    enable_gossip_encryption = var.enable_gossip_encryption
-    gossip_encryption_key    = var.gossip_encryption_key
-    enable_rpc_encryption    = var.enable_rpc_encryption
-    ca_path                  = var.ca_path
-    cert_file_path           = var.cert_file_path
-    key_file_path            = var.key_file_path
-  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
