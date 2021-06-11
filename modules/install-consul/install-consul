@@ -4,6 +4,7 @@
 #
 # 1. Ubuntu 16.04
 # 1. Ubuntu 18.04
+# 1. Ubuntu 20.04
 # 1. Amazon Linux 2
 
 set -e
@@ -21,7 +22,7 @@ function print_usage {
   echo
   echo "Usage: install-consul [OPTIONS]"
   echo
-  echo "This script can be used to install Consul and its dependencies. This script has been tested with Ubuntu 16.04 and Amazon Linux 2."
+  echo "This script can be used to install Consul and its dependencies. This script has been tested with Ubuntu 16.04/18.04/20.04 and Amazon Linux 2."
   echo
   echo "Options:"
   echo

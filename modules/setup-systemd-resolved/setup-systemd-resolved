@@ -3,6 +3,7 @@
 # with the following operating systems:
 #
 # 1. Ubuntu 18.04
+# 1. Ubuntu 20.04
 # See https://learn.hashicorp.com/consul/security-networking/forwarding#systemd-resolved-setup for more details
 # Github Issue: https://github.com/hashicorp/consul/issues/4155
 
@@ -20,7 +21,7 @@ function print_usage {
   echo
   echo "Usage: setup-systemd-resolved [OPTIONS]"
   echo
-  echo "Configure systemd-resolved to forward requests for a specific domain to Consul. This script has been tested with Ubuntu 18.04."
+  echo "Configure systemd-resolved to forward requests for a specific domain to Consul. This script has been tested with Ubuntu 18.04/20.04."
   echo
   echo "Options:"
   echo
