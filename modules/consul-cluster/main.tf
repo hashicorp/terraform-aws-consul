@@ -66,7 +66,20 @@ resource "aws_autoscaling_group" "autoscaling_group" {
     }
   }
   
-  instance_refresh = var.instance_refresh
+  dynamic "instance_refresh" {
+    for_each = var.instance_refresh == null ? [] : [var.instance_refresh]
+    content {
+      strategy = var.instance_refresh.strategy == null ? [] : [var.instance_refresh_strategy]
+      dynamic "preferences" {
+        for_each = lookup(var.instance_refresh, "preferences", null) == null ? [] : [var.instance_refresh.preferences]
+        content {
+          instance_warmup        = lookup(var.instance_refresh.preferences, "instance_warmup", null)
+          min_healthy_percentage = lookup(var.instance_refresh.preferences, "min_healthy_percentage", null)
+        }
+      }
+      triggers = lookup(var.instance_refresh, "triggers", null)
+    }
+  }
 
   lifecycle {
     # As of AWS Provider 3.x, inline load_balancers and target_group_arns
