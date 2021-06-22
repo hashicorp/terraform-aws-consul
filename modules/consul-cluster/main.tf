@@ -67,17 +67,17 @@ resource "aws_autoscaling_group" "autoscaling_group" {
   }
   
   dynamic "instance_refresh" {
-    for_each = var.instance_refresh == null ? [] : [var.instance_refresh]
+    for_each = range(var.instance_refresh == null ? 0 : 1)
     content {
-      strategy = instance_refresh.strategy
+      strategy = var.instance_refresh.strategy
       dynamic "preferences" {
-        for_each = lookup(instance_refresh, "preferences", null) == null ? [] : [instance_refresh.preferences]
+        for_each = range(lookup(var.instance_refresh, "preferences", null) == null ? 0 : 1)
         content {
-          instance_warmup        = lookup(preferences, "instance_warmup", null)
-          min_healthy_percentage = lookup(preferences, "min_healthy_percentage", null)
+          instance_warmup        = lookup(var.instance_refresh.preferences, "instance_warmup", null)
+          min_healthy_percentage = lookup(var.instance_refresh.preferences, "min_healthy_percentage", null)
         }
       }
-      triggers = lookup(instance_refresh, "triggers", null)
+      triggers = lookup(var.instance_refresh, "triggers", null)
     }
   }
 
