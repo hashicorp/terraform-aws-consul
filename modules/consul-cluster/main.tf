@@ -65,6 +65,8 @@ resource "aws_autoscaling_group" "autoscaling_group" {
       role_arn                = lookup(initial_lifecycle_hook.value, "role_arn", null)
     }
   }
+  
+  instance_refresh = var.instance_refresh
 
   lifecycle {
     # As of AWS Provider 3.x, inline load_balancers and target_group_arns
