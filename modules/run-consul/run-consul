@@ -64,6 +64,10 @@ function print_usage {
   echo -e "  --autopilot-disable-upgrade-migration\t(Enterprise-only) If this flag is set, this will disable Autopilot's upgrade migration strategy in Consul Enterprise of waiting until enough newer-versioned servers have been added to the cluster before promoting any of them to voters. Defaults to $DEFAULT_AUTOPILOT_DISABLE_UPGRADE_MIGRATION. Optional."
   echo -e "  --autopilot-upgrade-version-tag\t\t(Enterprise-only) That tag to be used to override the version information used during a migration. Optional."
   echo
+  echo "Options for Consul Connect:"
+  echo
+  echo -e "  --enable-connect\tIf set, turn on Consul Connect(only Server Mode)"
+  echo
   echo
   echo "Example:"
   echo
@@ -231,9 +235,10 @@ function generate_consul_config {
   local -r redundancy_zone_tag="${18}"
   local -r disable_upgrade_migration="${19}"
   local -r upgrade_version_tag=${20}
+  local -r enable_connect="${21}"
   local -r config_path="$config_dir/$CONSUL_CONFIG_FILE"
 
-  shift 20
+  shift 21
   local -r recursors=("$@")
 
   local instance_id=""
@@ -312,6 +317,17 @@ EOF
 )
   fi
 
+  local connect_configuration=""
+  if [[ "$enable_connect" == "true" && "$server" == "true" ]]; then
+    log_info "Creating Consul Connect configuration"
+    connect_configuration=$(cat <<EOF
+"connect" : {
+  "enabled" : true
+},
+EOF
+)
+  fi
+
   log_info "Creating default Consul configuration"
   local default_config_json
   default_config_json=$(cat <<EOF
@@ -328,6 +344,7 @@ EOF
   $gossip_encryption_configuration
   $rpc_encryption_configuration
   $autopilot_configuration
+  $connect_configuration
   "telemetry": {
     "disable_compat_1.9": true
   },
@@ -417,7 +434,7 @@ function get_owner_of_path {
   ls -ld "$path" | awk '{print $3}'
 }
 
-function run {
+function execute {
   local server="false"
   local client="false"
   local config_dir=""
@@ -446,6 +463,7 @@ function run {
   local server_stabilization_time="$DEFAULT_AUTOPILOT_SERVER_STABILIZATION_TIME"
   local redundancy_zone_tag="$DEFAULT_AUTOPILOT_REDUNDANCY_ZONE_TAG"
   local disable_upgrade_migration="$DEFAULT_AUTOPILOT_DISABLE_UPGRADE_MIGRATION"
+  local enable_connect="false"
 
   while [[ $# -gt 0 ]]; do
     local key="$1"
@@ -538,6 +556,9 @@ function run {
         ;;
       --enable-gossip-encryption)
         enable_gossip_encryption="true"
+        ;;
+      --enable-connect)
+        enable_connect="true"
         ;;
       --gossip-encryption-key)
         assert_not_empty "$key" "$2"
@@ -656,6 +677,7 @@ function run {
       "$redundancy_zone_tag" \
       "$disable_upgrade_migration" \
       "$upgrade_version_tag" \
+      "$enable_connect" \
       "${recursors[@]}"
   fi
 
@@ -663,4 +685,7 @@ function run {
   start_consul
 }
 
-run "$@"
+# Support sourcing of this script
+if [ "$0" = "$BASH_SOURCE" ] ; then
+    execute "$@"
+fi
