@@ -34,3 +34,31 @@ data "aws_iam_policy_document" "auto_discover_cluster" {
   }
 }
 
+data "aws_iam_policy_document" "acl_token_cluster_ssm" {
+  
+  count = var.acl_store_type == "ssm" ? 1 : 0
+  
+  statement {
+    effect = "Allow"
+
+    actions = [ "ssm:PutParameter", "ssm:GetParameters" ]
+
+    resources = [ "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.cluster_tag_value}/*" ]
+  }
+}
+
+resource "aws_iam_role_policy" "ssm" {
+  count  = var.acl_store_type == "ssm" ? 1 : 0
+  name   = "ssm-cluster"
+  role   = var.iam_role_id
+  policy = data.aws_iam_policy_document.acl_token_cluster_ssm[0].json
+}
+
+data "aws_caller_identity" "current" {
+  
+}
+
+data "aws_region" "current" {
+  
+}
+
