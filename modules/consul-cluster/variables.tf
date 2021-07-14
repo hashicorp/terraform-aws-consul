@@ -148,6 +148,22 @@ variable "lifecycle_hooks" {
   }
 }
 
+variable "instance_refresh" {
+  description = "Setting for an instance refresh triggered after the group is updated.  The value is an object that is defined in the instance_refresh block of the aws_autoscaling_group resource.  The default is not to trigger an instance refresh"
+  type        = any
+  default     = null
+  
+  #    example = {
+  #        strategy          = string : ROLLING
+  #        preferences       = {
+  #          instance_warmup          = int
+  #          min_healthy_percentage   = int
+  #        }
+  #        triggers          = list(string)
+  #    }
+  
+}
+    
 variable "associate_public_ip_address" {
   description = "If set to true, associate a public IP address with each EC2 Instance in the cluster."
   type        = bool
