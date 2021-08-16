@@ -55,8 +55,3 @@ workflows:
               only: publish-amis
             tags:
               only: /^v.*/
-    jobs:
-      - build
-      - test:
-          requires:
-            - build
