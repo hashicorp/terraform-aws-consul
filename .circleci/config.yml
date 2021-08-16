@@ -55,14 +55,6 @@ workflows:
               only: publish-amis
             tags:
               only: /^v.*/
-  nightly-test:
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only:
-                - master
     jobs:
       - build
       - test:
