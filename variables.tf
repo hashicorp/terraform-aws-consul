@@ -67,7 +67,7 @@ variable "enable_https_port" {
 }
 
 variable "subnet_ids" {
-  description = "The subnet IDs into which the EC2 Instances should be deployed. We recommend one subnet ID per node in the cluster_size variable. At least one of var.subnet_ids or var.availability_zones must be non-empty."
+  description = "The subnet IDs into which the EC2 Instances should be deployed. We recommend one subnet ID per node in the cluster_size variable."
   type        = list(string)
   default     = null
 }
