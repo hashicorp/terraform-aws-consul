@@ -161,12 +161,7 @@ variable "instance_refresh" {
   #        }
   #        triggers          = list(string)
   #    }
-  
-  validation {
-   condition = (var.instance_refresh == null || var.enable_unsafe_instance_refresh == true || (lookup(var.instance_refresh.preferences, "min_healthy_percentage", null) > (100 - 100/var.cluster_size)))
-   error_message = "min_healthy_percentage must be high enough so that only one instance is taken out of service, or enable_unsafe_instance_refresh should be set to true."
-  }
-  
+   
 }
     
 variable "enable_unsafe_instance_refresh" {
