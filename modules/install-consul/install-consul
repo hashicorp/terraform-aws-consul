@@ -118,13 +118,18 @@ function has_apt_get {
 }
 
 function install_dependencies {
+  local -r skip_package_update="$1"
   log_info "Installing dependencies"
 
   if has_apt_get; then
-    sudo apt-get update -y
+    if [[ "$skip_package_update" == "false" ]]; then 
+      sudo apt-get update -y
+    fi
     sudo apt-get install -y awscli curl unzip jq
   elif has_yum; then
-    sudo yum update -y
+    if [[ "$skip_package_update" == "false" ]]; then 
+      sudo yum update -y
+    fi
     sudo yum install -y aws curl unzip jq
   else
     log_error "Could not find apt-get or yum. Cannot install dependencies on this OS."
@@ -274,6 +279,7 @@ function install {
   local ca_file_path=""
   local cert_file_path=""
   local key_file_path=""
+  local skip_package_update="false"
 
   while [[ $# -gt 0 ]]; do
     local key="$1"
@@ -310,6 +316,9 @@ function install {
         key_file_path="$2"
         shift
         ;;
+      --skip-package-update)
+        skip_package_update="true"
+        ;;
       --help)
         print_usage
         exit
@@ -330,7 +339,7 @@ function install {
 
   log_info "Starting Consul install"
 
-  install_dependencies
+  install_dependencies "$skip_package_update"
   create_consul_user "$user"
   create_consul_install_paths "$path" "$user"
 
