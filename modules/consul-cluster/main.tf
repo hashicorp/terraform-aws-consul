@@ -9,6 +9,21 @@ terraform {
   required_version = ">= 0.12.26"
 }
 
+locals {
+  asg_tags = [
+    {
+      key                 = "Name"
+      value               = var.cluster_name
+      propagate_at_launch = true
+    },
+    {
+      key                 = var.cluster_tag_key
+      value               = var.cluster_tag_value
+      propagate_at_launch = true
+    }
+  ]
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE AN AUTO SCALING GROUP (ASG) TO RUN CONSUL
 # ---------------------------------------------------------------------------------------------------------------------
@@ -36,21 +51,15 @@ resource "aws_autoscaling_group" "autoscaling_group" {
 
   protect_from_scale_in = var.protect_from_scale_in
 
-  tags = flatten(
-    [
-      {
-        key                 = "Name"
-        value               = var.cluster_name
-        propagate_at_launch = true
-      },
-      {
-        key                 = var.cluster_tag_key
-        value               = var.cluster_tag_value
-        propagate_at_launch = true
-      },
-      var.tags,
-    ]
-  )
+  dynamic "tag" {
+    for_each = concat(local.asg_tags, var.tags)
+
+    content {
+      key                 = lookup(tag.value, "key", null)
+      value               = lookup(tag.value, "value", null)
+      propagate_at_launch = lookup(tag.value, "propagate_at_launch", null)
+    }
+  }
 
   dynamic "initial_lifecycle_hook" {
     for_each = var.lifecycle_hooks
