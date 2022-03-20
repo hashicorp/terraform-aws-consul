@@ -1,5 +1,5 @@
 # DISCLAIMER
-**This repository is no longer supported, please consider using [this repository](https://registry.terraform.io/modules/hashicorp/consul-starter/aws/latest) for the latest and most supported version for Vault.**
+**This repository is no longer supported, please consider using [this repository](https://registry.terraform.io/modules/hashicorp/consul-starter/aws/latest) for the latest and most supported version for Consul.**
 
 Moving forward in the future this repository will be no longer supported and eventually lead to
 deprecation. Please use our latest versions of our products moving forward or alternatively you
