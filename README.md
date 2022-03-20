@@ -1,4 +1,11 @@
-[![Maintained by Gruntwork.io](https://img.shields.io/badge/maintained%20by-gruntwork.io-%235849a6.svg)](https://gruntwork.io/?ref=repo_aws_consul)
+# DISCLAIMER
+**This repository is no longer supported, please consider using [this repository](https://registry.terraform.io/modules/hashicorp/consul-starter/aws/latest) for the latest and most supported version for Vault.**
+
+Moving forward in the future this repository will be no longer supported and eventually lead to
+deprecation. Please use our latest versions of our products moving forward or alternatively you
+may fork the repository to continue use and development for your personal/business use.
+
+---
 # Consul AWS Module
 
 This repo contains a set of modules in the [modules folder](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules) for deploying a [Consul](https://www.consul.io/) cluster on 
@@ -67,7 +74,7 @@ a version number bump.
  
 ## Who maintains this Module?
 
-This Module is maintained by [Gruntwork](http://www.gruntwork.io/). If you're looking for help or commercial 
+This Module is maintained by [Gruntwork](http://www.gruntwork.io/?ref=repo_aws_consul). If you're looking for help or commercial 
 support, send an email to [modules@gruntwork.io](mailto:modules@gruntwork.io?Subject=Consul%20Module). 
 Gruntwork can help with:
 
@@ -132,4 +139,4 @@ MINOR, and PATCH versions on each release to indicate any incompatibilities.
 This code is released under the Apache 2.0 License. Please see [LICENSE](https://github.com/hashicorp/terraform-aws-consul/tree/master/LICENSE) and [NOTICE](https://github.com/hashicorp/terraform-aws-consul/tree/master/NOTICE) for more 
 details.
 
-Copyright &copy; 2017 Gruntwork, Inc.
+Copyright &copy; 2017 [Gruntwork](http://www.gruntwork.io/?ref=repo_aws_consul), Inc.
