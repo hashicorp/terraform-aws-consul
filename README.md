@@ -71,18 +71,10 @@ you can leverage the work of the Module community to pick up infrastructure impr
 a version number bump.
  
  
- 
-## Who maintains this Module?
 
-This Module is maintained by [Gruntwork](http://www.gruntwork.io/?ref=repo_aws_consul). If you're looking for help or commercial 
-support, send an email to [modules@gruntwork.io](mailto:modules@gruntwork.io?Subject=Consul%20Module). 
-Gruntwork can help with:
+## Who created this Module?
 
-* Setup, customization, and support for this Module.
-* Modules for other types of infrastructure, such as VPCs, Docker clusters, databases, and continuous integration.
-* Modules that meet compliance requirements, such as HIPAA.
-* Consulting & Training on AWS, Terraform, and DevOps.
-
+These modules were created by [Gruntwork](http://www.gruntwork.io/?ref=repo_aws_consul), in partnership with HashiCorp, in 2017 and maintained through 2021. They were deprecated in 2022 in favor of newer alternatives (see the top of the README for details).
 
 
 ## Code included in this Module:
@@ -114,12 +106,6 @@ Gruntwork can help with:
 
 * [consul-client-security-group-rules](https://github.com/hashicorp/terraform-aws-consul/tree/master/modules/consul-client-security-group-rules): Defines the security group rules
   used by a Consul agent to control the traffic that is allowed to go in and out.
-
-
-
-## How do I contribute to this Module?
-
-Contributions are very welcome! Check out the [Contribution Guidelines](https://github.com/hashicorp/terraform-aws-consul/tree/master/CONTRIBUTING.md) for instructions.
 
 
 
