@@ -79,7 +79,7 @@ module "consul_servers" {
   })
 
   vpc_id     = data.aws_vpc.default.id
-  subnet_ids = data.aws_subnet_ids.default.ids
+  subnet_ids = var.subnet_ids != null ? var.subnet_ids : data.aws_subnet_ids.default.ids
 
   # If set to true, this allows access to the consul HTTPS API
   enable_https_port = var.enable_https_port
@@ -128,7 +128,7 @@ module "consul_clients" {
   })
 
   vpc_id     = data.aws_vpc.default.id
-  subnet_ids = data.aws_subnet_ids.default.ids
+  subnet_ids = var.subnet_ids != null ? var.subnet_ids : data.aws_subnet_ids.default.ids
 
   # To make testing easier, we allow Consul and SSH requests from any IP address here but in a production
   # deployment, we strongly recommend you limit this to the IP address ranges of known, trusted servers inside your VPC.
