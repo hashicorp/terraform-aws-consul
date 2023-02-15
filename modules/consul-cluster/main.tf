@@ -65,6 +65,21 @@ resource "aws_autoscaling_group" "autoscaling_group" {
       role_arn                = lookup(initial_lifecycle_hook.value, "role_arn", null)
     }
   }
+  
+  dynamic "instance_refresh" {
+    for_each = range(var.instance_refresh == null ? 0 : 1)
+    content {
+      strategy = var.instance_refresh.strategy
+      dynamic "preferences" {
+        for_each = range(lookup(var.instance_refresh, "preferences", null) == null ? 0 : 1)
+        content {
+          instance_warmup        = lookup(var.instance_refresh.preferences, "instance_warmup", null)
+          min_healthy_percentage = lookup(var.instance_refresh.preferences, "min_healthy_percentage", null)
+        }
+      }
+      triggers = lookup(var.instance_refresh, "triggers", null)
+    }
+  }
 
   lifecycle {
     # As of AWS Provider 3.x, inline load_balancers and target_group_arns
