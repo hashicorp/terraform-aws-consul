@@ -94,7 +94,9 @@ Options for Consul Autopilot:
 * `--autopilot-disable-upgrade-migration` (optional)(enterprise-only): If this flag is set, this will disable Autopilot's upgrade migration strategy in Consul Enterprise of waiting until enough newer-versioned servers have been added to the cluster before promoting any of them to voters. Defaults to false.
 * `--autopilot-upgrade-version-tag` (optional)(enterprise-only): That tag to be used to override the version information used during a migration.
 
+Options for ACL enabling:
 
+* `--enable-acl` (optional): If set, the script will perform the steps required to bootstrap the ACL system in Consul, and populate an [AWS Systems Manager Parameter](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html) with the root bootstrap token so that other nodes (include client nodes) can retrieve it and create agent tokens for themselves. **This requires that the IAM Role used by the instances includes a policy that allows for the reading and writing of SSM parameters under the path `<cluster tag value>/*`. An example of how to do this with the existing Terraform modules present in this repository is located [here](../../examples/example-with-acl).**
 
 Example:
 

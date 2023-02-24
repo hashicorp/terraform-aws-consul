@@ -26,7 +26,6 @@ clean up.
 ### Prerequisites
 
 - Install the latest version of [Go](https://golang.org/).
-- Install [dep](https://github.com/golang/dep) for Go dependency management.
 - Install [Terraform](https://www.terraform.io/downloads.html).
 - Configure your AWS credentials using one of the [options supported by the AWS 
   SDK](http://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/credentials.html). Usually, the easiest option is to
@@ -35,11 +34,11 @@ clean up.
 
 ### One-time setup
 
-Download Go dependencies using dep:
+Download Go dependencies:
 
 ```
 cd test
-dep ensure
+go get .
 ```
 
 
@@ -60,5 +59,15 @@ cd test
 go test -v -timeout 60m -run TestFoo
 ```
 
+### Running tests without building the AMI every time
+
+In certain cases you may want to run the deploy / validate tests without building an AMI every time.
+
+```bash
+# Build the AMIs
+SKIP_deploy="true" SKIP_validate="true" SKIP_teardown="true" go test -v -timeout 60m
+
+# Run the tests, which you can do over and over again
+SKIP_setup_ami="true" go test -v -timeout 60m
 
   

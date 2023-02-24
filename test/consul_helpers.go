@@ -41,17 +41,18 @@ const AWS_DEFAULT_REGION_ENV_VAR = "AWS_DEFAULT_REGION"
 // 2. Building the AMI in the consul-ami example with the given build name
 // 3. Deploying that AMI using the consul-cluster Terraform code
 // 4. Checking that the Consul cluster comes up within a reasonable time period and can respond to requests
-func runConsulClusterTest(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string, sshUser string, enterpriseUrl string) {
+func runConsulClusterTest(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string, sshUser string, enterpriseUrl string, enableAcl bool) {
 	runConsulClusterTestWithVars(t,
 		packerBuildName,
 		examplesFolder,
 		packerTemplatePath,
 		sshUser,
 		map[string]interface{}{},
-		enterpriseUrl)
+		enterpriseUrl,
+		enableAcl,)
 }
 
-func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string, sshUser string, terraformVarsMerge map[string]interface{}, enterpriseUrl string) {
+func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examplesFolder string, packerTemplatePath string, sshUser string, terraformVarsMerge map[string]interface{}, enterpriseUrl string, enableAcl bool) {
 	// Uncomment any of the following to skip that section during the test
 	// os.Setenv("SKIP_setup_ami", "true")
 	// os.Setenv("SKIP_deploy", "true")
@@ -122,18 +123,41 @@ func runConsulClusterTestWithVars(t *testing.T, packerBuildName string, examples
 		}
 
 		// Check the Consul servers
-		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME, terraformOptions, awsRegion)
+		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_SERVER_ASG_NAME, terraformOptions, awsRegion, enableAcl)
 
 		// Check the Consul clients
-		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terraformOptions, awsRegion)
+		checkConsulClusterIsWorking(t, CONSUL_CLUSTER_EXAMPLE_OUTPUT_CLIENT_ASG_NAME, terraformOptions, awsRegion, enableAcl)
 	})
 }
 
 // Check that the Consul cluster comes up within a reasonable time period and can respond to requests
-func checkConsulClusterIsWorking(t *testing.T, asgNameOutputVar string, terratestOptions *terraform.Options, awsRegion string) {
+func checkConsulClusterIsWorking(t *testing.T, asgNameOutputVar string, terratestOptions *terraform.Options, awsRegion string, enableAcl bool) {
 	asgName := terraform.OutputRequired(t, terratestOptions, asgNameOutputVar)
 	nodeIpAddress := getIpAddressOfAsgInstance(t, asgName, awsRegion)
-	testConsulCluster(t, nodeIpAddress)
+
+	maxRetries := 60
+	sleepBetweenRetries := 10 * time.Second
+
+	token := ""
+
+	if enableAcl {
+		// TODO: Actually retrieve the token here
+		token = retry.DoWithRetry(t, "Check for SSM token", maxRetries, sleepBetweenRetries, func() (string,error) {
+			parameterName := fmt.Sprintf("/%s/token/bootstrap",terratestOptions.Vars["cluster_name"])
+			token, err := aws.GetParameterE(t, awsRegion, parameterName)
+			if err != nil {
+				return "", err
+			}
+			return token, nil
+		})
+	}
+	
+	clientArgs := CreateConsulClientArgs{
+		ipAddress: nodeIpAddress,
+		token: token,
+	}
+
+	testConsulCluster(t, &clientArgs)
 }
 
 // Use a Consul client to connect to the given node and use it to verify that:
@@ -141,8 +165,8 @@ func checkConsulClusterIsWorking(t *testing.T, asgNameOutputVar string, terrates
 // 1. The Consul cluster has deployed
 // 2. The cluster has the expected number of members
 // 3. The cluster has elected a leader
-func testConsulCluster(t *testing.T, nodeIpAddress string) {
-	consulClient := createConsulClient(t, nodeIpAddress)
+func testConsulCluster(t *testing.T, clientArgs *CreateConsulClientArgs) {
+	consulClient := createConsulClient(t, clientArgs)
 	maxRetries := 60
 	sleepBetweenRetries := 10 * time.Second
 	expectedMembers := CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_CLIENTS + CONSUL_CLUSTER_EXAMPLE_DEFAULT_NUM_SERVERS
@@ -169,14 +193,40 @@ func testConsulCluster(t *testing.T, nodeIpAddress string) {
 		return leader, nil
 	})
 
+	if clientArgs.token != "" {
+		logger.Logf(t, "Attempting to retrieve members without token")
+		consulClient = createConsulClient(t, &CreateConsulClientArgs{
+			ipAddress: clientArgs.ipAddress,
+			token: "",
+		})
+		leader = retry.DoWithRetry(t, "Check for empty members with no token", maxRetries, sleepBetweenRetries, func() (string, error) {
+			members, err := consulClient.Agent().Members(false)
+			if err != nil {
+				return "", err
+			}
+			if len(members) != 0 {
+				return "",fmt.Errorf("expected an empty member list when not using token, found %d members instead", len(members))
+			}
+
+			return "",nil
+		})
+	}
+
 	logger.Logf(t, "Consul cluster is properly deployed and has elected leader %s", leader)
 }
 
-// Create a Consul client
-func createConsulClient(t *testing.T, ipAddress string) *api.Client {
-	config := api.DefaultConfig()
-	config.Address = fmt.Sprintf("%s:8500", ipAddress)
+type CreateConsulClientArgs struct {
+	ipAddress string
+	token			string
+}
 
+// Create a Consul client
+func createConsulClient(t *testing.T, clientArgs *CreateConsulClientArgs) *api.Client {
+	config := api.DefaultConfig()
+	config.Address = fmt.Sprintf("%s:8500", clientArgs.ipAddress)
+	if clientArgs.token != "" {
+		config.Token = clientArgs.token
+	}
 	client, err := api.NewClient(config)
 	if err != nil {
 		t.Fatalf("Failed to create Consul client due to error: %v", err)
