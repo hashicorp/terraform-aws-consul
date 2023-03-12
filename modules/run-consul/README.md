@@ -81,6 +81,7 @@ The `run-consul` script accepts the following arguments:
 * `ca-file-path` (optional): Path to the CA file used to verify outgoing connections. Must be specified with `enable-rpc-encryption`, `cert-file-path` and `key-file-path`.
 * `cert-file-path` (optional): Path to the certificate file used to verify incoming connections. Must be specified with `enable-rpc-encryption`, `ca-file-path`, and `key-file-path`.
 * `key-file-path` (optional): Path to the certificate key used to verify incoming connections. Must be specified with `enable-rpc-encryption`, `ca-file-path` and `cert-file-path`.
+* `enable-connect` (optional): If this flag is set, turn on Consul Connect, when bootstrapping a cluster. Requires the server flag. To specify your own CA, specify an override config as outlined below.
 * `skip-consul-config` (optional): If this flag is set, don't generate a Consul configuration file. This is useful if
   you have a custom configuration file and don't want to use any of of the default settings from `run-consul`.
 
@@ -278,3 +279,24 @@ There are Autopilot settings called [upgrade migrations](https://www.consul.io/d
 that are useful when adding new members to the cluster either with newer configurations or using
 newer versions of Consul. These configurations manage how Consul will promote new servers and demote
 old ones. These settings, however, are only available at the Consul Enterprise version. 
+
+### Consul Connect
+[Consul Connect](https://www.consul.io/docs/connect) provides service-to-service connection authorization and encryption using mutual Transport Layer Security (TLS). 
+Applications can use sidecar proxies in a service mesh configuration to establish TLS connections for inbound and outbound connections. 
+Connect can help you secure your services and provide data about service-to-service communications.
+
+#### Enabling Connect on cluster bootstrap. 
+To enable Consul Connect on your servers, pass in the `--enable-connect` flag to the `run-consul` command used to start the consul service on the server.
+
+#### Declaring Services and Sidecar Proxies on cluster bootstrap. 
+A simple way to declare services and sidecar proxies is to include these in the user-data-client scripts that call run-consul. We have shown this in our example. A word of caution: if you have multiple Consul Clients this rudimentary approach will have the services and sidecar proxies duplicated on each client node.
+
+#### Examples
+The examples/example-with-consul-connect directory shows a working Terraform implementation of deploying a Consul Cluster with 3 servers, 1 client, 2 Services with their sidecar proxies respectively where one service is an upstream dependent for the other
+
+To run Consul in production, ensure the following:
+* ACL's should be set to deny and RPC communications must be encrypted. [More information can be found here](https://learn.hashicorp.com/consul/developer-mesh/connect-production)
+* You can choose to deploy Vault as a CA. By default Consul will run an in-built CA. [More information on running your own CA can be found here](https://www.consul.io/docs/connect/ca)
+* [You can choose to use Envoy as a proxy](https://www.consul.io/docs/connect/proxies/envoy)
+
+For all of the above your Consul server configuration should override the default configuration as specified above in Section "Overriding the configuration"
