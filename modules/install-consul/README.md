@@ -45,20 +45,25 @@ example](https://github.com/hashicorp/terraform-aws-consul/tree/master/examples/
 
 The `install-consul` script accepts the following arguments:
 
+* `help`: Prints a usage message.
 * `version VERSION`: Install Consul version VERSION. Optional if download-url is provided.
 * `download-url URL`: Install the Consul package hosted in this url. Optional if version is provided.
 * `path DIR`: Install Consul into folder DIR. Optional.
 * `user USER`: The install dirs will be owned by user USER. Optional.
+* `header`: Additional header(s) to pass when downloading. May be specified multiple times. Optional.
 * `ca-file-path PATH`: Path to a PEM-encoded certificate authority used to encrypt and verify authenticity of client and server connections. Optional.
 * `cert-file-path PATH`: Path to a PEM-encoded certificate, which will be provided to clients or servers to verify the agent's authenticity. Optional.
 * `key-file-path PATH`: Path to a PEM-encoded private key, used with the certificate to verify the agent's authenticity. Optional.
 
-Example:
+Examples:
 
 ```
 install-consul --version 1.2.2
 ```
 
+```
+install-consul --download-url https://staticassets.example.com/consul/1.2.3/consul_1.2.3_linux_amd64.zip -H "X-API-Key: 123fks9213432"
+```
 
 
 ## How it works
