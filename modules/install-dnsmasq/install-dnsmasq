@@ -78,14 +78,19 @@ function has_apt_get {
 
 function install_dnsmasq {
   local -r consul_ip="$1"
+  local -r skip_package_update="$2"
 
   log_info "Installing Dnsmasq"
 
   if has_apt_get; then
-    sudo apt-get update -y
+    if [[ "$skip_package_update" == "false" ]]; then 
+      sudo apt-get update -y
+    fi
     sudo apt-get install -y dnsmasq
   elif has_yum; then
-    sudo yum update -y
+    if [[ "$skip_package_update" == "false" ]]; then 
+      sudo yum update -y
+    fi
     sudo yum install -y dnsmasq
     echo "prepend domain-name-servers $consul_ip;" | sudo tee -a "/etc/dhcp/dhclient.conf" > /dev/null
     echo "conf-dir=$DNS_MASQ_CONFIG_DIR" | sudo tee -a "/etc/dnsmasq.conf" > /dev/null
@@ -119,6 +124,7 @@ function install {
   local consul_ip="$DEFAULT_CONSUL_IP"
   local consul_dns_port="$DEFAULT_CONSUL_DNS_PORT"
   local dnsmasq_listen_address="$DEFAULT_DNSMASQ_LISTEN_ADDRESS"
+  local skip_package_update="false"
 
   while [[ $# -gt 0 ]]; do
     local key="$1"
@@ -144,6 +150,9 @@ function install {
         dnsmasq_listen_address="$2"
         shift
         ;;
+      --skip-package-update)
+        skip_package_update="true"
+        ;;
       --help)
         print_usage
         exit
@@ -163,7 +172,7 @@ function install {
   fi
 
   log_info "Starting Dnsmasq install"
-  install_dnsmasq "$consul_ip"
+  install_dnsmasq "$consul_ip" "$skip_package_update"
   write_consul_config "$consul_domain" "$consul_ip" "$consul_dns_port" "$dnsmasq_listen_address"
   log_info "Dnsmasq install complete!"
 }
